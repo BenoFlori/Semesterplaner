@@ -144,7 +144,6 @@ h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; te
 .hint { font-size: 0.85rem; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .btn, .chip, .ev, .nx { transition: opacity .15s, background-color .15s; } }
 </style>
-<script src="termine.js" onerror="void 0"></script>
 </head>
 <body>
 <div class="wrap">
@@ -652,10 +651,23 @@ function showEdit() {
   $("#addpanel").hidden = !EDIT; $("#exportpanel").hidden = !EDIT;
   setStatus(); updateExport();
 }
-loadData();
-showEdit();
-render();
-(async () => {
+function boot() {
+  loadData();
+  showEdit();
+  render();
+  connect();
+}
+/* termine.js immer frisch laden, damit kein alter Zwischenspeicher alte Termine zeigt */
+(function () {
+  let done = false;
+  const go = () => { if (!done) { done = true; boot(); } };
+  const sc = document.createElement("script");
+  sc.src = "termine.js?t=" + Date.now();
+  sc.onload = go; sc.onerror = go;
+  document.head.appendChild(sc);
+  setTimeout(go, 4000);
+})();
+async function connect() {
   if (!(window.claude && window.claude.use)) return;
   try {
     const db = await window.claude.use("db");
@@ -673,7 +685,7 @@ render();
       if (lim && lim.images) { sampleFn = s; $("#photofile").accept = lim.images.mediaTypes.join(","); $("#photobox").hidden = false; }
     }
   } catch (e) { /* bleibt bei der statischen Ansicht */ }
-})();
+}
 </script>
 </body>
 </html>

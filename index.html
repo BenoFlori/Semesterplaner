@@ -6,107 +6,99 @@
 <title>Semesterplaner</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: Eingabefeld oben, darunter "Als Nächstes", dann Wochenraster oder Liste. */
+/* Layout: Eingabe (nur Bearbeitungsmodus), "Als Nächstes", Wochenraster oder Liste.
+   Farben: jedes Fach hat einen festen Farbton, Tutorien sind immer Bernstein mit Strichrand, Klausuren Rot, Sonstiges Grau. */
 :root {
-  --bg: #f3f5f8;
-  --surface: #ffffff;
-  --fg: #1b2430;
-  --muted: #5d6b7c;
-  --line: #dde3ea;
-  --accent: #2f5bd8;
-  --accent-fg: #ffffff;
-  --today: #eaf0fe;
-  --danger: #b42318;
-  --ev-s: 62%;
-  --ev-bg-l: 90%;
-  --ev-fg-l: 22%;
-  --ev-line-l: 48%;
+  --bg: #f3f5f8; --surface: #ffffff; --fg: #1b2430; --muted: #5d6b7c; --line: #dde3ea;
+  --accent: #2f5bd8; --accent-fg: #ffffff; --today: #eaf0fe; --danger: #b42318;
+  --ev-s: 62%; --ev-bg-l: 90%; --ev-fg-l: 22%; --ev-line-l: 48%;
   --font-ui: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --hh: 52px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f141b; --surface: #171e28; --fg: #e6ebf2; --muted: #9aa8b9; --line: #2a3441;
     --accent: #7fa2ff; --accent-fg: #0b1220; --today: #1b2840; --danger: #ff8a80;
-    --ev-s: 45%; --ev-bg-l: 24%; --ev-fg-l: 88%; --ev-line-l: 62%;
-    color-scheme: dark;
+    --ev-s: 45%; --ev-bg-l: 24%; --ev-fg-l: 88%; --ev-line-l: 62%; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f141b; --surface: #171e28; --fg: #e6ebf2; --muted: #9aa8b9; --line: #2a3441;
   --accent: #7fa2ff; --accent-fg: #0b1220; --today: #1b2840; --danger: #ff8a80;
-  --ev-s: 45%; --ev-bg-l: 24%; --ev-fg-l: 88%; --ev-line-l: 62%;
-  color-scheme: dark;
+  --ev-s: 45%; --ev-bg-l: 24%; --ev-fg-l: 88%; --ev-line-l: 62%; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
-  background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.45;
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.45;
   padding-block: 20px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-button, input, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+button, input, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
 header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
 #status { font-size: 0.8rem; color: var(--muted); }
-
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
-.add label.cap, .cap {
-  display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-}
+.cap { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .add textarea {
   width: 100%; margin-top: 8px; min-height: 96px; resize: vertical; padding: 10px 12px;
   background: var(--bg); border: 1px solid var(--line); border-radius: 8px; font-family: var(--font-num); font-size: 0.85rem; line-height: 1.5;
 }
-.add .ctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }
-.add input[type="text"] {
-  flex: 1 1 200px; min-width: 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
-}
-.btn {
-  background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600;
-}
+.ctl { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-top: 10px; }
+.ctl input[type="text"] { flex: 1 1 200px; min-width: 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+.btn { background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600; }
 .btn:disabled { opacity: 0.45; cursor: default; }
 .btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 500; padding: 7px 12px; }
 .btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); font-weight: 500; padding: 6px 10px; }
 .btn.danger.armed { background: var(--danger); color: var(--surface); }
-#preview, #addmsg { font-size: 0.85rem; color: var(--muted); }
+#preview, #addmsg, .note { font-size: 0.85rem; color: var(--muted); }
 #preview { margin-top: 8px; min-height: 1.3em; }
 #addmsg { color: var(--fg); }
 
-#next { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+#photobox { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+#photobox .ctl { margin-top: 6px; }
+#photolist { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+#photolist label { display: flex; gap: 10px; align-items: baseline; padding: 6px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; font-size: 0.85rem; }
+#photolist .num { font-family: var(--font-num); }
+
+.editbar { border-color: var(--accent); }
+.editbar p { margin: 6px 0 0; font-size: 0.85rem; color: var(--muted); }
+
+/* Farbmodell der Termine */
+.k-vorlesung { --sat: var(--ev-s); }
+.k-tutorium { --h: 42 !important; --sat: 88%; }
+.k-pruefung { --h: 4 !important; --sat: 75%; }
+.k-sonstiges { --h: 215 !important; --sat: 12%; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; background: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; border: 1px solid hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); color: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-fg-l)); background: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-bg-l)); white-space: nowrap; }
+
+#next { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
 #next:empty { display: none; }
-.nx {
-  --h: 215; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
-  border-left: 4px solid hsl(var(--h) var(--ev-s) var(--ev-line-l)); min-width: 0;
-}
+.nx { --h: 215; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; border-left: 5px solid hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .nx .when { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .nx .tm { font-family: var(--font-num); font-size: 0.95rem; }
-.nx .tt { font-size: 0.85rem; color: var(--muted); overflow-wrap: anywhere; }
+.nx .tt { font-weight: 600; overflow-wrap: anywhere; }
+.nx .pf { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
 
 .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 .tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
 .tabs button { border: 0; background: transparent; padding: 7px 16px; font-weight: 500; }
 .tabs button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
 .nav { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.nav .lbl { font-weight: 600; min-width: 11ch; text-align: center; font-variant-numeric: tabular-nums; }
+.nav .lbl { font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
 .nav .kw { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip {
-  --h: 215; display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; background: var(--surface);
-  border: 1px solid var(--line); font-size: 0.85rem; max-width: 100%; text-align: left;
-}
-.chip i, .tt i { width: 10px; height: 10px; border-radius: 50%; flex: none; background: hsl(var(--h) var(--ev-s) var(--ev-line-l)); display: inline-block; }
+.chip { --h: 215; display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.85rem; max-width: 100%; text-align: left; }
 .chip[aria-pressed="false"] { opacity: 0.45; text-decoration: line-through; }
 .chip small { color: var(--muted); font-family: var(--font-num); }
 
 .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
-.wk { display: grid; grid-template-columns: 2.8rem repeat(var(--nd), minmax(0, 1fr)); min-width: 560px; }
+.wk { display: grid; grid-template-columns: 2.8rem repeat(var(--nd), minmax(0, 1fr)); min-width: 640px; }
 .dh { padding: 8px 4px; text-align: center; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); font-size: 0.78rem; color: var(--muted); }
 .dh b { display: block; font-size: 1.05rem; color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
 .dh.today { background: var(--today); }
@@ -114,49 +106,45 @@ h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; te
 .corner { border-bottom: 1px solid var(--line); }
 .gut { position: relative; }
 .gut span { position: absolute; right: 6px; font-family: var(--font-num); font-size: 0.7rem; color: var(--muted); transform: translateY(-50%); }
-.col {
-  position: relative; border-left: 1px solid var(--line);
-  background-image: linear-gradient(var(--line) 1px, transparent 1px); background-size: 100% var(--hh);
-}
+.col { position: relative; border-left: 1px solid var(--line); background-image: linear-gradient(var(--line) 1px, transparent 1px); background-size: 100% var(--hh); }
 .col.today { background-color: var(--today); }
 .ev {
-  --h: 215; position: absolute; text-align: left; overflow: hidden; padding: 3px 6px; border-radius: 6px;
-  background: hsl(var(--h) var(--ev-s) var(--ev-bg-l)); color: hsl(var(--h) var(--ev-s) var(--ev-fg-l));
-  border: 1px solid hsl(var(--h) var(--ev-s) var(--ev-line-l)); line-height: 1.25; font-size: 0.78rem;
+  --h: 215; position: absolute; text-align: left; overflow: hidden; padding: 3px 6px; border-radius: 6px; line-height: 1.25; font-size: 0.76rem;
+  background: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-bg-l)); color: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-fg-l));
+  border: 1px solid hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l));
 }
+.ev.k-tutorium { border-style: dashed; border-width: 2px; }
 .ev.sel { outline: 2px solid var(--fg); outline-offset: 1px; z-index: 2; }
-.ev .t { display: block; font-family: var(--font-num); font-size: 0.7rem; opacity: 0.85; }
-.ev .n { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.ev .t { display: block; font-family: var(--font-num); font-size: 0.68rem; opacity: 0.85; }
+.ev .n { display: block; font-weight: 700; overflow-wrap: anywhere; }
+.ev .p { display: block; opacity: 0.85; overflow-wrap: anywhere; }
+.ev .tg { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
 .detail { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
-.detail .info { min-width: 0; }
-.detail .info b { overflow-wrap: anywhere; }
+.detail .info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.detail .info b { overflow-wrap: anywhere; font-size: 1.05rem; }
+.detail .hint { overflow-wrap: anywhere; }
 .detail .acts { display: flex; gap: 8px; flex-wrap: wrap; }
 .empty { color: var(--muted); font-size: 0.9rem; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
 .list { list-style: none; margin: 0; padding: 0; }
 .mh { margin: 18px 0 6px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.row {
-  display: grid; grid-template-columns: 5.5rem 7.2rem minmax(0, 1fr) auto; gap: 8px 12px; align-items: center;
-  padding: 9px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px;
-}
-.row.past { opacity: 0.55; }
-.row .d { font-variant-numeric: tabular-nums; }
-.row .d b { font-weight: 600; margin-right: 4px; }
-.row .tm { font-family: var(--font-num); font-size: 0.85rem; }
-.row .tt { --h: 215; display: flex; gap: 8px; align-items: center; overflow-wrap: anywhere; min-width: 0; }
+.li { display: grid; grid-template-columns: 5.5rem 7.2rem minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; padding: 9px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; border-left: 5px solid hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); }
+.li.past { opacity: 0.55; }
+.li .d b { font-weight: 600; margin-right: 4px; }
+.li .d { font-variant-numeric: tabular-nums; }
+.li .tm { font-family: var(--font-num); font-size: 0.85rem; }
+.li .tt { min-width: 0; overflow-wrap: anywhere; }
+.li .tt .l1 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 600; }
+.li .tt .l2 { font-size: 0.82rem; color: var(--muted); }
 @media (max-width: 560px) {
-  .row { grid-template-columns: 1fr auto; }
-  .row .tt { grid-column: 1 / -1; order: 3; }
+  .li { grid-template-columns: 1fr auto; }
+  .li .tt { grid-column: 1 / -1; order: 3; }
 }
-.hint { font-size: 0.8rem; color: var(--muted); }
+.hint { font-size: 0.85rem; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .btn, .chip, .ev, .nx { transition: opacity .15s, background-color .15s; } }
-.editbar { border-color: var(--accent); }
-.editbar p { margin: 6px 0 0; font-size: 0.85rem; color: var(--muted); }
-.editbar .ctl { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-[hidden] { display: none !important; }
 </style>
-<script src="termine.js"></script>
+<script src="termine.js" onerror="void 0"></script>
 </head>
 <body>
 <div class="wrap">
@@ -170,19 +158,32 @@ h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; te
     <textarea id="paste" spellcheck="false" placeholder="Titel in eine Zeile, darunter die Termine:&#10;Tutorium - Analysis &amp; Lineare Algebra&#10;Mittwoch, 21.10.2026, 16:45 – 17:55 Uhr&#10;Mittwoch, 04.11.2026, 16:45 – 18:15 Uhr"></textarea>
     <div id="preview" aria-live="polite"></div>
     <div class="ctl">
-      <input type="text" id="deftitle" placeholder="Fach (nur nötig, wenn im Text kein Titel steht)" autocomplete="off">
       <button class="btn" id="addbtn" type="button" disabled>Eintragen</button>
       <span id="addmsg" aria-live="polite"></span>
+    </div>
+    <div id="photobox" hidden>
+      <span class="cap">Oder per Foto</span>
+      <div class="ctl">
+        <input type="file" id="photofile" accept="image/*">
+        <button class="btn" id="photobtn" type="button" disabled>Foto auslesen</button>
+        <button class="btn ghost" id="photostop" type="button" hidden>Abbrechen</button>
+      </div>
+      <p class="note" id="photomsg" aria-live="polite">Mach ein Foto vom Tutoriumsplan. Du siehst die erkannten Termine, bevor sie eingetragen werden.</p>
+      <div id="photolist"></div>
+      <div class="ctl" id="photoact" hidden>
+        <button class="btn" id="photoadd" type="button">Ausgewählte eintragen</button>
+        <button class="btn ghost" id="photocancel" type="button">Verwerfen</button>
+      </div>
     </div>
   </section>
 
   <section class="panel editbar" id="exportpanel" hidden>
     <span class="cap">Veröffentlichen</span>
-    <p id="expinfo">Du bist im Bearbeitungsmodus.</p>
+    <p id="expinfo"></p>
     <div class="ctl">
       <button class="btn" id="expcopy" type="button">termine.js kopieren</button>
       <button class="btn ghost" id="expdl" type="button">termine.js herunterladen</button>
-      <button class="btn ghost" id="expreset" type="button">Auf veröffentlichten Stand zurücksetzen</button>
+      <button class="btn ghost" id="expreset" type="button" hidden>Auf veröffentlichten Stand zurücksetzen</button>
     </div>
     <p id="expmsg" aria-live="polite"></p>
   </section>
@@ -203,24 +204,33 @@ h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; te
 
 <script>
 //<parse>
-const WD = /^(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so)\b\.?,?\s*/i;
+const WD_RE = "(?:montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so)";
+const WD = new RegExp("^" + WD_RE + "\\b\\.?,?\\s*", "i");
+const WD_END = new RegExp("[\\s,]*\\b" + WD_RE + "\\b\\.?,?\\s*$", "i");
 const DATE_RE = /(\d{1,2})\.\s?(\d{1,2})\.\s?(\d{4}|\d{2}(?![\d:]))?[^\d]*?(\d{1,2})[:.](\d{2})\s*(?:[–—-]|bis)\s*(\d{1,2})[:.](\d{2})/;
-function parseEvents(text, def, nowYear) {
+function headKind(line) {
+  const m = /^(tutorium|tut\.?)\s*[-–—:]?\s*(.*)$/i.exec(line);
+  if (m) return { kind: "tutorium", title: m[2].trim() };
+  const k = /^(klausur|prüfung)\s*[-–—:]?\s*(.*)$/i.exec(line);
+  if (k) return { kind: "pruefung", title: (line).trim() };
+  const v = /^vorlesung\s*[-–—:]?\s*(.*)$/i.exec(line);
+  if (v) return { kind: "vorlesung", title: v[1].trim() };
+  return { kind: "vorlesung", title: line.trim() };
+}
+function parseEvents(text, nowYear) {
   const out = [];
-  let title = null;
+  let head = null;
   for (const raw of String(text).split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
     const m = DATE_RE.exec(line);
     if (!m) {
       const t = line.replace(/^[#*•\-\s]+/, "").trim();
-      if (t && !/^uhr$/i.test(t)) title = t;
+      if (t && !/^uhr$/i.test(t)) head = headKind(t);
       continue;
     }
-    const prefix = line.slice(0, m.index).replace(WD, "")
-      .replace(/[\s,]*\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so)\b\.?,?\s*$/i, "")
-      .replace(/[:\-–—,\s]+$/, "").trim();
-    if (prefix) title = prefix;
+    const prefix = line.slice(0, m.index).replace(WD, "").replace(WD_END, "").replace(/[:\-–—,\s]+$/, "").trim();
+    if (prefix) head = headKind(prefix);
     let [, d, mo, y, h1, i1, h2, i2] = m;
     d = +d; mo = +mo; h1 = +h1; i1 = +i1; h2 = +h2; i2 = +i2;
     y = y ? (y.length === 2 ? 2000 + +y : +y) : nowYear;
@@ -228,12 +238,8 @@ function parseEvents(text, def, nowYear) {
     if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) continue;
     if (h1 > 23 || h2 > 24 || i1 > 59 || i2 > 59 || h2 * 60 + i2 <= h1 * 60 + i1) continue;
     const p = (n) => String(n).padStart(2, "0");
-    out.push({
-      title: title || def || "Termin",
-      date: `${y}-${p(mo)}-${p(d)}`,
-      start: `${p(h1)}:${p(i1)}`,
-      end: `${p(h2)}:${p(i2)}`,
-    });
+    const h = head || { kind: "vorlesung", title: "Termin" };
+    out.push({ title: h.title || "Termin", kind: h.kind, prof: "", room: "", date: `${y}-${p(mo)}-${p(d)}`, start: `${p(h1)}:${p(i1)}`, end: `${p(h2)}:${p(i2)}` });
   }
   return out;
 }
@@ -247,15 +253,31 @@ const mins = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 const monday = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
 const fmt = (d, o) => new Intl.DateTimeFormat("de-DE", o).format(d);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const isoWeek = (d) => {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   t.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7) + 3);
   const fy = new Date(Date.UTC(t.getUTCFullYear(), 0, 4));
   return 1 + Math.round(((t - fy) / 864e5 - 3 + ((fy.getUTCDay() + 6) % 7)) / 7);
 };
-const HUES = [215, 25, 150, 330, 270, 45, 185, 0];
-const LS = "semesterplaner.v1";
+
+const HUE = {
+  "Analysis & Lineare Algebra": 220, "Logik & Algebra": 255, "BWL: Einführung": 140, "BWL: Marketing": 168,
+  "Grundlagen der IT": 282, "Einführung in die Programmierung": 335, "Einführung in die Wirtschaftsinformatik": 192,
+  "Vertrags- und Schuldrecht": 105, "Wissenschaftliches Arbeiten": 312, "Präsentations- & Kommunikationskompetenz": 68
+};
+const KIND_LABEL = { tutorium: "Tutorium", pruefung: "Klausur", sonstiges: "", vorlesung: "" };
+const KIND_CHIP = { tutorium: "Tutorien", pruefung: "Klausuren", sonstiges: "Sonstiges" };
+function hueOf(e) {
+  if (e.kind !== "vorlesung" && e.kind !== "tutorium") return 215;
+  if (HUE[e.title] != null) return HUE[e.title];
+  let h = 0; for (const c of e.title) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+const kindOf = (e) => (["vorlesung", "tutorium", "pruefung", "sonstiges"].includes(e.kind) ? e.kind : "vorlesung");
+const filterKey = (e) => (kindOf(e) === "vorlesung" ? e.title : "@" + kindOf(e));
+const ckey = (e) => `${kindOf(e)}|${e.title}|${e.date}|${e.start}`;
+const newId = () => "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 let events = {};
 let dbRef = null;
@@ -266,117 +288,179 @@ let armed = null;
 let armTimer = null;
 let showPast = false;
 const hidden = new Set();
+let EDIT = /(^|[?&])edit(=|&|$)/.test(location.search);
+let sampleFn = null;
+const WORK = "semesterplaner.arbeitskopie.v2";
 
 function all() {
   return Object.entries(events)
-    .map(([id, e]) => ({ id, ...e, a: mins(e.start), b: mins(e.end) }))
+    .map(([id, e]) => ({ id, ...e, kind: kindOf(e), a: mins(e.start), b: mins(e.end) }))
     .sort((x, y) => x.date.localeCompare(y.date) || x.a - y.a);
 }
-function hueOf(title) {
-  const names = [...new Set(all().map((e) => e.title))].sort((a, b) => a.localeCompare(b, "de"));
-  return HUES[Math.max(0, names.indexOf(title)) % HUES.length];
-}
-const ckey = (e) => `${e.title}|${e.date}|${e.start}`;
-const newId = () => "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clean = (e) => ({ title: e.title, kind: kindOf(e), prof: e.prof || "", room: e.room || "", date: e.date, start: e.start, end: e.end });
 
 /* ---------- Daten ---------- */
-const EDIT = /(^|[?&])edit(=|&|$)/.test(location.search);
-const WORK = "semesterplaner.arbeitskopie.v1";
 function base() {
   const o = {};
-  (window.TERMINE || []).forEach((e, i) => { o["t" + i] = { title: e.title, date: e.date, start: e.start, end: e.end }; });
+  (window.TERMINE || []).forEach((e, i) => { o["t" + i] = clean(e); });
   return o;
 }
 function loadData() {
   events = base();
-  if (!EDIT) return;
+  if (!EDIT || dbRef) return;
   try {
     const w = JSON.parse(localStorage.getItem(WORK) || "null");
-    if (Array.isArray(w)) { events = {}; w.forEach((e, i) => { events["w" + i] = e; }); }
+    if (Array.isArray(w)) { events = {}; w.forEach((e, i) => { events["w" + i] = clean(e); }); }
   } catch (e) { /* Arbeitskopie nicht lesbar */ }
 }
 function persist() {
-  if (!EDIT) return;
-  const arr = all().map(({ title, date, start, end }) => ({ title, date, start, end }));
-  try { localStorage.setItem(WORK, JSON.stringify(arr)); } catch (e) { /* ignorieren */ }
+  if (dbRef || !EDIT) { updateExport(); return; }
+  try { localStorage.setItem(WORK, JSON.stringify(all().map(clean))); } catch (e) { /* ignorieren */ }
   updateExport();
 }
-async function saveEv(id, ev) { events[id] = ev; persist(); }
-async function delEv(id) { delete events[id]; persist(); }
+async function saveEv(id, ev) {
+  if (dbRef) await dbRef.doc("termine/" + id).set(clean(ev));
+  else { events[id] = clean(ev); persist(); }
+}
+async function delEv(id) {
+  if (dbRef) await dbRef.doc("termine/" + id).delete();
+  else { delete events[id]; persist(); }
+}
 function exportText() {
-  const rows = all().map((e) => `  { title: ${JSON.stringify(e.title)}, date: "${e.date}", start: "${e.start}", end: "${e.end}" }`);
-  return `// Hier stehen alle Termine. Neue Termine im Bearbeitungsmodus (?edit) eintragen und diese Datei ersetzen.\nwindow.TERMINE = [\n${rows.join(",\n")}\n];\n`;
+  const rows = all().map((e) => "  " + JSON.stringify(clean(e)));
+  return "// Alle Termine. Neue Termine im Bearbeitungsmodus (?edit) eintragen und diese Datei ersetzen.\nwindow.TERMINE = [\n" + rows.join(",\n") + "\n];\n";
 }
 function dirty() {
-  const f = (arr) => JSON.stringify(arr.map((e) => [e.title, e.date, e.start, e.end]).sort());
+  const f = (arr) => JSON.stringify(arr.map((e) => { const c = clean(e); return [c.title, c.kind, c.date, c.start, c.end, c.prof, c.room]; }).sort());
   return f(all()) !== f(window.TERMINE || []);
 }
 function updateExport() {
   if (!EDIT) return;
   $("#expinfo").textContent = dirty()
-    ? "Es gibt Änderungen, die noch nicht veröffentlicht sind. Kopiere termine.js und ersetze die Datei auf GitHub."
-    : "Alles ist auf dem veröffentlichten Stand. Besucher sehen nur diesen Stand.";
+    ? "Es gibt Änderungen, die Besucher noch nicht sehen. Kopiere termine.js und ersetze die Datei auf GitHub."
+    : "Alles ist auf dem veröffentlichten Stand.";
+  $("#expreset").hidden = !!dbRef;
 }
 function setStatus() {
-  $("#status").textContent = EDIT ? "Bearbeitungsmodus (nur für dich)" : "";
+  $("#status").textContent = !EDIT ? "" : dbRef ? "Bearbeiten, automatisch gespeichert" : "Bearbeitungsmodus (nur für dich)";
 }
-if (EDIT) {
-  $("#expcopy").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(exportText()); $("#expmsg").textContent = "Kopiert. Auf GitHub termine.js öffnen, alles ersetzen, speichern."; }
-    catch (e) { $("#expmsg").textContent = "Kopieren ging nicht. Nutze stattdessen das Herunterladen."; }
-  });
-  $("#expdl").addEventListener("click", () => {
-    const url = URL.createObjectURL(new Blob([exportText()], { type: "text/javascript" }));
-    const a = document.createElement("a"); a.href = url; a.download = "termine.js"; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    $("#expmsg").textContent = "Heruntergeladen. Lade die Datei auf GitHub hoch und ersetze die alte.";
-  });
-  $("#expreset").addEventListener("click", () => {
-    try { localStorage.removeItem(WORK); } catch (e) { /* egal */ }
-    loadData(); updateExport(); render();
-    $("#expmsg").textContent = "Zurückgesetzt auf den veröffentlichten Stand.";
-  });
+async function saveFile(name, text) {
+  try {
+    const dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+    if (dl) { await dl.save({ filename: name, data: text }); return; }
+  } catch (e) { /* weiter mit Link */ }
+  const url = URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /* ---------- Eingabe ---------- */
 const ta = $("#paste");
-const def = $("#deftitle");
+function profFor(title, kind) {
+  if (kind === "tutorium") return "";
+  const m = all().find((e) => e.title === title && e.prof);
+  return m ? m.prof : "";
+}
 function updatePreview() {
-  const f = parseEvents(ta.value, def.value.trim(), new Date().getFullYear());
+  const f = parseEvents(ta.value, new Date().getFullYear());
   $("#addbtn").disabled = f.length === 0;
   if (!ta.value.trim()) { $("#preview").textContent = ""; return; }
   if (!f.length) { $("#preview").textContent = "Noch kein Termin erkannt. Eine Zeile braucht Datum und Uhrzeit, zum Beispiel 21.10.2026, 16:45 – 17:55."; return; }
-  const titles = [...new Set(f.map((x) => x.title))];
-  $("#preview").textContent = `${f.length} Termin${f.length === 1 ? "" : "e"} erkannt für: ${titles.join(", ")}`;
+  const names = [...new Set(f.map((x) => (KIND_LABEL[x.kind] ? KIND_LABEL[x.kind] + ": " : "") + x.title))];
+  $("#preview").textContent = `${f.length} Termin${f.length === 1 ? "" : "e"} erkannt für: ${names.join(", ")}`;
 }
 ta.addEventListener("input", updatePreview);
-def.addEventListener("input", updatePreview);
 ta.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") addFromText(); });
 $("#addbtn").addEventListener("click", addFromText);
 
-async function addFromText() {
-  const f = parseEvents(ta.value, def.value.trim(), new Date().getFullYear());
-  if (!f.length) return;
+async function addEvents(list) {
   const have = new Set(all().map(ckey));
-  const added = [];
-  let dup = 0;
-  $("#addbtn").disabled = true;
-  for (const x of f) {
-    if (have.has(ckey(x))) { dup++; continue; }
-    have.add(ckey(x));
-    try { await saveEv(newId(), x); added.push(x); }
-    catch (err) { $("#addmsg").textContent = "Speichern hat nicht geklappt. Versuche es noch einmal."; updatePreview(); return; }
+  const added = []; let dup = 0;
+  for (const x of list) {
+    const e = clean(x);
+    if (!e.prof) e.prof = profFor(e.title, e.kind);
+    if (have.has(ckey(e))) { dup++; continue; }
+    have.add(ckey(e));
+    await saveEv(newId(), e);
+    added.push(e);
   }
-  ta.value = "";
-  updatePreview();
-  $("#addmsg").textContent = `${added.length} eingetragen` + (dup ? `, ${dup} schon vorhanden` : "");
   if (added.length) {
     const today = key(new Date());
-    const first = added.map((x) => x.date).sort().find((d) => d >= today) || added.map((x) => x.date).sort()[0];
-    weekStart = monday(parseKey(first));
+    const ds = added.map((x) => x.date).sort();
+    weekStart = monday(parseKey(ds.find((d) => d >= today) || ds[0]));
   }
+  return { added: added.length, dup };
+}
+async function addFromText() {
+  const f = parseEvents(ta.value, new Date().getFullYear());
+  if (!f.length) return;
+  $("#addbtn").disabled = true;
+  try {
+    const r = await addEvents(f);
+    ta.value = ""; updatePreview();
+    $("#addmsg").textContent = `${r.added} eingetragen` + (r.dup ? `, ${r.dup} schon vorhanden` : "");
+  } catch (err) { $("#addmsg").textContent = "Speichern hat nicht geklappt. Versuche es noch einmal."; updatePreview(); }
   render();
 }
+
+/* ---------- Foto ---------- */
+let photoRows = [];
+let photoCtl = null;
+const photoFile = $("#photofile");
+photoFile.addEventListener("change", () => { $("#photobtn").disabled = !photoFile.files.length; });
+function photoErr(e) {
+  const c = e && e.code;
+  if (c === "not_granted" || c === "sampling_disabled") return "Claude darf hier nicht auf das Foto zugreifen. Du kannst die Termine stattdessen als Text einfügen.";
+  if (c === "rate_limited") return "Gerade zu viele Anfragen. Versuche es in einer Minute noch einmal.";
+  if (c === "image_rejected") return "Das Bild konnte nicht gelesen werden. Nimm ein anderes Foto.";
+  if (c === "invalid_json") return "Ich konnte keine Termine im Foto erkennen. Mach ein schärferes Foto oder füge den Text ein.";
+  if (c === "cancelled") return "Abgebrochen.";
+  return "Das Auslesen hat nicht geklappt. Versuche es noch einmal.";
+}
+$("#photobtn").addEventListener("click", async () => {
+  const f = photoFile.files[0];
+  if (!f || !sampleFn) return;
+  photoCtl = new AbortController();
+  $("#photobtn").disabled = true; $("#photostop").hidden = false;
+  $("#photomsg").textContent = "Ich lese das Foto …";
+  $("#photolist").innerHTML = ""; $("#photoact").hidden = true;
+  const fach = Object.keys(HUE).join("; ");
+  const prompt = "Das Foto zeigt einen Plan mit Tutorien (oder anderen Terminen) einer Hochschule, Studiengang Wirtschaftsinformatik, 1. Semester, Wintersemester 2026/27. " +
+    "Lies alle Termine aus. Antworte nur mit einem JSON-Array. Jedes Element hat genau diese Felder: " +
+    '{"title": Fach ohne das Wort Tutorium, "kind": "tutorium", "date": "YYYY-MM-DD", "start": "HH:MM", "end": "HH:MM", "prof": Name der Tutorin oder des Tutors, falls lesbar, sonst "", "room": Raum, falls lesbar, sonst ""}. ' +
+    "Wenn ein Fach zu dieser Liste passt, schreibe es genau so: " + fach + ". " +
+    "Fehlt im Foto das Jahr, nimm 2026. Wiederholt sich ein Termin wöchentlich und die Daten stehen im Foto, schreibe jedes Datum einzeln. Erfinde nichts, lass Unleserliches weg. Ist es kein Termin im Foto, antworte mit [].";
+  try {
+    const rows = await sampleFn.json(prompt, { images: f, modelTier: "default", signal: photoCtl.signal });
+    photoRows = (Array.isArray(rows) ? rows : []).map((r) => ({
+      title: String(r.title || "").trim(), kind: ["tutorium", "vorlesung", "pruefung", "sonstiges"].includes(r.kind) ? r.kind : "tutorium",
+      prof: String(r.prof || "").trim(), room: String(r.room || "").trim(), date: String(r.date || ""), start: String(r.start || ""), end: String(r.end || "")
+    })).filter((r) => r.title && /^\d{4}-\d{2}-\d{2}$/.test(r.date) && /^\d{1,2}:\d{2}$/.test(r.start) && /^\d{1,2}:\d{2}$/.test(r.end) && mins(r.end) > mins(r.start))
+      .map((r) => ({ ...r, start: pad(+r.start.split(":")[0]) + ":" + r.start.split(":")[1], end: pad(+r.end.split(":")[0]) + ":" + r.end.split(":")[1] }));
+    if (!photoRows.length) { $("#photomsg").textContent = "Ich habe keine Termine erkannt. Mach ein schärferes Foto oder füge den Text ein."; }
+    else {
+      $("#photomsg").textContent = `${photoRows.length} Termin${photoRows.length === 1 ? "" : "e"} erkannt. Prüfe sie und trage sie ein.`;
+      $("#photolist").innerHTML = photoRows.map((r, i) =>
+        `<label><input type="checkbox" checked data-i="${i}"><span class="num">${fmt(parseKey(r.date), { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" })} ${r.start}–${r.end}</span><span>${esc(KIND_LABEL[r.kind] ? KIND_LABEL[r.kind] + ": " : "")}${esc(r.title)}${r.prof ? " · " + esc(r.prof) : ""}${r.room ? " · " + esc(r.room) : ""}</span></label>`).join("");
+      $("#photoact").hidden = false;
+    }
+  } catch (e) { $("#photomsg").textContent = photoErr(e); }
+  $("#photobtn").disabled = !photoFile.files.length; $("#photostop").hidden = true;
+});
+$("#photostop").addEventListener("click", () => { if (photoCtl) photoCtl.abort(); });
+$("#photocancel").addEventListener("click", () => { photoRows = []; $("#photolist").innerHTML = ""; $("#photoact").hidden = true; $("#photomsg").textContent = "Verworfen."; });
+$("#photoadd").addEventListener("click", async () => {
+  const chosen = [...document.querySelectorAll("#photolist input:checked")].map((c) => photoRows[+c.dataset.i]);
+  if (!chosen.length) return;
+  $("#photoadd").disabled = true;
+  try {
+    const r = await addEvents(chosen);
+    $("#photomsg").textContent = `${r.added} eingetragen` + (r.dup ? `, ${r.dup} schon vorhanden` : "") + ".";
+    photoRows = []; $("#photolist").innerHTML = ""; $("#photoact").hidden = true; photoFile.value = ""; $("#photobtn").disabled = true;
+  } catch (e) { $("#photomsg").textContent = "Speichern hat nicht geklappt. Versuche es noch einmal."; }
+  $("#photoadd").disabled = false;
+  render();
+});
 
 /* ---------- Anzeige ---------- */
 function relLabel(date) {
@@ -391,22 +475,33 @@ function upcoming() {
   const now = new Date();
   const today = key(now);
   const nowM = now.getHours() * 60 + now.getMinutes();
-  return all().filter((e) => e.date > today || (e.date === today && e.b > nowM));
+  return all().filter((e) => !hidden.has(filterKey(e)) && (e.date > today || (e.date === today && e.b > nowM)));
 }
+const titleOf = (e) => (e.kind === "tutorium" ? "Tutorium: " + e.title : e.title);
 function renderNext() {
   const up = upcoming().slice(0, 3);
   $("#next").innerHTML = up.map((e) =>
-    `<button type="button" class="nx" style="--h:${hueOf(e.title)}" data-act="goto" data-date="${e.date}" data-id="${e.id}">
+    `<button type="button" class="nx k-${e.kind}" style="--h:${hueOf(e)}" data-act="goto" data-date="${e.date}" data-id="${e.id}">
       <div class="when">${esc(relLabel(e.date))}</div>
-      <div class="tm">${e.start}–${e.end}</div>
-      <div class="tt">${esc(e.title)}</div>
+      <div class="tm">${e.start}–${e.end}${e.room ? " · " + esc(e.room) : ""}</div>
+      <div class="tt">${esc(titleOf(e))}</div>
+      ${e.prof ? `<div class="pf">${esc(e.prof)}</div>` : ""}
     </button>`).join("");
 }
 function renderChips() {
-  const counts = {};
-  all().forEach((e) => { counts[e.title] = (counts[e.title] || 0) + 1; });
-  $("#chips").innerHTML = Object.keys(counts).sort((a, b) => a.localeCompare(b, "de")).map((t) =>
-    `<button type="button" class="chip" style="--h:${hueOf(t)}" aria-pressed="${!hidden.has(t)}" data-act="chip" data-title="${esc(t)}"><i></i>${esc(t)} <small>${counts[t]}</small></button>`).join("");
+  const items = new Map();
+  all().forEach((e) => {
+    const k = filterKey(e);
+    const it = items.get(k) || { k, e, n: 0 };
+    it.n++; items.set(k, it);
+  });
+  const arr = [...items.values()];
+  const fach = arr.filter((i) => !i.k.startsWith("@")).sort((a, b) => a.k.localeCompare(b.k, "de"));
+  const kinds = ["@tutorium", "@pruefung", "@sonstiges"].map((k) => arr.find((i) => i.k === k)).filter(Boolean);
+  $("#chips").innerHTML = [...fach, ...kinds].map((i) => {
+    const label = i.k.startsWith("@") ? KIND_CHIP[i.k.slice(1)] : i.k;
+    return `<button type="button" class="chip k-${i.e.kind}" style="--h:${hueOf(i.e)}" aria-pressed="${!hidden.has(i.k)}" data-act="chip" data-k="${esc(i.k)}"><span class="dot"></span>${esc(label)} <small>${i.n}</small></button>`;
+  }).join("");
 }
 function renderNav() {
   if (view === "week") {
@@ -420,7 +515,6 @@ function renderNav() {
     $("#nav").innerHTML = `<button type="button" class="btn ghost" data-act="past">${showPast ? "Vergangene ausblenden" : "Vergangene anzeigen"}</button>`;
   }
 }
-
 function layoutDay(evs) {
   evs.sort((x, y) => x.a - y.a || x.b - y.b);
   const res = []; let cluster = []; let end = 0;
@@ -434,15 +528,13 @@ function layoutDay(evs) {
   if (cluster.length) flush();
   return res;
 }
-
 function delButton(id, label) {
   if (!EDIT) return "";
   const on = armed === id;
-  return `<button type="button" class="btn danger${on ? " armed" : ""}" data-act="del" data-id="${id}">${on ? "Wirklich löschen?" : label}</button>`;
+  return `<button type="button" class="btn danger${on ? " armed" : ""}" data-act="del" data-id="${esc(id)}">${on ? "Wirklich löschen?" : label}</button>`;
 }
-
 function weekHTML() {
-  const list = all().filter((e) => !hidden.has(e.title));
+  const list = all().filter((e) => !hidden.has(filterKey(e)));
   const end = addDays(weekStart, 7);
   const inWeek = list.filter((e) => { const d = parseKey(e.date); return d >= weekStart && d < end; });
   const weekend = inWeek.some((e) => ((parseKey(e.date).getDay() + 6) % 7) >= 5);
@@ -454,10 +546,8 @@ function weekHTML() {
   }
   const HH = 52, todayKey = key(new Date());
   const days = [...Array(nd)].map((_, i) => addDays(weekStart, i));
-  const heads = days.map((d) =>
-    `<div class="dh${key(d) === todayKey ? " today" : ""}">${fmt(d, { weekday: "short" })}<b>${d.getDate()}.</b></div>`).join("");
-  const gut = `<div class="gut" style="height:${(h1 - h0) * HH}px">${[...Array(h1 - h0 + 1)].map((_, i) =>
-    `<span style="top:${i * HH}px">${pad(h0 + i)}:00</span>`).join("")}</div>`;
+  const heads = days.map((d) => `<div class="dh${key(d) === todayKey ? " today" : ""}">${fmt(d, { weekday: "short" })}<b>${d.getDate()}.</b></div>`).join("");
+  const gut = `<div class="gut" style="height:${(h1 - h0) * HH}px">${[...Array(h1 - h0 + 1)].map((_, i) => `<span style="top:${i * HH}px">${pad(h0 + i)}:00</span>`).join("")}</div>`;
   const cols = days.map((d) => {
     const k = key(d);
     const evs = layoutDay(inWeek.filter((e) => e.date === k).map((e) => ({ ...e })));
@@ -465,45 +555,46 @@ function weekHTML() {
       const top = (e.a - h0 * 60) / 60 * HH;
       const ht = Math.max((e.b - e.a) / 60 * HH - 2, 20);
       const w = 100 / e.n;
-      return `<button type="button" class="ev${e.id === sel ? " sel" : ""}" data-act="sel" data-id="${e.id}" style="--h:${hueOf(e.title)};top:${top}px;height:${ht}px;left:calc(${e.lane * w}% + 2px);width:calc(${w}% - 4px)" title="${esc(e.title)} ${e.start}–${e.end}"><span class="t">${e.start}–${e.end}</span><span class="n">${esc(e.title)}</span></button>`;
+      const tip = `${titleOf(e)} ${e.start}–${e.end}${e.prof ? ", " + e.prof : ""}${e.room ? ", " + e.room : ""}`;
+      return `<button type="button" class="ev k-${e.kind}${e.id === sel ? " sel" : ""}" data-act="sel" data-id="${esc(e.id)}" style="--h:${hueOf(e)};top:${top}px;height:${ht}px;left:calc(${e.lane * w}% + 2px);width:calc(${w}% - 4px)" title="${esc(tip)}"><span class="t">${e.start}–${e.end}</span>${e.kind === "tutorium" ? '<span class="tg">Tutorium</span>' : ""}<span class="n">${esc(e.title)}</span>${e.prof ? `<span class="p">${esc(e.prof)}</span>` : ""}</button>`;
     }).join("");
     return `<div class="col${k === todayKey ? " today" : ""}" style="height:${(h1 - h0) * HH}px">${blocks}</div>`;
   }).join("");
-
   let extra = "";
   const cur = sel && events[sel] ? all().find((e) => e.id === sel) : null;
   if (cur) {
-    const n = all().filter((e) => e.title === cur.title).length;
+    const n = all().filter((e) => e.title === cur.title && e.kind === cur.kind).length;
     extra = `<div class="panel detail">
-      <div class="info"><b>${esc(cur.title)}</b><br><span class="hint">${fmt(parseKey(cur.date), { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${cur.start}–${cur.end} Uhr (${cur.b - cur.a} Min.)</span></div>
-      <div class="acts">${delButton(cur.id, "Termin löschen")}${delButton("course:" + cur.title, `Alle ${n} Termine des Fachs löschen`)}</div>
+      <div class="info"><b>${esc(titleOf(cur))}</b>
+        ${cur.prof ? `<span class="hint">${esc(cur.kind === "tutorium" ? "Tutor/in" : "Dozent/in")}: ${esc(cur.prof)}</span>` : ""}
+        <span class="hint">${fmt(parseKey(cur.date), { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${cur.start}–${cur.end} Uhr (${cur.b - cur.a} Min.)${cur.room ? ", Raum " + esc(cur.room) : ""}</span></div>
+      <div class="acts">${delButton(cur.id, "Termin löschen")}${n > 1 ? delButton("course:" + cur.kind + "|" + cur.title, `Alle ${n} Termine löschen`) : ""}</div>
     </div>`;
   } else if (!inWeek.length) {
-    const nx = upcoming().filter((e) => !hidden.has(e.title))[0];
+    const nx = upcoming()[0];
     extra = `<div class="empty">In dieser Woche ist nichts eingetragen.${nx ? ` <button type="button" class="btn ghost" data-act="goto" data-date="${nx.date}">Zum nächsten Termin (${fmt(parseKey(nx.date), { day: "numeric", month: "short" })})</button>` : ""}</div>`;
   }
   return `<div class="scroll"><div class="wk" style="--nd:${nd};--hh:${HH}px"><div class="corner"></div>${heads}${gut}${cols}</div></div>${extra}`;
 }
-
 function listHTML() {
   const today = key(new Date());
-  const items = all().filter((e) => !hidden.has(e.title) && (showPast || e.date >= today));
+  const items = all().filter((e) => !hidden.has(filterKey(e)) && (showPast || e.date >= today));
   if (!items.length) return `<div class="empty">${all().length ? "Keine kommenden Termine." : (EDIT ? "Noch keine Termine. Füge oben welche ein." : "Noch keine Termine eingetragen.")}</div>`;
   let html = '<ul class="list">', month = "";
   for (const e of items) {
     const d = parseKey(e.date);
     const m = fmt(d, { month: "long", year: "numeric" });
     if (m !== month) { month = m; html += `<li class="mh" role="presentation">${m}</li>`; }
-    html += `<li class="row${e.date < today ? " past" : ""}">
+    const l2 = [e.prof, e.room].filter(Boolean).join(" · ");
+    html += `<li class="li k-${e.kind}${e.date < today ? " past" : ""}" style="--h:${hueOf(e)}">
       <div class="d"><b>${fmt(d, { weekday: "short" })}</b>${pad(d.getDate())}.${pad(d.getMonth() + 1)}.</div>
       <div class="tm">${e.start}–${e.end}</div>
-      <div class="tt" style="--h:${hueOf(e.title)}"><i></i>${esc(e.title)}</div>
+      <div class="tt"><div class="l1">${esc(e.title)}${e.kind === "tutorium" ? ' <span class="tag">Tutorium</span>' : e.kind === "pruefung" ? ' <span class="tag">Klausur</span>' : ""}</div>${l2 ? `<div class="l2">${esc(l2)}</div>` : ""}</div>
       ${delButton(e.id, "Löschen")}
     </li>`;
   }
   return html + "</ul>";
 }
-
 function render() {
   $("#tabweek").setAttribute("aria-pressed", view === "week");
   $("#tablist").setAttribute("aria-pressed", view === "list");
@@ -522,7 +613,7 @@ document.addEventListener("click", async (ev) => {
   else if (act === "next") weekStart = addDays(weekStart, 7);
   else if (act === "today") weekStart = monday(new Date());
   else if (act === "past") showPast = !showPast;
-  else if (act === "chip") { const t = el.dataset.title; hidden.has(t) ? hidden.delete(t) : hidden.add(t); }
+  else if (act === "chip") { const k = el.dataset.k; hidden.has(k) ? hidden.delete(k) : hidden.add(k); }
   else if (act === "sel") sel = sel === el.dataset.id ? null : el.dataset.id;
   else if (act === "goto") { view = "week"; weekStart = monday(parseKey(el.dataset.date)); if (el.dataset.id) sel = el.dataset.id; }
   else if (act === "del") {
@@ -531,8 +622,8 @@ document.addEventListener("click", async (ev) => {
     clearTimeout(armTimer); armed = null;
     try {
       if (id.startsWith("course:")) {
-        const t = id.slice(7);
-        for (const e of all().filter((x) => x.title === t)) await delEv(e.id);
+        const [kd, ...rest] = id.slice(7).split("|"); const t = rest.join("|");
+        for (const e of all().filter((x) => x.title === t && x.kind === kd)) await delEv(e.id);
       } else await delEv(id);
     } catch (err) { $("#addmsg").textContent = "Löschen hat nicht geklappt."; }
     sel = null;
@@ -542,11 +633,47 @@ document.addEventListener("click", async (ev) => {
 $("#tabweek").addEventListener("click", () => { view = "week"; armed = null; render(); });
 $("#tablist").addEventListener("click", () => { view = "list"; armed = null; render(); });
 
+$("#expcopy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(exportText()); $("#expmsg").textContent = "Kopiert. Auf GitHub termine.js öffnen, alles ersetzen, speichern."; }
+  catch (e) { $("#expmsg").textContent = "Kopieren ging nicht. Nutze stattdessen das Herunterladen."; }
+});
+$("#expdl").addEventListener("click", async () => {
+  await saveFile("termine.js", exportText());
+  $("#expmsg").textContent = "Lade termine.js auf GitHub hoch und ersetze die alte Datei.";
+});
+$("#expreset").addEventListener("click", () => {
+  try { localStorage.removeItem(WORK); } catch (e) { /* egal */ }
+  loadData(); updateExport(); render();
+  $("#expmsg").textContent = "Zurückgesetzt auf den veröffentlichten Stand.";
+});
+
 /* ---------- Start ---------- */
+function showEdit() {
+  $("#addpanel").hidden = !EDIT; $("#exportpanel").hidden = !EDIT;
+  setStatus(); updateExport();
+}
 loadData();
-setStatus();
-if (EDIT) { $("#addpanel").hidden = false; $("#exportpanel").hidden = false; updateExport(); }
+showEdit();
 render();
+(async () => {
+  if (!(window.claude && window.claude.use)) return;
+  try {
+    const db = await window.claude.use("db");
+    if (db) {
+      dbRef = db; EDIT = true; showEdit();
+      db.collection("termine").onSnapshot((snap) => {
+        events = {};
+        snap.docs.forEach((d) => { events[d.id] = clean(d.data()); });
+        updateExport(); render();
+      }, () => { dbRef = null; loadData(); showEdit(); render(); });
+    }
+    const s = await window.claude.use("sample");
+    if (s && s.json) {
+      const lim = await s.limits().catch(() => null);
+      if (lim && lim.images) { sampleFn = s; $("#photofile").accept = lim.images.mediaTypes.join(","); $("#photobox").hidden = false; }
+    }
+  } catch (e) { /* bleibt bei der statischen Ansicht */ }
+})();
 </script>
 </body>
 </html>

@@ -40,6 +40,7 @@ window.TERMINE = [
   {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "Das erste Tutorium findet am 22.10. um 16:40 statt :)", "date": "2026-10-22", "start": "16:40", "end": "18:10"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-10-23", "start": "09:00", "end": "12:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-10-23", "start": "13:00", "end": "17:15"},
+  {"title": "Treffen im Senatssaal", "kind": "sonstiges", "prof": "", "room": "MP2-4.01 Senatssaal (ganz oben) · Skript und Stände beider Kurse vorher anschauen, falls sie kommen", "date": "2026-10-23", "start": "13:45", "end": "15:15"},
   {"title": "VERSCHOBEN auf 21.10. 14:00: BWL: Einführung", "kind": "sonstiges", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-10-26", "start": "08:00", "end": "10:30"},
   {"title": "Grundlagen der IT", "kind": "vorlesung", "prof": "Prof. Dr. Gerlach", "room": "MP2-3.13", "date": "2026-10-26", "start": "10:45", "end": "13:15"},
   {"title": "Einführung in die Wirtschaftsinformatik", "kind": "vorlesung", "prof": "Herr Berlet", "room": "MP2-3.13", "date": "2026-10-26", "start": "14:00", "end": "17:15"},

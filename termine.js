@@ -51,7 +51,6 @@ window.TERMINE = [
   {"title": "Einführung in die Programmierung", "kind": "tutorium", "prof": "Ghays Alnema, Anton Nguyen, Jan Wieland", "room": "", "date": "2026-10-28", "start": "14:00", "end": "15:30"},
   {"title": "BWL: Marketing", "kind": "vorlesung", "prof": "Frau Einetter", "room": "MP2-3.13", "date": "2026-10-29", "start": "08:00", "end": "10:30"},
   {"title": "BWL: Marketing", "kind": "vorlesung", "prof": "Frau Einetter", "room": "MP2-3.13", "date": "2026-10-29", "start": "10:45", "end": "13:15"},
-  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-10-29", "start": "13:30", "end": "15:00"},
   {"title": "BWL: Marketing", "kind": "vorlesung", "prof": "Frau Einetter", "room": "MP2-3.13", "date": "2026-10-29", "start": "14:00", "end": "17:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-10-30", "start": "09:00", "end": "12:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-10-30", "start": "13:00", "end": "17:15"},

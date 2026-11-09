@@ -253,6 +253,19 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
   .wx .dt { display: none; }
   .wx .dn small { display: none; }
 }
+.wx { position: relative; }
+.wx.mini { display: block; padding: 0; background: none; box-shadow: none; }
+.wxbar { width: 100%; display: flex; align-items: center; gap: 6px 16px; flex-wrap: wrap; text-align: left; border: 0; background: var(--surface); box-shadow: var(--shadow-sm); border-radius: var(--r-md); padding: 9px 14px; font-size: 0.88rem; color: var(--fg); font-variant-numeric: tabular-nums; }
+.wxbar .wn b { font-weight: 600; }
+.wxbar .wtx, .wxbar .wl { color: var(--muted); }
+.wxbar .wl { font-size: 0.8rem; }
+.wxbar .chev, .wxclose .chev { margin-left: auto; color: var(--faint); font-size: 1.15rem; line-height: 1; display: inline-block; transform: rotate(90deg); }
+.wxclose { position: absolute; top: 12px; right: 12px; z-index: 1; border: 0; background: var(--sunken); color: var(--muted); border-radius: 999px; padding: 4px 10px; font-size: 0.75rem; font-weight: 500; display: inline-flex; gap: 6px; align-items: center; }
+.wxclose .chev { transform: rotate(-90deg); font-size: 1rem; }
+.wx:not(.mini) .hrs { margin-top: 18px; }
+@media (min-width: 561px) { .wx:not(.mini) .hrs { margin-top: 0; padding-top: 22px; } }
+@media (max-width: 560px) { .wxbar .wtx { display: none; } }
+@media (prefers-reduced-motion: no-preference) { .wxbar { transition: transform 160ms var(--ease-out); } .wxbar:active { transform: scale(0.99); } }
 .wx .src { grid-column: 1 / -1; font-size: 0.68rem; color: var(--faint); margin-top: -6px; }
 .wx .src a { color: inherit; }
 .wx.err { display: block; color: var(--muted); font-size: 0.85rem; }
@@ -1273,6 +1286,9 @@ const WX_URL = "https://api.open-meteo.com/v1/forecast?latitude=47.7815&longitud
   + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max";
 const WX_CACHE = "semesterplaner.wetter.v1";
 const wx = { data: null, at: 0, err: false };
+const WX_OPEN = "semesterplaner.wetter.offen";
+let wxOpen = false;
+try { wxOpen = localStorage.getItem(WX_OPEN) === "1"; } catch (e) { /* zugeklappt */ }
 const WMO = {
   0: ["Klar", "☀️", "🌙"], 1: ["Überwiegend klar", "🌤️", "🌙"], 2: ["Teils bewölkt", "⛅", "☁️"], 3: ["Bedeckt", "☁️"],
   45: ["Nebel", "🌫️"], 48: ["Nebel mit Reif", "🌫️"],
@@ -1320,9 +1336,17 @@ function renderWeather() {
       <span class="dmin">${deg(w.min)}</span><span class="bar"><span style="left:${(w.min - lo) / span * 100}%;right:${(hi - w.max) / span * 100}%"></span></span><span class="dmax">${deg(w.max)}</span></div>`;
   }).join("");
   const stand = fmt(new Date(wx.at), { hour: "2-digit", minute: "2-digit" });
-  el.className = "panel wx";
   el.hidden = false;
-  el.innerHTML = `<div class="now"><span class="ic" aria-hidden="true">${now.icon}</span>
+  if (!wxOpen) {
+    /* Zugeklappt: eine schmale Zeile mit jetzt, morgen und übermorgen */
+    const more = dl.filter((x) => x.n > 0).map(({ n, w }) => `<span class="wm"><span class="wl">${n === 1 ? "Morgen" : "Übermorgen"}</span> ${wmo(w.code).icon} ${deg(w.max)}</span>`).join("");
+    el.className = "wx mini";
+    el.innerHTML = `<button type="button" class="wxbar" data-act="wxtoggle" aria-expanded="false" aria-label="Wetter aufklappen">
+      <span class="wn"><span aria-hidden="true">${now.icon}</span> <b>${deg(c.temperature_2m)}</b> <span class="wtx">${esc(now.text)}</span></span>${more}<span class="chev" aria-hidden="true">›</span></button>`;
+    return;
+  }
+  el.className = "panel wx";
+  el.innerHTML = `<button type="button" class="wxclose" data-act="wxtoggle" aria-expanded="true" aria-label="Wetter zuklappen">Weniger <span class="chev" aria-hidden="true">›</span></button><div class="now"><span class="ic" aria-hidden="true">${now.icon}</span>
       <div><div class="t">${deg(c.temperature_2m)}</div>
       <div class="d">${esc(now.text)} · gefühlt ${deg(c.apparent_temperature)}${today ? ` · <b>${deg(today.max)}</b> / ${deg(today.min)}` : ""}${today && today.pp != null ? ` · Regen ${today.pp} %` : ""}</div></div></div>
     <div class="hrs" aria-label="Die nächsten Stunden">${hours}</div>
@@ -1427,6 +1451,13 @@ document.addEventListener("click", async (ev) => {
   else if (act === "past") showPast = !showPast;
   else if (act === "mday") mensa.day = el.dataset.date;
   else if (act === "mreload") { mensa.state = "idle"; }
+  else if (act === "wxtoggle") {
+    wxOpen = !wxOpen;
+    try { localStorage.setItem(WX_OPEN, wxOpen ? "1" : "0"); } catch (e) { /* egal */ }
+    renderWeather();
+    const t = $("#wx [data-act=wxtoggle]"); if (t) t.focus();
+    return;
+  }
   else if (act === "chip") { const k = el.dataset.k; hidden.has(k) ? hidden.delete(k) : hidden.add(k); }
   else if (act === "sel") sel = sel === el.dataset.id ? null : el.dataset.id;
   else if (act === "goto") { view = "week"; weekStart = monday(parseKey(el.dataset.date)); if (el.dataset.id) sel = el.dataset.id; }

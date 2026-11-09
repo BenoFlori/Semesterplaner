@@ -1,0 +1,31 @@
+# Holt jeden Tag den Speiseplan der Seezeit-Mensa Ravensburg und speichert ihn als mensa.xml im Repo.
+# Die Website liest diese Datei im Tab "Mensa".
+name: Mensa-Speiseplan holen
+
+on:
+  schedule:
+    - cron: "15 4 * * *"    # jeden Tag ca. 5:15 Uhr (Winterzeit)
+    - cron: "15 9 * * 1-5"  # Mo–Fr ca. 10:15 Uhr, falls sich etwas geändert hat
+  workflow_dispatch:         # Knopf "Run workflow" zum Starten von Hand
+
+permissions:
+  contents: write
+
+jobs:
+  holen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Speiseplan laden
+        run: |
+          curl -fsSL --retry 3 -o mensa.neu.xml "https://www.max-manager.de/daten-extern/seezeit/xml/mensa_ravensburg/speiseplan.xml"
+          grep -q "<speiseplan" mensa.neu.xml
+          mv mensa.neu.xml mensa.xml
+
+      - name: Speichern, wenn sich etwas geändert hat
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mensa.xml
+          git diff --cached --quiet || (git commit -m "Mensa-Speiseplan aktualisiert" && git push)

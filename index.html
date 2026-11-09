@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Semesterplaner</title>
-<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
+<title>Semesterplaner – Apple-Vergleich</title>
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
@@ -332,6 +332,98 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
   .nx:hover { box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 2px 4px rgb(0 0 0 / 0.05), 0 12px 24px -10px rgb(0 0 0 / 0.14); }
   .ev:hover { filter: saturate(1.15) brightness(0.98); }
 }
+/* ===== Vergleich: Apple-Stil (nur Optik, Logik unverändert) ===== */
+:root {
+  --bg: #f5f5f7; --surface: #ffffff; --sunken: rgb(118 118 128 / 0.12); --fg: #1d1d1f; --muted: #6e6e73; --faint: #aeaeb2;
+  --line: rgb(60 60 67 / 0.18); --line-faint: rgb(60 60 67 / 0.08);
+  --accent: #007aff; --accent-fg: #fff; --accent-soft: rgb(0 122 255 / 0.08);
+  --danger: #ff3b30; --danger-soft: rgb(255 59 48 / 0.1); --now: #ff3b30;
+  --ring: 0 0 0 0.5px rgb(0 0 0 / 0.08);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 2px 12px rgb(0 0 0 / 0.06);
+  --ev-s: 78%; --ev-bg-l: 92%; --ev-fg-l: 28%; --ev-line-l: 52%;
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter", system-ui, sans-serif;
+  --font-num: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --r-lg: 20px; --r-md: 12px; --r-sm: 8px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #000; --surface: #1c1c1e; --sunken: rgb(118 118 128 / 0.24); --fg: #f5f5f7; --muted: #98989d; --faint: #636366;
+  --line: rgb(84 84 88 / 0.6); --line-faint: rgb(84 84 88 / 0.3);
+  --accent: #0a84ff; --accent-fg: #fff; --accent-soft: rgb(10 132 255 / 0.14);
+  --danger: #ff453a; --danger-soft: rgb(255 69 58 / 0.16); --now: #ff453a;
+  --ring: 0 0 0 0.5px rgb(255 255 255 / 0.1); --shadow-sm: none; --shadow-md: none;
+  --ev-s: 60%; --ev-bg-l: 22%; --ev-fg-l: 86%; --ev-line-l: 60%;
+} }
+:root[data-theme="dark"] {
+  --bg: #000; --surface: #1c1c1e; --sunken: rgb(118 118 128 / 0.24); --fg: #f5f5f7; --muted: #98989d; --faint: #636366;
+  --line: rgb(84 84 88 / 0.6); --line-faint: rgb(84 84 88 / 0.3);
+  --accent: #0a84ff; --accent-fg: #fff; --accent-soft: rgb(10 132 255 / 0.14);
+  --danger: #ff453a; --danger-soft: rgb(255 69 58 / 0.16); --now: #ff453a;
+  --ring: 0 0 0 0.5px rgb(255 255 255 / 0.1); --shadow-sm: none; --shadow-md: none;
+  --ev-s: 60%; --ev-bg-l: 22%; --ev-fg-l: 86%; --ev-line-l: 60%;
+}
+body { font-size: 17px; line-height: 1.4; letter-spacing: -0.012em; font-feature-settings: normal; }
+.wrap { gap: 22px; }
+/* Großer Titel wie in iOS, Kopfzeile als Glasleiste */
+header { position: sticky; top: 0; z-index: 10; margin: -28px -16px 0; padding: 18px 16px 12px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px); }
+h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
+.cap, .mh, .nx .when, .mrow .c { text-transform: none; letter-spacing: -0.005em; font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+.mh { font-size: 1.25rem; font-weight: 700; color: var(--fg); letter-spacing: -0.02em; margin: 26px 0 10px; }
+.panel { box-shadow: none; border-radius: var(--r-lg); padding: 18px 20px; }
+/* Knöpfe: Pillen, Akzent statt Schwarz */
+.btn { background: var(--accent); color: #fff; border-radius: 999px; padding: 8px 18px; font-weight: 500; font-size: 0.94rem; min-height: 36px; }
+.btn.ghost { background: var(--sunken); color: var(--accent); box-shadow: none; }
+.btn.ghost[aria-pressed="true"] { background: var(--accent); color: #fff; }
+/* Segmented Control */
+.tabs { background: var(--sunken); box-shadow: none; padding: 2px; border-radius: 10px; }
+.tabs button { border-radius: 8px; padding: 5px 18px; color: var(--fg); font-weight: 500; font-size: 0.88rem; }
+.tabs button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 3px 8px rgb(0 0 0 / 0.12), 0 3px 1px rgb(0 0 0 / 0.04); font-weight: 600; }
+.nav .kw { background: transparent; padding: 0; }
+.chip { background: var(--surface); box-shadow: none; padding: 6px 13px; font-size: 0.85rem; }
+.chip[aria-pressed="false"] { text-decoration: none; opacity: 0.4; background: var(--sunken); box-shadow: none; }
+/* Als Nächstes: Widget-Karten */
+.nx { box-shadow: none; border-radius: 22px; padding: 16px 18px; }
+.nx::before { left: 18px; top: 16px; bottom: auto; width: 20px; height: 4px; border-radius: 2px; }
+.nx .when { margin-top: 10px; color: hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); }
+.nx .tt { font-size: 1.12rem; font-weight: 600; }
+.nx .tm, .li .tm { font-family: var(--font-ui); }
+/* Wochenraster wie Kalender-App */
+.scroll { box-shadow: none; border-radius: var(--r-lg); }
+.dh { border-left: 0; text-transform: none; letter-spacing: 0; font-size: 0.75rem; }
+.dh.today b { background: var(--now); color: #fff; }
+.dh.today { color: var(--now); }
+.col { border-left: 0.5px solid var(--line-faint); }
+.col.today { background-color: transparent; }
+.ev { border: 0; border-radius: 6px; box-shadow: inset 3px 0 0 hsl(var(--h) var(--sat, var(--ev-s)) var(--ev-line-l)); font-size: 0.75rem; }
+.ev.k-tutorium { border: 0; box-shadow: inset 3px 0 0 hsl(var(--h) var(--sat) var(--ev-line-l)); background: repeating-linear-gradient(135deg, hsl(var(--h) var(--sat) var(--ev-bg-l)) 0 6px, hsl(var(--h) var(--sat) calc(var(--ev-bg-l) - 3%)) 6px 12px); padding-left: 9px; }
+.ev .t, .gut span { font-family: var(--font-ui); }
+.ev.sel { outline: 2px solid var(--accent); }
+/* Liste: Inset-Grouped wie Einstellungen */
+.li { box-shadow: none; border-radius: 0; margin: 0; background: var(--surface); padding: 12px 16px 12px 22px; }
+.li::before { left: 10px; top: 50%; bottom: auto; width: 6px; height: 6px; border-radius: 50%; transform: translateY(-50%); }
+.li.k-tutorium::before { background: hsl(var(--h) var(--sat) var(--ev-line-l)); }
+.li + .li { box-shadow: inset 22px 0.5px 0 var(--surface), inset 0 0.5px 0 var(--line); }
+.mh + .li { border-top-left-radius: 14px; border-top-right-radius: 14px; }
+.li:has(+ .mh), .li:last-child { border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; }
+.tag { border-radius: 6px; box-shadow: none; text-transform: none; letter-spacing: 0; font-size: 0.7rem; }
+/* Mensa & Wetter */
+.dish, .mrow { box-shadow: none; border-radius: 22px; }
+.mrow { border-radius: 16px; }
+.wx .t { font-size: 2.6rem; font-weight: 300; letter-spacing: -0.03em; }
+.wx .h .hh { font-family: var(--font-ui); }
+.wx .h .hp { color: var(--accent); }
+.sw .ui { width: 51px; height: 31px; background: rgb(120 120 128 / 0.16); box-shadow: none; }
+.sw .ui::after { width: 27px; height: 27px; top: 2px; left: 2px; box-shadow: 0 3px 8px rgb(0 0 0 / 0.15), 0 1px 1px rgb(0 0 0 / 0.16); }
+.sw input:checked + .ui { background: #34c759; }
+.sw input:checked + .ui::after { transform: translateX(20px); }
+.empty { border: 0; background: var(--surface); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.ghost:not(:disabled):not([aria-pressed="true"]):hover { background: color-mix(in srgb, var(--sunken) 100%, var(--accent) 6%); }
+  .nx:hover, .chip:hover { box-shadow: 0 4px 16px rgb(0 0 0 / 0.08); }
+}
+@media (max-width: 560px) { h1 { font-size: 1.85rem; } }
 </style>
 </head>
 <body>
@@ -930,7 +1022,7 @@ async function loadMensa() {
   mensa.state = "loading"; render();
   const today = key(new Date());
   const fresh = (d) => d && d.some((x) => x.date >= today);
-  let days = await fetchMensa("mensa.xml?t=" + Date.now());
+  let days = await fetchMensa("../mensa.xml?t=" + Date.now());
   if (!fresh(days)) {
     const live = await fetchMensa(MENSA_XML);
     if (live && live.length) days = live;
@@ -1360,7 +1452,7 @@ function boot() {
   let done = false;
   const go = () => { if (!done) { done = true; boot(); } };
   const sc = document.createElement("script");
-  sc.src = "termine.js?t=" + Date.now();
+  sc.src = "../termine.js?t=" + Date.now();
   sc.onload = go; sc.onerror = go;
   document.head.appendChild(sc);
   setTimeout(go, 4000);

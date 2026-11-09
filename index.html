@@ -464,6 +464,35 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
   .nx:hover, .chip:hover { box-shadow: 0 4px 16px rgb(0 0 0 / 0.08); }
 }
 @media (max-width: 560px) { h1 { font-size: 1.85rem; } }
+/* Partys: Passwortabfrage, Eintragen, Karten */
+.pgate { max-width: 380px; margin: 8px auto 0; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 28px 22px; }
+.pgate h2 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+.pgate .note { margin: 0; }
+.pg-ic { font-size: 2rem; line-height: 1; }
+.pgate input, .padd input { width: 100%; min-width: 0; padding: 10px 12px; background: var(--sunken); border: 0; box-shadow: inset var(--ring); border-radius: var(--r-md); font-size: 16px; }
+.pgate .btn { width: 100%; }
+.pmsg { margin: 0; min-height: 1.3em; font-size: 0.85rem; color: var(--danger); }
+.pmsg2 { margin: 0; }
+.pf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.pf-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 0.82rem; font-weight: 600; color: var(--muted); min-width: 0; }
+.pf-grid .pf-wide { grid-column: 1 / -1; }
+.pf-grid .opt { font-weight: 400; color: var(--faint); }
+.pf-grid input { color: var(--fg); font-weight: 400; -webkit-appearance: none; appearance: none; min-height: 42px; }
+.plist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.pc { background: var(--surface); border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pc.past { opacity: 0.5; }
+.pc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; margin-bottom: 2px; }
+.pc-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.pc-when { font-size: 0.82rem; font-weight: 600; color: #bf5af2; font-variant-numeric: tabular-nums; }
+.pc-row { display: grid; grid-template-columns: 1.4rem 5.6rem minmax(0, 1fr); align-items: baseline; gap: 6px; font-size: 0.94rem; }
+.pc-lbl { font-size: 0.8rem; color: var(--muted); }
+.pc-row a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+.pc-none { color: var(--faint); }
+.pc-acts { display: flex; justify-content: flex-end; margin-top: 2px; }
+.pgh summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+.pgh[open] summary { margin-bottom: 8px; }
+.pgh .note { margin: 0; }
+@media (max-width: 560px) { .pf-grid { grid-template-columns: minmax(0, 1fr); } .pf-grid .pf-wide { grid-column: auto; } }
 </style>
 </head>
 <body>
@@ -534,6 +563,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
       <button type="button" id="tabweek" aria-pressed="true">Woche</button>
       <button type="button" id="tablist" aria-pressed="false">Liste</button>
       <button type="button" id="tabmensa" aria-pressed="false">Mensa</button>
+      <button type="button" id="tabpartys" aria-pressed="false">Partys</button>
     </div>
     <div class="nav" id="nav"></div>
   </div>
@@ -863,6 +893,8 @@ function renderNav() {
        <button type="button" class="btn ghost" data-act="today">Heute</button>`;
   } else if (view === "mensa") {
     $("#nav").innerHTML = mensaNav();
+  } else if (view === "partys") {
+    $("#nav").innerHTML = "";
   } else {
     $("#nav").innerHTML = `<button type="button" class="btn ghost" data-act="past">${showPast ? "Vergangene ausblenden" : "Vergangene anzeigen"}</button>`;
   }
@@ -965,10 +997,11 @@ function render() {
   $("#tabweek").setAttribute("aria-pressed", view === "week");
   $("#tablist").setAttribute("aria-pressed", view === "list");
   $("#tabmensa").setAttribute("aria-pressed", view === "mensa");
+  $("#tabpartys").setAttribute("aria-pressed", view === "partys");
   renderNext(); renderNav(); renderTravel();
-  $("#chips").hidden = view === "mensa";
-  if (view !== "mensa") renderChips();
-  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : mensaHTML();
+  $("#chips").hidden = view === "mensa" || view === "partys";
+  if (view !== "mensa" && view !== "partys") renderChips();
+  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : mensaHTML();
   if (view === "mensa") fillPhotos();
   liveSig = liveSignature();
   tick();
@@ -988,7 +1021,7 @@ function leftText(sec) {
 function tick() {
   const now = new Date();
   /* Wenn ein Termin anfängt oder endet (oder ein neuer Tag beginnt), alles neu zeichnen */
-  if (liveSignature() !== liveSig) { if (view === "mensa") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
+  if (liveSignature() !== liveSig) { if (view === "mensa" || view === "partys") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
   const secs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   document.querySelectorAll(".depleft[data-dep]").forEach((el) => {
     const ms = +el.dataset.dep - now.getTime(), toStart = +el.dataset.start - now.getTime();
@@ -1488,6 +1521,7 @@ document.addEventListener("click", async (ev) => {
 $("#tabweek").addEventListener("click", () => { view = "week"; armed = null; render(); });
 $("#tablist").addEventListener("click", () => { view = "list"; armed = null; render(); });
 $("#tabmensa").addEventListener("click", () => { view = "mensa"; armed = null; render(); });
+$("#tabpartys").addEventListener("click", () => { view = "partys"; armed = null; render(); });
 
 $("#expcopy").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(exportText()); $("#expmsg").textContent = "Kopiert. Auf GitHub termine.js öffnen, alles ersetzen, speichern."; }
@@ -1501,6 +1535,274 @@ $("#expreset").addEventListener("click", () => {
   try { localStorage.removeItem(WORK); } catch (e) { /* egal */ }
   loadData(); updateExport(); render();
   $("#expmsg").textContent = "Zurückgesetzt auf den veröffentlichten Stand.";
+});
+
+/* ---------- Partys ----------
+   Tab mit Passwort. "Party" zeigt die Liste, "Party 7" darf zusätzlich Partys eintragen und löschen.
+   Groß-/Kleinschreibung und Leerzeichen sind egal. Die Liste liegt verschlüsselt in partys.json,
+   damit niemand sie im öffentlichen GitHub-Repo lesen kann. Neue Partys landen erst als Entwurf
+   auf diesem Gerät; online sind sie, sobald die heruntergeladene partys.json auf GitHub liegt. */
+const PARTY_FILE = "partys.json";
+const PARTY_AUTH = "semesterplaner.partys.zugang.v1";
+const PARTY_DRAFT = "semesterplaner.partys.entwurf.v1";
+/* Direkt speichern: GitHub-Token und Repo liegen nur auf dem Gerät des Admins, nie in der Website */
+const PARTY_GH = "semesterplaner.partys.github.v1";
+const PARTY_PUSHED = "semesterplaner.partys.gesendet.v1";
+const PARTY_VIEW_CHECK = { s: "WTO4Axq64scP2qHWa4fitA==", i: "/bOPUDPNIAHSFC2P", d: "GvpmBeGJ1Pvt+1Zo0e4jAk8U" };
+const PARTY_ADMIN_WRAP = { s: "cv+g4BW3WUHmkd3cVD3ZOQ==", i: "0ChKZVyF/JJiLUGS", d: "IsdRF2pEGbgs1S1CjKQLShnhXowU" };
+const party = { level: 0, pw: "", state: "idle", list: [], draft: null, msg: "", busy: false, armed: null };
+const pNorm = (s) => String(s || "").toLowerCase().replace(/\s+/g, "");
+const pB64 = (u) => btoa(String.fromCharCode(...new Uint8Array(u)));
+const pBytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function pKey(pw, salt) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function pOpen(pw, box) {
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: pBytes(box.i) }, await pKey(pw, pBytes(box.s)), pBytes(box.d));
+  return new TextDecoder().decode(plain);
+}
+async function pSeal(pw, text) {
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await pKey(pw, salt), new TextEncoder().encode(text));
+  return { v: 1, s: pB64(salt), i: pB64(iv), d: pB64(ct) };
+}
+/* Prüft ein Passwort: 2 = darf eintragen, 1 = darf ansehen, 0 = falsch */
+async function pCheck(input) {
+  const n = pNorm(input);
+  if (!n) return null;
+  try { const viewPw = await pOpen(n, PARTY_ADMIN_WRAP); return { level: 2, pw: viewPw }; } catch (e) { /* kein Admin */ }
+  try { if (await pOpen(n, PARTY_VIEW_CHECK) === "ok") return { level: 1, pw: n }; } catch (e) { /* falsch */ }
+  return null;
+}
+function pSaveAuth() {
+  try { party.level ? localStorage.setItem(PARTY_AUTH, JSON.stringify({ level: party.level, pw: party.pw })) : localStorage.removeItem(PARTY_AUTH); } catch (e) { /* egal */ }
+}
+function pSaveDraft() {
+  try { party.draft ? localStorage.setItem(PARTY_DRAFT, JSON.stringify(party.draft)) : localStorage.removeItem(PARTY_DRAFT); } catch (e) { /* egal */ }
+}
+try {
+  const a = JSON.parse(localStorage.getItem(PARTY_AUTH) || "null");
+  if (a && (a.level === 1 || a.level === 2) && a.pw) { party.level = a.level; party.pw = a.pw; }
+  const d = JSON.parse(localStorage.getItem(PARTY_DRAFT) || "null");
+  if (Array.isArray(d)) party.draft = d;
+} catch (e) { /* gesperrt starten */ }
+function pRepoGuess() {
+  const h = location.hostname;
+  if (!h.endsWith(".github.io")) return "";
+  const owner = h.split(".")[0], seg = location.pathname.split("/")[1] || "";
+  return owner + "/" + (seg && !seg.includes(".") ? seg : h);
+}
+try {
+  const g = JSON.parse(localStorage.getItem(PARTY_GH) || "null");
+  if (g && g.token && g.repo) party.gh = g;
+  party.pushed = +localStorage.getItem(PARTY_PUSHED) || 0;
+} catch (e) { /* ohne GitHub */ }
+function pSaveGh() { try { party.gh ? localStorage.setItem(PARTY_GH, JSON.stringify(party.gh)) : localStorage.removeItem(PARTY_GH); } catch (e) { /* egal */ } }
+function pSavePushed() { try { party.pushed ? localStorage.setItem(PARTY_PUSHED, String(party.pushed)) : localStorage.removeItem(PARTY_PUSHED); } catch (e) { /* egal */ } }
+const pGhHead = (token) => ({ Authorization: "Bearer " + token, Accept: "application/vnd.github+json" });
+function pGhErr(st) {
+  if (st === 401) return "GitHub kennt den Token nicht (falsch oder abgelaufen).";
+  if (st === 403 || st === 404) return "Der Token darf dieses Repo nicht ändern. Prüfe Repo-Name und die Berechtigung „Contents: Read and write“.";
+  if (st === 409 || st === 422) return "Die Datei hat sich gerade auf GitHub geändert. Versuch es nochmal.";
+  return "GitHub war nicht erreichbar" + (st ? " (Fehler " + st + ")" : "") + ".";
+}
+/* Schreibt die verschlüsselte Liste als partys.json ins Repo (ein Commit) */
+async function pPublish(list) {
+  const g = party.gh;
+  const api = `https://api.github.com/repos/${g.repo}/contents/${PARTY_FILE}`;
+  let sha, r;
+  try { r = await fetch(api + "?t=" + Date.now(), { headers: pGhHead(g.token), cache: "no-store" }); } catch (e) { throw 0; }
+  if (r.ok) sha = (await r.json()).sha; else if (r.status !== 404) throw r.status;
+  const box = await pSeal(party.pw, JSON.stringify(list));
+  const body = { message: "Partys aktualisiert", content: btoa(JSON.stringify(box) + "\n") };
+  if (sha) body.sha = sha;
+  try { r = await fetch(api, { method: "PUT", headers: pGhHead(g.token), body: JSON.stringify(body) }); } catch (e) { throw 0; }
+  if (!r.ok) throw r.status;
+}
+/* Neue Liste übernehmen: erst als Entwurf merken, dann (wenn verbunden) gleich online speichern */
+let pCheckTimer = 0;
+async function pCommit(list, msg) {
+  party.draft = list; pSaveDraft();
+  if (pSig(party.draft) === pSig(party.list)) { party.draft = null; pSaveDraft(); }
+  if (!party.gh || !party.draft) { party.msg = msg; renderPartys(); return; }
+  const pre = msg ? msg + " " : "";
+  party.saving = true; party.msg = pre + "Speichere online …"; renderPartys();
+  try {
+    await pPublish(party.draft);
+    party.pushed = Date.now(); pSavePushed();
+    party.msg = pre + "Online gespeichert. In etwa 1 Minute sehen es alle.";
+    clearTimeout(pCheckTimer); pCheckTimer = setTimeout(() => { if (party.level) { party.state = "idle"; renderPartys(); } }, 75e3);
+  } catch (st) {
+    party.msg = pre + "Online speichern hat nicht geklappt: " + pGhErr(st);
+  }
+  party.saving = false; renderPartys();
+}
+const pSig = (list) => JSON.stringify((list || []).map((p) => [p.id, p.name, p.ort, p.vor, p.datum || "", p.zeit || ""]).sort());
+async function loadPartys() {
+  if (party.state === "loading") return;
+  party.state = "loading"; renderPartys();
+  try {
+    const r = await fetch(PARTY_FILE + "?t=" + Date.now(), { cache: "no-store" });
+    if (r.status === 404) party.list = [];
+    else {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = JSON.parse(await pOpen(party.pw, await r.json()));
+      party.list = Array.isArray(data) ? data : [];
+    }
+    party.state = "ok";
+    if (party.draft && pSig(party.draft) === pSig(party.list)) { party.draft = null; pSaveDraft(); party.pushed = 0; pSavePushed(); party.msg = "Alles ist online."; }
+  } catch (e) { party.state = "err"; }
+  renderPartys();
+}
+function pShown() { return party.level === 2 && party.draft ? party.draft : party.list; }
+const pMap = (place) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`;
+function pWhen(p) {
+  if (!p.datum) return "";
+  const d = parseKey(p.datum);
+  return fmt(d, { weekday: "short", day: "numeric", month: "short" }) + (p.zeit ? `, ${p.zeit} Uhr` : "");
+}
+function pCard(p, past) {
+  const when = pWhen(p);
+  const del = party.level === 2 ? `<button type="button" class="btn danger${party.armed === p.id ? " armed" : ""}" data-pa="del" data-id="${esc(p.id)}">${party.armed === p.id ? "Wirklich löschen?" : "Löschen"}</button>` : "";
+  return `<li class="pc${past ? " past" : ""}">
+    <div class="pc-top"><div class="pc-name">${esc(p.name)}</div>${when ? `<div class="pc-when">${esc(when)}</div>` : ""}</div>
+    <div class="pc-row"><span class="pc-ic" aria-hidden="true">📍</span><span class="pc-lbl">Party</span><a href="${pMap(p.ort)}" target="_blank" rel="noopener">${esc(p.ort)}</a></div>
+    <div class="pc-row"><span class="pc-ic" aria-hidden="true">🍻</span><span class="pc-lbl">Vorglühen</span>${p.vor ? `<a href="${pMap(p.vor)}" target="_blank" rel="noopener">${esc(p.vor)}</a>` : `<span class="pc-none">noch offen</span>`}</div>
+    ${del ? `<div class="pc-acts">${del}</div>` : ""}
+  </li>`;
+}
+function partysHTML() {
+  if (!party.level) {
+    return `<form class="panel pgate" data-pf="login" autocomplete="off">
+      <div class="pg-ic" aria-hidden="true">🔒</div>
+      <h2>Partys</h2>
+      <p class="note">Dieser Bereich ist mit einem Passwort geschützt.</p>
+      <input type="password" id="ppw" placeholder="Passwort" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-label="Passwort" required>
+      <button class="btn" type="submit"${party.busy ? " disabled" : ""}>${party.busy ? "Prüfe …" : "Entsperren"}</button>
+      <p class="pmsg" role="alert">${esc(party.msg)}</p>
+    </form>`;
+  }
+  if (party.state === "idle") { setTimeout(loadPartys, 0); return `<div class="empty">Partys werden geladen …</div>`; }
+  if (party.state === "loading") return `<div class="empty">Partys werden geladen …</div>`;
+  let html = "";
+  if (party.state === "err") html += `<div class="empty">Die Partyliste konnte gerade nicht geladen werden. <button type="button" class="btn ghost" data-pa="reload">Nochmal versuchen</button></div>`;
+  const today = key(new Date());
+  const items = [...pShown()].sort((a, b) => (a.datum || "9999").localeCompare(b.datum || "9999") || (a.zeit || "").localeCompare(b.zeit || "") || a.name.localeCompare(b.name, "de"));
+  const soon = items.filter((p) => !p.datum || p.datum >= today), past = items.filter((p) => p.datum && p.datum < today).reverse();
+  if (party.level === 2) {
+    const n = party.draft ? party.draft.length : 0;
+    html += `<form class="panel padd" data-pf="add" autocomplete="off">
+      <span class="cap">Party eintragen</span>
+      <div class="pf-grid">
+        <label class="pf-wide">Name der Party<input type="text" name="name" maxlength="80" required placeholder="z. B. Semesterstartparty"></label>
+        <label>Ort der Party<input type="text" name="ort" maxlength="120" required placeholder="z. B. Kuppelnau, Ravensburg"></label>
+        <label>Ort des Vorglühens<input type="text" name="vor" maxlength="120" placeholder="z. B. WG Marktstraße 5"></label>
+        <label><span>Datum <span class="opt">(optional)</span></span><input type="date" name="datum"></label>
+        <label><span>Uhrzeit <span class="opt">(optional)</span></span><input type="time" name="zeit"></label>
+      </div>
+      <div class="ctl"><button class="btn" type="submit">Eintragen</button></div>
+    </form>`;
+    const fresh = party.draft && party.pushed && Date.now() - party.pushed < 15 * 60e3;
+    if (party.saving) { /* Meldung reicht */ }
+    else if (fresh) html += `<p class="note">Gespeichert. GitHub veröffentlicht die Änderung gerade, das dauert etwa eine Minute. <button type="button" class="btn ghost" data-pa="reload">Prüfen</button></p>`;
+    else if (party.draft && party.gh) html += `<section class="panel editbar">
+      <span class="cap">Noch nicht online</span>
+      <p>Deine letzten Änderungen sind noch nicht auf GitHub gespeichert.</p>
+      <div class="ctl">
+        <button class="btn" type="button" data-pa="push">Jetzt online speichern</button>
+        <button class="btn ghost" type="button" data-pa="discard">Änderungen verwerfen</button>
+      </div>
+    </section>`;
+    else if (party.draft) html += `<section class="panel editbar">
+      <span class="cap">Noch nicht online</span>
+      <p>Deine Änderungen siehst bisher nur du (${n} ${n === 1 ? "Party" : "Partys"} in der Liste). Damit alle sie sehen: <b>partys.json</b> herunterladen und auf GitHub hochladen (die alte Datei ersetzen).</p>
+      <div class="ctl">
+        <button class="btn" type="button" data-pa="dl">partys.json herunterladen</button>
+        <button class="btn ghost" type="button" data-pa="discard">Änderungen verwerfen</button>
+      </div>
+    </section>`;
+  }
+  if (party.msg) html += `<p class="note pmsg2" role="status">${esc(party.msg)}</p>`;
+  if (party.level === 2) {
+    html += party.gh
+      ? `<details class="panel pgh"><summary>Direkt speichern: verbunden mit ${esc(party.gh.repo)}</summary>
+          <p class="note">Neue und gelöschte Partys werden sofort auf GitHub gespeichert. Der Token liegt nur auf diesem Gerät.</p>
+          <div class="ctl"><button class="btn ghost" type="button" data-pa="ghoff">Verbindung trennen</button></div></details>`
+      : `<details class="panel pgh"${party.ghOpen ? " open" : ""}><summary>Direkt auf GitHub speichern (ohne Hochladen)</summary>
+          <form data-pf="gh" autocomplete="off">
+            <p class="note">Einmal einrichten, dann landet jede neue Party sofort online. Dafür brauchst du einen GitHub-Token, der nur dieses Repo ändern darf („Contents: Read and write“). Er wird nur auf diesem Gerät gespeichert.</p>
+            <div class="pf-grid">
+              <label class="pf-wide">GitHub-Token<input type="password" name="token" required placeholder="github_pat_…" autocapitalize="none" spellcheck="false"></label>
+              <label class="pf-wide">Repo<input type="text" name="repo" required placeholder="name/repo" value="${esc(pRepoGuess())}" autocapitalize="none" spellcheck="false"></label>
+            </div>
+            <div class="ctl"><button class="btn" type="submit"${party.ghBusy ? " disabled" : ""}>${party.ghBusy ? "Prüfe …" : "Verbinden"}</button></div>
+          </form></details>`;
+  }
+  html += `<h2 class="mh">Kommende Partys</h2>`;
+  html += soon.length ? `<ul class="plist">${soon.map((p) => pCard(p, false)).join("")}</ul>` : `<div class="empty">Gerade ist keine Party eingetragen.${party.level === 2 ? " Trag oben die erste ein." : ""}</div>`;
+  if (past.length) html += `<h2 class="mh">Vorbei</h2><ul class="plist">${past.map((p) => pCard(p, true)).join("")}</ul>`;
+  html += `<div class="ctl"><span class="note">${party.level === 2 ? "Angemeldet zum Eintragen." : "Angemeldet zum Ansehen."}</span><button type="button" class="btn ghost" data-pa="lock">Abmelden</button></div>`;
+  return html;
+}
+function renderPartys() { if (view === "partys") $("#view").innerHTML = partysHTML(); }
+document.addEventListener("submit", async (ev) => {
+  const f = ev.target.closest("[data-pf]");
+  if (!f) return;
+  ev.preventDefault();
+  if (f.dataset.pf === "login") {
+    const input = f.querySelector("#ppw").value;
+    party.busy = true; party.msg = ""; renderPartys();
+    const res = await pCheck(input).catch(() => null);
+    party.busy = false;
+    if (!res) { party.msg = "Falsches Passwort."; renderPartys(); const i = $("#ppw"); if (i) i.focus(); return; }
+    party.level = res.level; party.pw = res.pw; party.state = "idle"; party.msg = ""; pSaveAuth(); renderPartys();
+  } else if (f.dataset.pf === "add" && party.level === 2) {
+    const v = (n) => (f.elements[n].value || "").trim();
+    const p = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: v("name"), ort: v("ort"), vor: v("vor") };
+    if (!p.name || !p.ort) return;
+    if (v("datum")) p.datum = v("datum");
+    if (v("zeit")) p.zeit = v("zeit");
+    await pCommit([...pShown(), p], `„${p.name}“ eingetragen.`);
+  } else if (f.dataset.pf === "gh" && party.level === 2) {
+    const token = f.elements.token.value.trim(), repo = f.elements.repo.value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/+$/, "");
+    if (!token || !/^[\w.-]+\/[\w.-]+$/.test(repo)) { party.msg = "Bitte Token und Repo im Format name/repo angeben."; renderPartys(); return; }
+    party.ghBusy = true; party.ghOpen = true; party.msg = ""; renderPartys();
+    let st = 0;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${repo}`, { headers: pGhHead(token), cache: "no-store" });
+      st = r.status;
+      if (r.ok) { const j = await r.json(); if (!(j.permissions && j.permissions.push)) st = 403; }
+    } catch (e) { st = 0; }
+    party.ghBusy = false;
+    if (st !== 200) { party.msg = "Verbinden hat nicht geklappt: " + pGhErr(st); renderPartys(); return; }
+    party.gh = { token, repo }; pSaveGh(); party.ghOpen = false;
+    if (party.draft) await pCommit(party.draft, "Verbunden.");
+    else { party.msg = "Verbunden. Neue Partys werden ab jetzt direkt online gespeichert."; renderPartys(); }
+  }
+});
+document.addEventListener("click", async (ev) => {
+  const el = ev.target.closest("[data-pa]");
+  if (!el) return;
+  const a = el.dataset.pa;
+  if (a !== "del") party.armed = null;
+  if (a === "lock") { party.level = 0; party.pw = ""; party.state = "idle"; party.list = []; party.msg = ""; pSaveAuth(); }
+  else if (a === "reload") party.state = "idle";
+  else if (a === "discard") { party.draft = null; pSaveDraft(); party.msg = "Änderungen verworfen."; }
+  else if (a === "del" && party.level === 2) {
+    const id = el.dataset.id;
+    if (party.armed !== id) { party.armed = id; renderPartys(); setTimeout(() => { if (party.armed === id) { party.armed = null; renderPartys(); } }, 4000); return; }
+    party.armed = null;
+    await pCommit(pShown().filter((p) => p.id !== id), "Gelöscht.");
+    return;
+  } else if (a === "push" && party.level === 2 && party.draft) { await pCommit(party.draft, ""); return; }
+  else if (a === "ghoff") { party.gh = null; pSaveGh(); party.msg = "Verbindung getrennt. Der Token ist von diesem Gerät gelöscht."; }
+  else if (a === "dl" && party.level === 2) {
+    const box = await pSeal(party.pw, JSON.stringify(pShown()));
+    await saveFile(PARTY_FILE, JSON.stringify(box) + "\n");
+    party.msg = "Heruntergeladen. Jetzt partys.json auf GitHub hochladen. Sobald sie online ist, verschwindet der Hinweis von selbst.";
+  }
+  renderPartys();
 });
 
 /* ---------- Start ---------- */

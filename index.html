@@ -236,6 +236,23 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
 .wx .h .hi { font-size: 1.15rem; line-height: 1.1; }
 .wx .h .ht { font-size: 0.82rem; font-weight: 600; }
 .wx .h .hp { font-size: 0.64rem; color: #2f7ae5; font-weight: 600; min-height: 1em; }
+.wx .days { grid-column: 1 / -1; display: flex; flex-direction: column; border-top: 0.5px solid var(--line); margin-top: -4px; }
+.wx .dy { display: grid; grid-template-columns: 7.2rem 1.8rem minmax(0, 1fr) 2.6rem minmax(60px, 140px) 2.6rem; align-items: center; gap: 10px; padding: 9px 0; font-variant-numeric: tabular-nums; }
+.wx .dy + .dy { border-top: 0.5px solid var(--line-faint); }
+.wx .dn { font-weight: 600; white-space: nowrap; }
+.wx .dn small { font-weight: 400; color: var(--muted); font-size: 0.78rem; }
+.wx .di { font-size: 1.2rem; text-align: center; }
+.wx .dt { font-size: 0.82rem; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wx .dpp { color: var(--accent); font-weight: 600; }
+.wx .dmin { color: var(--muted); text-align: right; }
+.wx .dmax { font-weight: 600; }
+.wx .bar { position: relative; height: 5px; border-radius: 999px; background: var(--sunken); }
+.wx .bar span { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, #5ac8fa, #ffcc00 60%, #ff9500); min-width: 5px; }
+@media (max-width: 560px) {
+  .wx .dy { grid-template-columns: 6.6rem 1.6rem 2.2rem minmax(40px, 1fr) 2.2rem; gap: 6px; }
+  .wx .dt { display: none; }
+  .wx .dn small { display: none; }
+}
 .wx .src { grid-column: 1 / -1; font-size: 0.68rem; color: var(--faint); margin-top: -6px; }
 .wx .src a { color: inherit; }
 .wx.err { display: block; color: var(--muted); font-size: 0.85rem; }
@@ -1291,6 +1308,17 @@ function renderWeather() {
     const i = i0 + j, w = wmo(h.weather_code[i], h.is_day ? h.is_day[i] : 1), pp = h.precipitation_probability ? h.precipitation_probability[i] : null;
     return `<div class="h" title="${esc(w.text)}"><span class="hh">${j === 0 ? "Jetzt" : t.slice(11, 13) + " Uhr"}</span><span class="hi">${w.icon}</span><span class="ht">${deg(h.temperature_2m[i])}</span><span class="hp">${pp >= 20 ? pp + " %" : ""}</span></div>`;
   }).join("");
+  /* Heute, Morgen, Übermorgen als Zeilen mit Temperaturbalken (wie in der Wetter-App) */
+  const dl = [0, 1, 2].map((n) => ({ n, w: wxDay(key(addDays(new Date(), n))) })).filter((x) => x.w);
+  const lo = Math.min(...dl.map((x) => x.w.min)), hi = Math.max(...dl.map((x) => x.w.max)), span = Math.max(1, hi - lo);
+  const daysHTML = dl.map(({ n, w }) => {
+    const t = wmo(w.code);
+    const name = n === 0 ? "Heute" : n === 1 ? "Morgen" : "Übermorgen";
+    const sub = n === 2 ? fmt(addDays(new Date(), 2), { weekday: "short" }) : "";
+    return `<div class="dy" title="${esc(t.text)}"><span class="dn">${name}${sub ? ` <small>${esc(sub)}</small>` : ""}</span><span class="di" aria-hidden="true">${t.icon}</span>
+      <span class="dt">${esc(t.text)}${w.pp >= 20 ? ` · <span class="dpp">${w.pp} % Regen</span>` : ""}</span>
+      <span class="dmin">${deg(w.min)}</span><span class="bar"><span style="left:${(w.min - lo) / span * 100}%;right:${(hi - w.max) / span * 100}%"></span></span><span class="dmax">${deg(w.max)}</span></div>`;
+  }).join("");
   const stand = fmt(new Date(wx.at), { hour: "2-digit", minute: "2-digit" });
   el.className = "panel wx";
   el.hidden = false;
@@ -1298,6 +1326,7 @@ function renderWeather() {
       <div><div class="t">${deg(c.temperature_2m)}</div>
       <div class="d">${esc(now.text)} · gefühlt ${deg(c.apparent_temperature)}${today ? ` · <b>${deg(today.max)}</b> / ${deg(today.min)}` : ""}${today && today.pp != null ? ` · Regen ${today.pp} %` : ""}</div></div></div>
     <div class="hrs" aria-label="Die nächsten Stunden">${hours}</div>
+    ${daysHTML ? `<div class="days" aria-label="Heute, morgen und übermorgen">${daysHTML}</div>` : ""}
     <div class="src">Ravensburg · Wind ${Math.round(c.wind_speed_10m)} km/h · Daten: DWD-Modell ICON über <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Stand ${stand} Uhr</div>`;
 }
 async function loadWeather(force) {

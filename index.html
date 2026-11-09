@@ -185,23 +185,96 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
 .nowline::before { content: ""; position: absolute; left: -5px; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--now); box-shadow: 0 0 0 2px var(--surface); }
 .gut .nowlbl { right: 4px; padding: 1px 5px; border-radius: 5px; background: var(--now); color: #fff; font-weight: 600; z-index: 1; }
 
-/* Mensa */
+/* Mensa: große Fotokarten für Hauptgerichte, kompakte Zeilen mit Vorschaubild für Beilagen */
 .mz { display: flex; flex-direction: column; gap: 6px; }
 .mz .mh:first-child { margin-top: 0; }
-.mgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-.mgrid.small { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
-.dish { background: var(--surface); box-shadow: var(--shadow-md); border-radius: var(--r-lg); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
-.dish .ph { position: relative; aspect-ratio: 4 / 3; background: var(--sunken); display: grid; place-items: center; color: var(--faint); font-size: 0.75rem; }
-.dish .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.dish .ph::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 -1px 0 var(--line); pointer-events: none; }
-.dish .ph .src { position: absolute; right: 8px; bottom: 8px; z-index: 1; font-size: 0.64rem; padding: 2px 7px; border-radius: 999px; background: rgb(0 0 0 / 0.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff; text-decoration: none; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dish .bd { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-.dish .nm { font-weight: 600; letter-spacing: -0.01em; overflow-wrap: anywhere; text-wrap: pretty; }
-.mgrid.small .dish .nm { font-weight: 500; font-size: 0.9rem; }
-.dish .sub { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
-.dish .pr { margin-top: auto; padding-top: 8px; font-family: var(--font-num); font-size: 0.95rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.dish .pr small { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 400; margin-top: 2px; }
+.mgrid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.dish { background: var(--surface); box-shadow: var(--shadow-md); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.ph { position: relative; overflow: hidden; background: var(--sunken); display: grid; place-items: center; isolation: isolate; }
+.dish .ph { aspect-ratio: 16 / 11; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.03); }
+.ph img.ok { opacity: 1; transform: none; }
+.ph .fb { font-size: 2.6rem; line-height: 1; opacity: 0.9; }
+.ph.wait::before { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%); background-size: 220% 100%; animation: shimmer 1.3s linear infinite; z-index: 1; }
+@keyframes shimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+.dish .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(0 0 0 / 0.28), transparent 32%, transparent 70%, rgb(0 0 0 / 0.22)); pointer-events: none; z-index: 1; }
+.ph .glass { position: absolute; z-index: 2; font-size: 0.7rem; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: rgb(255 255 255 / 0.86); color: #18181b; -webkit-backdrop-filter: blur(10px) saturate(1.4); backdrop-filter: blur(10px) saturate(1.4); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); white-space: nowrap; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; }
+.ph .glass.cat { left: 12px; top: 12px; letter-spacing: 0.02em; }
+.ph .glass.price { right: 12px; top: 12px; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 0.8rem; }
+.ph .glass.sym { left: 12px; bottom: 12px; font-weight: 500; font-size: 0.62rem; background: rgb(0 0 0 / 0.45); color: #fff; text-decoration: none; box-shadow: none; }
+.dish .bd { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.dish .nm { font-weight: 600; font-size: 1.02rem; letter-spacing: -0.015em; line-height: 1.3; overflow-wrap: anywhere; text-wrap: pretty; }
+.dish .sub { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+.dish .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.dish .tg2 { font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgb(34 160 90 / 0.12); color: rgb(22 120 64); }
+.dish .others { margin-top: auto; padding-top: 10px; font-size: 0.74rem; color: var(--muted); font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.mlist { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.mrow { display: flex; gap: 12px; align-items: center; padding: 8px; padding-right: 14px; background: var(--surface); box-shadow: var(--shadow-sm); border-radius: 14px; min-width: 0; }
+.mrow .ph { width: 60px; height: 60px; flex: none; border-radius: 10px; }
+.mrow .ph .fb { font-size: 1.6rem; }
+.mrow .tx { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.mrow .c { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.mrow .nm { font-size: 0.9rem; font-weight: 500; overflow-wrap: anywhere; line-height: 1.3; }
+.mrow .pr { font-family: var(--font-num); font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .mz .note { margin: 14px 0 0; max-width: 65ch; }
+@media (prefers-reduced-motion: no-preference) { .ph img { transition: opacity 280ms ease, transform 420ms var(--ease-out); } }
+@media (prefers-reduced-motion: reduce) { .ph.wait::before { animation: none; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dish .tg2 { color: rgb(120 220 160); } :root:not([data-theme="light"]) .ph.wait::before { background-image: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.06) 50%, transparent 70%); } }
+
+/* Wetter */
+.wx { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 22px; align-items: center; padding: 14px 16px; }
+.wx .now { display: flex; align-items: center; gap: 12px; }
+.wx .ic { font-size: 2.3rem; line-height: 1; }
+.wx .t { font-size: 2rem; font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.wx .d { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+.wx .d b { color: var(--fg); font-weight: 600; }
+.wx .hrs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); padding-right: 24px; }
+.wx .hrs::-webkit-scrollbar { display: none; }
+.wx .h { flex: none; min-width: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px; border-radius: var(--r-md); font-variant-numeric: tabular-nums; }
+.wx .h:first-child { background: var(--sunken); }
+.wx .h .hh { font-family: var(--font-num); font-size: 0.66rem; color: var(--muted); }
+.wx .h .hi { font-size: 1.15rem; line-height: 1.1; }
+.wx .h .ht { font-size: 0.82rem; font-weight: 600; }
+.wx .h .hp { font-size: 0.64rem; color: #2f7ae5; font-weight: 600; min-height: 1em; }
+.wx .src { grid-column: 1 / -1; font-size: 0.68rem; color: var(--faint); margin-top: -6px; }
+.wx .src a { color: inherit; }
+.wx.err { display: block; color: var(--muted); font-size: 0.85rem; }
+.dh .dw { display: block; margin-top: 3px; font-size: 0.68rem; letter-spacing: 0; text-transform: none; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 560px) { .wx { grid-template-columns: minmax(0, 1fr); gap: 10px; } .wx .src { margin-top: 0; } }
+
+/* Anfahrt */
+.hdr-r { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#travelbtn .pill { font-size: 0.7rem; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: var(--sunken); color: var(--muted); font-variant-numeric: tabular-nums; }
+#travelbtn.on .pill { background: rgb(22 163 74 / 0.14); color: rgb(21 128 61); }
+.tp { display: flex; flex-direction: column; gap: 12px; }
+.sw { display: inline-flex; align-items: center; gap: 10px; font-weight: 550; cursor: pointer; -webkit-user-select: none; user-select: none; position: relative; }
+.sw input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sw .ui { width: 40px; height: 24px; border-radius: 999px; background: var(--sunken); box-shadow: inset var(--ring); position: relative; flex: none; }
+.sw .ui::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.25); }
+.sw input:checked + .ui { background: rgb(22 163 74); box-shadow: none; }
+.sw input:checked + .ui::after { transform: translateX(16px); }
+.sw input:focus-visible + .ui { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .sw .ui, .sw .ui::after { transition: background-color 160ms ease, transform 200ms var(--ease-out); } }
+.tp-grid { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
+.tp-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+.tp-grid .in { display: inline-flex; align-items: center; gap: 6px; color: var(--fg); font-size: 0.9rem; }
+.tp-grid input, .tp-grid select { padding: 7px 10px; background: var(--sunken); border: 0; box-shadow: inset var(--ring); border-radius: var(--r-md); color: var(--fg); }
+.tp-grid input { width: 5.2em; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.tp.off .tp-grid { opacity: 0.5; }
+.tp .note { margin: 0; }
+@media (pointer: coarse) { .tp-grid input, .tp-grid select { font-size: 16px; } }
+.dep {
+  position: absolute; left: 2px; right: 2px; z-index: 1; border-radius: var(--r-sm); padding: 2px 6px; overflow: hidden;
+  border: 1.5px dashed rgb(22 163 74 / 0.6); background: repeating-linear-gradient(135deg, rgb(22 163 74 / 0.07) 0 6px, transparent 6px 12px);
+  color: rgb(21 128 61); font-size: 0.66rem; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; pointer-events: none; white-space: nowrap; text-overflow: ellipsis;
+}
+.dep b { font-family: var(--font-num); }
+.nx .dp, .li .dp { font-size: 0.8rem; color: rgb(21 128 61); font-weight: 600; font-variant-numeric: tabular-nums; }
+.nx .dp .depleft { font-weight: 500; color: var(--muted); }
+.nx .dp .depleft.go { color: var(--now); font-weight: 700; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dep, :root:not([data-theme="light"]) .nx .dp, :root:not([data-theme="light"]) .li .dp, :root:not([data-theme="light"]) #travelbtn.on .pill { color: rgb(110 231 160); }
+}
 .mz .note a, .empty a { color: var(--accent); text-underline-offset: 2px; }
 
 /* Details und leere Zustände */
@@ -265,8 +338,27 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
 <div class="wrap">
   <header>
     <h1>Semesterplaner</h1>
-    <span id="status" role="status"></span>
+    <div class="hdr-r">
+      <span id="status" role="status"></span>
+      <button type="button" class="btn ghost" id="travelbtn" aria-expanded="false" aria-controls="travelpanel">🚗 Anfahrt <span class="pill">aus</span></button>
+    </div>
   </header>
+
+  <section class="panel tp" id="travelpanel" hidden aria-labelledby="tpcap">
+    <span class="cap" id="tpcap">Anfahrt</span>
+    <label class="sw"><input type="checkbox" id="tOn"><span class="ui"></span>Im Kalender zeigen, wann ich losfahren muss</label>
+    <div class="tp-grid">
+      <label for="tMin">Fahrzeit<span class="in"><input type="number" id="tMin" min="1" max="300" step="1" inputmode="numeric"> min</span></label>
+      <label for="tBuf">Puffer<span class="in"><input type="number" id="tBuf" min="0" max="120" step="1" inputmode="numeric"> min</span></label>
+      <label for="tMode">Anzeigen<select id="tMode">
+        <option value="first">vor dem ersten Termin am Tag</option>
+        <option value="gaps">auch nach langen Pausen</option>
+      </select></label>
+    </div>
+    <p class="note" id="tInfo"></p>
+  </section>
+
+  <section class="panel wx" id="wx" aria-label="Wetter in Ravensburg" hidden></section>
 
   <section class="panel add" id="addpanel" hidden aria-labelledby="addcap">
     <label class="cap" id="addcap" for="paste">Termine einfügen</label>
@@ -597,10 +689,18 @@ const nowMin = () => { const n = new Date(); return n.getHours() * 60 + n.getMin
 const titleOf = (e) => (e.kind === "tutorium" ? "Tutorium: " + e.title : e.title);
 function renderNext() {
   const up = upcoming().slice(0, 3);
+  const deps = departures(visible());
+  const today = key(new Date());
+  const depLine = (e) => {
+    const d = deps.get(e.id);
+    if (!d || (e.date === today && e.a <= nowMin())) return "";
+    return `<div class="dp">🚗 Losfahren ${hm(d.dep)} <span class="depleft" data-dep="${depMs(e.date, d.dep)}" data-start="${depMs(e.date, e.a)}"></span></div>`;
+  };
   $("#next").innerHTML = up.map((e) =>
     `<button type="button" class="nx k-${e.kind}" style="--h:${hueOf(e)}" data-act="goto" data-date="${e.date}" data-id="${e.id}">
       <div class="when">${esc(e.date === key(new Date()) && e.a <= nowMin() ? "Läuft gerade" : relLabel(e.date))}</div>
       <div class="tm">${e.start}–${e.end}${e.room ? " · " + esc(e.room) : ""}</div>
+      ${depLine(e)}
       ${e.date === key(new Date()) && e.a <= nowMin() ? `<div class="left" data-end="${e.b}"></div>` : ""}
       <div class="tt">${esc(titleOf(e))}</div>
       ${e.prof ? `<div class="pf">${esc(e.prof)}</div>` : ""}
@@ -659,14 +759,19 @@ function weekHTML() {
   const inWeek = list.filter((e) => { const d = parseKey(e.date); return d >= weekStart && d < end; });
   const weekend = inWeek.some((e) => ((parseKey(e.date).getDay() + 6) % 7) >= 5);
   const nd = weekend ? 7 : 5;
+  const deps = departures(list);
   let h0 = 8, h1 = 18;
   if (inWeek.length) {
-    h0 = Math.min(h0, Math.floor(Math.min(...inWeek.map((e) => e.a)) / 60));
+    h0 = Math.min(h0, Math.floor(Math.min(...inWeek.map((e) => (deps.has(e.id) ? deps.get(e.id).dep : e.a))) / 60));
     h1 = Math.max(h1, Math.ceil(Math.max(...inWeek.map((e) => e.b)) / 60));
   }
   const now = new Date(), HH = 52, todayKey = key(now), nowM = now.getHours() * 60 + now.getMinutes();
   const days = [...Array(nd)].map((_, i) => addDays(weekStart, i));
-  const heads = days.map((d) => `<div class="dh${key(d) === todayKey ? " today" : ""}">${fmt(d, { weekday: "short" })}<b>${d.getDate()}.</b></div>`).join("");
+  const heads = days.map((d) => {
+    const w = wxDay(key(d));
+    const wt = w ? `<span class="dw" title="${esc(wmo(w.code).text)}${w.pp != null ? ", Regen " + w.pp + " %" : ""}">${wmo(w.code).icon} ${deg(w.max)}<span style="opacity:.6"> / ${deg(w.min)}</span></span>` : "";
+    return `<div class="dh${key(d) === todayKey ? " today" : ""}">${fmt(d, { weekday: "short" })}<b>${d.getDate()}.</b>${wt}</div>`;
+  }).join("");
   const showNow = days.some((d) => key(d) === todayKey);
   const gut = `<div class="gut" style="height:${(h1 - h0) * HH}px">${[...Array(h1 - h0 + 1)].map((_, i) => `<span style="top:${i * HH}px">${pad(h0 + i)}:00</span>`).join("")}${showNow ? '<span class="nowlbl" hidden></span>' : ""}</div>`;
   const cols = days.map((d) => {
@@ -680,7 +785,13 @@ function weekHTML() {
       const live = k === todayKey && e.a <= nowM && nowM < e.b;
       return `<button type="button" class="ev k-${e.kind}${e.id === sel ? " sel" : ""}${live ? " live" : ""}" data-act="sel" data-id="${esc(e.id)}" style="--h:${hueOf(e)};top:${top}px;height:${ht}px;left:calc(${e.lane * w}% + 2px);width:calc(${w}% - 4px)" title="${esc(tip)}"><span class="t">${e.start}–${e.end}</span>${live ? `<span class="left" data-end="${e.b}"></span>` : ""}${e.kind === "tutorium" ? '<span class="tg">Tutorium</span>' : ""}<span class="n">${esc(e.title)}</span>${e.prof ? `<span class="p">${esc(e.prof)}</span>` : ""}</button>`;
     }).join("");
-    return `<div class="col${k === todayKey ? " today" : ""}" style="height:${(h1 - h0) * HH}px">${blocks}${k === todayKey ? '<div class="nowline" hidden></div>' : ""}</div>`;
+    const depBlocks = evs.filter((e) => deps.has(e.id)).map((e) => {
+      const d = deps.get(e.id).dep;
+      const top = (d - h0 * 60) / 60 * HH;
+      const ht = Math.max((e.a - d) / 60 * HH - 3, 16);
+      return `<div class="dep" style="top:${top}px;height:${ht}px" title="Losfahren ${hm(d)} Uhr: ${travel.min} min Fahrt + ${travel.buf} min Puffer bis ${e.start}">🚗 <b>${hm(d)}</b> los</div>`;
+    }).join("");
+    return `<div class="col${k === todayKey ? " today" : ""}" style="height:${(h1 - h0) * HH}px">${depBlocks}${blocks}${k === todayKey ? '<div class="nowline" hidden></div>' : ""}</div>`;
   }).join("");
   let extra = "";
   const cur = sel && events[sel] ? all().find((e) => e.id === sel) : null;
@@ -702,6 +813,7 @@ function listHTML() {
   const today = key(new Date());
   const items = all().filter((e) => !hidden.has(filterKey(e)) && (showPast || e.date >= today));
   if (!items.length) return `<div class="empty">${all().length ? "Keine kommenden Termine." : (EDIT ? "Noch keine Termine. Füge oben welche ein." : "Noch keine Termine eingetragen.")}</div>`;
+  const deps = departures(visible());
   let html = '<ul class="list">', month = "";
   for (const e of items) {
     const d = parseKey(e.date);
@@ -711,7 +823,7 @@ function listHTML() {
     html += `<li class="li k-${e.kind}${e.date < today ? " past" : ""}" style="--h:${hueOf(e)}">
       <div class="d"><b>${fmt(d, { weekday: "short" })}</b>${pad(d.getDate())}.${pad(d.getMonth() + 1)}.</div>
       <div class="tm">${e.start}–${e.end}</div>
-      <div class="tt"><div class="l1">${esc(e.title)}${e.kind === "tutorium" ? ' <span class="tag">Tutorium</span>' : e.kind === "pruefung" ? ' <span class="tag">Klausur</span>' : ""}</div>${l2 ? `<div class="l2">${esc(l2)}</div>` : ""}</div>
+      <div class="tt"><div class="l1">${esc(e.title)}${e.kind === "tutorium" ? ' <span class="tag">Tutorium</span>' : e.kind === "pruefung" ? ' <span class="tag">Klausur</span>' : ""}</div>${l2 ? `<div class="l2">${esc(l2)}</div>` : ""}${deps.has(e.id) && e.date >= today ? `<div class="dp">🚗 Losfahren ${hm(deps.get(e.id).dep)} Uhr</div>` : ""}</div>
       ${delButton(e.id, "Löschen")}
     </li>`;
   }
@@ -721,7 +833,7 @@ function render() {
   $("#tabweek").setAttribute("aria-pressed", view === "week");
   $("#tablist").setAttribute("aria-pressed", view === "list");
   $("#tabmensa").setAttribute("aria-pressed", view === "mensa");
-  renderNext(); renderNav();
+  renderNext(); renderNav(); renderTravel();
   $("#chips").hidden = view === "mensa";
   if (view !== "mensa") renderChips();
   $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : mensaHTML();
@@ -746,6 +858,11 @@ function tick() {
   /* Wenn ein Termin anfängt oder endet (oder ein neuer Tag beginnt), alles neu zeichnen */
   if (liveSignature() !== liveSig) { if (view === "mensa") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
   const secs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  document.querySelectorAll(".depleft[data-dep]").forEach((el) => {
+    const ms = +el.dataset.dep - now.getTime(), toStart = +el.dataset.start - now.getTime();
+    el.classList.toggle("go", ms <= 0 && toStart > 0);
+    el.textContent = ms > 0 ? (ms < 36e5 * 12 ? "· in " + durText(Math.ceil(ms / 60e3)) : "") : toStart > 0 ? "· jetzt los!" : "";
+  });
   document.querySelectorAll(".left[data-end]").forEach((el) => {
     const rest = Math.max(0, +el.dataset.end * 60 - secs);
     el.textContent = leftText(rest);
@@ -761,7 +878,7 @@ function tick() {
   const lbl = document.querySelector(".gut .nowlbl");
   if (lbl) { lbl.hidden = !inside; lbl.style.top = pos + "px"; lbl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`; }
 }
-document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { tick(); if (wx.at && Date.now() - wx.at > 30 * 60e3) loadWeather(true); } });
 
 
 /* ---------- Mensa ----------
@@ -770,7 +887,6 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) tick
    sonst wird versucht, die Datei direkt bei Seezeit zu laden. */
 const MENSA_XML = "https://www.max-manager.de/daten-extern/seezeit/xml/mensa_ravensburg/speiseplan.xml";
 const MENSA_PAGE = "https://seezeit.com/essen/speiseplaene/mensa-ravensburg/";
-const PHOTO_CACHE = "semesterplaner.mensafotos.v1";
 const mensa = { state: "idle", days: [], day: null };
 const berlinKey = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
 const SIDE_RE = /^(sättigung|beilage|gemüse|salat|dessert|suppe)/i;
@@ -834,18 +950,40 @@ function mensaNav() {
   }).join("");
 }
 const euro = (v) => (v ? v.replace(".", ",") + " €" : "");
+const isVeg = (d) => /\b(vegan|pflanzlich)/i.test(d.name) ? "Vegan" : "";
+function dishEmoji(d) {
+  const s = (d.cat + " " + d.name).toLowerCase();
+  if (/dessert|joghurt|pudding|quark|panna|kuchen|creme/.test(s)) return "🍮";
+  if (/salat/.test(s)) return "🥗";
+  if (/pommes/.test(s)) return "🍟";
+  if (/kartoffel|püree|rösti/.test(s)) return "🥔";
+  if (/nudel|pasta|spätzle|spaghetti/.test(s)) return "🍝";
+  if (/reis|curry/.test(s)) return "🍛";
+  if (/suppe|eintopf/.test(s)) return "🍲";
+  if (/gemüse|brokkoli|karotte|wirsing|ratatouille/.test(s)) return "🥦";
+  return "🍽️";
+}
 function dishCard(d) {
   const [stud, staff, guest] = d.p;
   const others = [staff && "Bedienstete " + euro(staff), guest && "Gäste " + euro(guest)].filter(Boolean).join(" · ");
+  const veg = isVeg(d);
   return `<article class="dish">
-    <div class="ph" data-q="${esc(d.name)}">Foto wird gesucht …</div>
+    <div class="ph wait" data-q="${esc(d.name)}" data-c="${esc(d.cat)}"><span class="fb" aria-hidden="true">${dishEmoji(d)}</span>
+      <span class="glass cat">${esc(d.cat)}</span>${stud ? `<span class="glass price" title="Preis für Studierende">${esc(euro(stud))}</span>` : ""}</div>
     <div class="bd">
-      <span class="cap">${esc(d.cat)}</span>
       <span class="nm">${esc(d.name)}</span>
       ${d.extra ? `<span class="sub">${esc(d.extra)}</span>` : ""}
-      ${stud ? `<span class="pr">${esc(euro(stud))} <small>Studierende${others ? "<br>" + esc(others) : ""}</small></span>` : ""}
+      ${veg ? `<span class="tags"><span class="tg2">${veg}</span></span>` : ""}
+      ${others ? `<span class="others">${esc(others)}</span>` : ""}
     </div>
   </article>`;
+}
+function sideRow(d) {
+  return `<div class="mrow">
+    <div class="ph wait small" data-q="${esc(d.name)}" data-c="${esc(d.cat)}"><span class="fb" aria-hidden="true">${dishEmoji(d)}</span></div>
+    <div class="tx"><span class="c">${esc(d.cat)}</span><span class="nm">${esc(d.name)}</span></div>
+    ${d.p[0] ? `<span class="pr">${esc(euro(d.p[0]))}</span>` : ""}
+  </div>`;
 }
 function mensaHTML() {
   if (mensa.state === "idle") { setTimeout(loadMensa, 0); return `<div class="empty">Speiseplan wird geladen …</div>`; }
@@ -859,12 +997,116 @@ function mensaHTML() {
     ${mensa.stale ? `<div class="empty">Der gespeicherte Plan ist nicht mehr aktuell. <a href="${MENSA_PAGE}" target="_blank" rel="noopener">Aktuellen Plan bei Seezeit ansehen</a></div>` : ""}
     <h2 class="mh">Mensa Ravensburg · ${esc(label)}</h2>
     ${main.length ? `<div class="mgrid">${main.map(dishCard).join("")}</div>` : ""}
-    ${side.length ? `<h2 class="mh">Beilagen, Salate und Desserts</h2><div class="mgrid small">${side.map(dishCard).join("")}</div>` : ""}
-    <p class="note">Die Fotos sind Symbolbilder von Wikipedia und Wikimedia Commons, automatisch nach dem Namen des Gerichts gesucht. Sie zeigen nicht das Essen aus der Mensa. Speiseplan, Preise und Allergene: <a href="${MENSA_PAGE}" target="_blank" rel="noopener">Seezeit</a>.</p>
+    ${side.length ? `<h2 class="mh">Beilagen, Salate und Desserts</h2><div class="mlist">${side.map(sideRow).join("")}</div>` : ""}
+    <p class="note">Die Fotos sind Symbolbilder (Rezeptfotos von TheMealDB, bei schwäbischen Klassikern von Wikipedia), passend zum Namen des Gerichts ausgesucht. Sie zeigen nicht das Essen aus der Mensa. Preise auf den Fotos gelten für Studierende. Speiseplan, Preise und Allergene: <a href="${MENSA_PAGE}" target="_blank" rel="noopener">Seezeit</a>.</p>
   </div>`;
 }
 
-/* Fotos: erst Wikipedia (Hauptbild des passenden Artikels), dann Wikimedia Commons. Ergebnisse werden im Browser gemerkt. */
+/* Fotos: Jedes Gericht bekommt ein appetitliches Rezeptfoto.
+   1. Schwäbische/deutsche Klassiker: Hauptbild des passenden Wikipedia-Artikels (feste Zuordnung, kein Raten).
+   2. Sonst: Stichwort im Namen → englischer Suchbegriff bei TheMealDB (freie Rezept-Datenbank mit einheitlichen Food-Fotos).
+   3. Sonst: ein Foto aus der passenden TheMealDB-Kategorie (Dessert, Vegetarisch, Beilage …).
+   Dasselbe Gericht bekommt immer dasselbe Foto. Ergebnisse werden im Browser gemerkt. */
+const MEALDB = "https://www.themealdb.com/api/json/v1/1/";
+const PHOTO_RULES = [
+  [/linsengericht|linsen.*spätzle/, { wiki: "Linsen mit Spätzle", meal: ["lentil"], cat: "Vegetarian" }],
+  [/linsen/, { meal: ["lentil"], cat: "Vegetarian" }],
+  [/käs(e)?spätzle|kässpätzle/, { wiki: "Käsespätzle", cat: "Vegetarian" }],
+  [/maultasche/, { wiki: "Maultasche", cat: "Pasta" }],
+  [/schupfnudel/, { wiki: "Schupfnudel", cat: "Side" }],
+  [/flammkuchen/, { wiki: "Flammkuchen", meal: ["tart"], cat: "Miscellaneous" }],
+  [/kaiserschmarrn/, { wiki: "Kaiserschmarrn", meal: ["pancake"], cat: "Dessert" }],
+  [/germknödel/, { wiki: "Germknödel", cat: "Dessert" }],
+  [/dampfnudel/, { wiki: "Dampfnudel", cat: "Dessert" }],
+  [/leberkäs/, { wiki: "Leberkäse", cat: "Pork" }],
+  [/currywurst/, { wiki: "Currywurst", meal: ["sausage"], cat: "Pork" }],
+  [/grieß|gries/, { wiki: "Grießbrei", meal: ["pudding"], cat: "Dessert" }],
+  [/rote grütze/, { wiki: "Rote Grütze", cat: "Dessert" }],
+  [/spätzle/, { wiki: "Spätzle", cat: "Side" }],
+  [/camembert/, { meal: ["camembert", "brie"], cat: "Vegetarian" }],
+  [/rösti|puffer|reibekuchen/, { meal: ["rosti", "hash brown", "potato pancake"], cat: "Vegetarian" }],
+  [/panna ?cotta/, { meal: ["panna cotta"], cat: "Dessert" }],
+  [/butter ?chicken/, { meal: ["butter chicken", "chicken curry"], cat: "Chicken" }],
+  [/nugget/, { meal: ["fried chicken", "chicken karaage"], cat: "Chicken" }],
+  [/masala|tikka/, { meal: ["chicken curry", "tikka", "masala"], cat: "Chicken" }],
+  [/curry/, { meal: ["curry"], cat: "Vegetarian" }],
+  [/bolognese/, { meal: ["bolognese"], cat: "Pasta" }],
+  [/lasagne|lasagna/, { meal: ["lasagne", "lasagna"], cat: "Pasta" }],
+  [/carbonara/, { meal: ["carbonara"], cat: "Pasta" }],
+  [/pizza/, { meal: ["pizza"], cat: "Miscellaneous" }],
+  [/burger/, { meal: ["burger"], cat: "Beef" }],
+  [/schnitzel/, { meal: ["schnitzel", "katsu"], cat: "Pork" }],
+  [/frikadelle|hackbällchen|fleischküchle|bulette|köttbullar|meatball/, { meal: ["meatball", "kofta"], cat: "Beef" }],
+  [/falafel|bällchen|medaillon|bratling/, { meal: ["falafel", "fritter"], cat: "Vegetarian" }],
+  [/gulasch|goulash/, { meal: ["goulash", "stew"], cat: "Beef" }],
+  [/chili/, { meal: ["chilli", "chili"], cat: "Beef" }],
+  [/lachs|seelachs|fisch|kabeljau|forelle|scholle|thunfisch/, { meal: ["fish", "salmon", "cod"], cat: "Seafood" }],
+  [/garnele|shrimp|meeresfrüchte/, { meal: ["prawn", "shrimp"], cat: "Seafood" }],
+  [/risotto/, { meal: ["risotto"], cat: "Vegetarian" }],
+  [/teigtasche|empanada|calzone|börek|strudel/, { meal: ["empanada", "pie", "pastry"], cat: "Vegetarian" }],
+  [/wrap|burrito|taco|quesadilla|tortilla/, { meal: ["wrap", "burrito", "taco"], cat: "Miscellaneous" }],
+  [/auflauf|gratin/, { meal: ["bake", "gratin"], cat: "Vegetarian" }],
+  [/suppe|eintopf/, { meal: ["soup", "stew"], cat: "Starter" }],
+  [/rollbraten|braten|pute/, { meal: ["roast", "turkey"], cat: "Chicken" }],
+  [/schwein|steak/, { meal: ["pork"], cat: "Pork" }],
+  [/rind|kalb/, { meal: ["beef"], cat: "Beef" }],
+  [/hähnchen|geflügel|huhn|chicken/, { meal: ["chicken"], cat: "Chicken" }],
+  [/pommes/, { meal: ["fries", "chips"], cat: "Side" }],
+  [/püree|stampf/, { meal: ["mash"], cat: "Side" }],
+  [/kartoffel/, { meal: ["potato"], cat: "Side" }],
+  [/nudel|pasta|penne|spaghetti|tortellini|ravioli|gnocchi|makkaroni/, { meal: ["pasta", "noodle"], cat: "Pasta" }],
+  [/reis|bowl/, { meal: ["rice"], cat: "Side" }],
+  [/ratatouille/, { meal: ["ratatouille"], cat: "Vegetarian" }],
+  [/brokkoli|broccoli/, { meal: ["broccoli"], cat: "Side" }],
+  [/kürbis/, { meal: ["pumpkin", "squash"], cat: "Vegetarian" }],
+  [/salat|rohkost|coleslaw/, { meal: ["salad"], cat: "Side" }],
+  [/joghurt|quark|pudding|creme|mousse|kuchen|obst|dessert|tiramisu/, { meal: ["pudding", "cake", "fruit"], cat: "Dessert" }],
+  [/gemüse|wirsing|karotte|möhre|kohl|bohne|erbse/, { meal: ["vegetable"], cat: "Vegetarian" }]
+];
+const PHOTO_CACHE = "semesterplaner.mensafotos.v2";
+try { localStorage.removeItem("semesterplaner.mensafotos.v1"); } catch (e) { /* egal */ }
+function catFallback(cat, name) {
+  const s = (cat + " " + name).toLowerCase();
+  if (/dessert|joghurt|pudding|quark/.test(s)) return "Dessert";
+  if (/vegan|pflanzlich/.test(s)) return "Vegan";
+  if (/salat|sättigung|beilage/.test(s)) return "Side";
+  if (/gemüse|vegetar|veggie/.test(s)) return "Vegetarian";
+  return "Miscellaneous";
+}
+function photoPlan(name, cat) {
+  const head = name.split(/\s+(?:mit|dazu|an|auf)\s+/i)[0].toLowerCase();
+  const full = name.toLowerCase();
+  /* Das Hauptwort (vor "mit") zählt zuerst. Ist es nur allgemein (Nudeln, Kartoffeln …), darf ein genaueres Stichwort aus dem ganzen Namen gewinnen. */
+  const idx = (t) => PHOTO_RULES.findIndex(([re]) => re.test(t));
+  const generic = PHOTO_RULES.findIndex(([re]) => re.test("suppe"));
+  let i = idx(head);
+  const j = idx(full);
+  if (i < 0 || (i >= generic && j >= 0 && j < generic)) i = j;
+  const rule = i >= 0 ? PHOTO_RULES[i][1] : null;
+  return { wiki: rule && rule.wiki, meal: (rule && rule.meal) || [], cat: (rule && rule.cat) || catFallback(cat, name) };
+}
+const hashStr = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+const apiMem = new Map();
+function getJSON(u) {
+  if (!apiMem.has(u)) apiMem.set(u, fetch(u).then((r) => { if (!r.ok) throw new Error("http " + r.status); return r.json(); }).catch((e) => { apiMem.delete(u); throw e; }));
+  return apiMem.get(u);
+}
+const mealPhoto = (m) => ({ src: m.strMealThumb, small: m.strMealThumb + "/small", href: "https://www.themealdb.com/meal/" + m.idMeal, by: "TheMealDB: " + m.strMeal });
+async function wikiTitlePhoto(title) {
+  const j = await getJSON("https://de.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=800&titles=" + encodeURIComponent(title));
+  const p = Object.values((j.query && j.query.pages) || {}).find((x) => x.thumbnail && !/\.svg/i.test(x.thumbnail.source));
+  return p ? { src: p.thumbnail.source, small: p.thumbnail.source.replace(/\/\d+px-/, "/160px-"), href: "https://de.wikipedia.org/wiki/" + encodeURIComponent(p.title.replace(/ /g, "_")), by: "Wikipedia: " + p.title } : null;
+}
+async function mealSearchPhoto(term, name) {
+  const j = await getJSON(MEALDB + "search.php?s=" + encodeURIComponent(term));
+  const list = (j.meals || []).filter((m) => m.strMealThumb);
+  return list.length ? mealPhoto(list[hashStr(name) % list.length]) : null;
+}
+async function mealCatPhoto(cat, name) {
+  const j = await getJSON(MEALDB + "filter.php?c=" + encodeURIComponent(cat));
+  const list = (j.meals || []).filter((m) => m.strMealThumb);
+  return list.length ? mealPhoto(list[hashStr(name) % list.length]) : null;
+}
 const photoMem = new Map();
 let photoStore = null;
 function photoCache() {
@@ -876,53 +1118,180 @@ function photoRemember(q, r) {
   const c = photoCache(); c[q] = r;
   try { localStorage.setItem(PHOTO_CACHE, JSON.stringify(c)); } catch (e) { /* egal */ }
 }
-function photoQueries(name) {
-  const s = name.replace(/\([^)]*\)/g, " ").replace(/["„“”]/g, "").replace(/\s+/g, " ").trim();
-  const a = s.split(/\s+(?:mit|an|auf|in|im|und|vom|von|nach)\s+/i)[0].trim();
-  const out = [s, a];
-  const w = a.split(" ");
-  if (w.length > 1) out.push(w[w.length - 1]);
-  return [...new Set(out.filter((x) => x.length > 2))];
-}
-async function wikiPhoto(q) {
-  const u = "https://de.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=3&prop=pageimages&piprop=thumbnail&pithumbsize=640&gsrsearch=" + encodeURIComponent(q);
-  const j = await (await fetch(u)).json();
-  const pages = Object.values((j.query && j.query.pages) || {}).sort((a, b) => a.index - b.index);
-  const p = pages.find((x) => x.thumbnail && !/\.svg/i.test(x.thumbnail.source));
-  return p ? { src: p.thumbnail.source, href: "https://de.wikipedia.org/wiki/" + encodeURIComponent(p.title.replace(/ /g, "_")), by: "Wikipedia: " + p.title } : null;
-}
-async function commonsPhoto(q) {
-  const u = "https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url|mime&iiurlwidth=640&gsrsearch=" + encodeURIComponent(q + " filetype:bitmap");
-  const j = await (await fetch(u)).json();
-  const pages = Object.values((j.query && j.query.pages) || {}).sort((a, b) => a.index - b.index);
-  const p = pages.find((x) => x.imageinfo && x.imageinfo[0] && /jpe?g|png|webp/i.test(x.imageinfo[0].mime || ""));
-  return p ? { src: p.imageinfo[0].thumburl || p.imageinfo[0].url, href: p.imageinfo[0].descriptionurl, by: "Wikimedia Commons" } : null;
-}
-function photoFor(name) {
+function photoFor(name, cat) {
   if (photoMem.has(name)) return photoMem.get(name);
   const c = photoCache();
-  if (Object.prototype.hasOwnProperty.call(c, name)) { const r = Promise.resolve(c[name]); photoMem.set(name, r); return r; }
+  if (c[name]) { const r = Promise.resolve(c[name]); photoMem.set(name, r); return r; }
   const job = (async () => {
-    const qs = photoQueries(name);
-    try {
-      for (const q of qs) { const r = await wikiPhoto(q); if (r) { photoRemember(name, r); return r; } }
-      for (const q of qs.slice(0, 2)) { const r = await commonsPhoto(q); if (r) { photoRemember(name, r); return r; } }
-      photoRemember(name, null);
-      return null;
-    } catch (e) { photoMem.delete(name); return null; } /* Netzfehler: nicht merken, später nochmal versuchen */
+    const plan = photoPlan(name, cat);
+    const tries = [];
+    if (plan.wiki) tries.push(() => wikiTitlePhoto(plan.wiki));
+    plan.meal.forEach((t) => tries.push(() => mealSearchPhoto(t, name)));
+    tries.push(() => mealCatPhoto(plan.cat, name));
+    let netErr = false;
+    for (const t of tries) {
+      try { const r = await t(); if (r) { photoRemember(name, r); return r; } } catch (e) { netErr = true; }
+    }
+    if (netErr) photoMem.delete(name); /* Netzfehler: später nochmal versuchen */
+    return null;
   })();
   photoMem.set(name, job);
   return job;
 }
 function fillPhotos() {
-  document.querySelectorAll(".dish .ph[data-q]").forEach(async (el) => {
-    const r = await photoFor(el.dataset.q);
+  document.querySelectorAll(".ph[data-q]").forEach(async (el) => {
+    const small = el.classList.contains("small");
+    const r = await photoFor(el.dataset.q, el.dataset.c || "");
     if (!el.isConnected) return;
-    if (!r) { el.textContent = "Kein Foto gefunden"; return; }
-    el.innerHTML = `<img src="${esc(r.src)}" alt="Symbolbild: ${esc(el.dataset.q)}" loading="lazy" referrerpolicy="no-referrer"><a class="src" href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.by)}</a>`;
-    el.querySelector("img").addEventListener("error", () => { el.textContent = "Kein Foto gefunden"; });
+    if (!r) { el.classList.remove("wait"); return; }
+    const img = new Image();
+    img.alt = "Symbolbild: " + el.dataset.q;
+    img.decoding = "async"; img.referrerPolicy = "no-referrer";
+    img.onload = () => { el.classList.remove("wait"); el.querySelector(".fb")?.remove(); img.classList.add("ok"); };
+    img.onerror = () => { if (small && img.src !== r.src) { img.src = r.src; return; } el.classList.remove("wait"); img.remove(); };
+    img.src = small ? r.small || r.src : r.src;
+    el.prepend(img);
+    if (!small) el.insertAdjacentHTML("beforeend", `<a class="glass sym" href="${esc(r.href)}" target="_blank" rel="noopener" title="${esc(r.by)}">Symbolbild</a>`);
   });
 }
+
+/* ---------- Wetter ----------
+   Quelle: Open-Meteo (frei, ohne Schlüssel). Für Deutschland rechnet Open-Meteo mit dem
+   ICON-Modell des Deutschen Wetterdienstes (DWD). Ort: Ravensburg. Wird 20 Minuten im Browser gemerkt. */
+const WX_URL = "https://api.open-meteo.com/v1/forecast?latitude=47.7815&longitude=9.6127&timezone=Europe%2FBerlin&forecast_days=7"
+  + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,is_day"
+  + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day"
+  + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max";
+const WX_CACHE = "semesterplaner.wetter.v1";
+const wx = { data: null, at: 0, err: false };
+const WMO = {
+  0: ["Klar", "☀️", "🌙"], 1: ["Überwiegend klar", "🌤️", "🌙"], 2: ["Teils bewölkt", "⛅", "☁️"], 3: ["Bedeckt", "☁️"],
+  45: ["Nebel", "🌫️"], 48: ["Nebel mit Reif", "🌫️"],
+  51: ["Leichter Niesel", "🌦️", "🌧️"], 53: ["Nieselregen", "🌧️"], 55: ["Starker Niesel", "🌧️"], 56: ["Gefrierender Niesel", "🌧️"], 57: ["Gefrierender Niesel", "🌧️"],
+  61: ["Leichter Regen", "🌦️", "🌧️"], 63: ["Regen", "🌧️"], 65: ["Starker Regen", "🌧️"], 66: ["Gefrierender Regen", "🌧️"], 67: ["Gefrierender Regen", "🌧️"],
+  71: ["Leichter Schneefall", "🌨️"], 73: ["Schneefall", "🌨️"], 75: ["Starker Schneefall", "❄️"], 77: ["Schneegriesel", "🌨️"],
+  80: ["Leichte Schauer", "🌦️", "🌧️"], 81: ["Regenschauer", "🌧️"], 82: ["Heftige Schauer", "⛈️"], 85: ["Schneeschauer", "🌨️"], 86: ["Starke Schneeschauer", "❄️"],
+  95: ["Gewitter", "⛈️"], 96: ["Gewitter mit Hagel", "⛈️"], 99: ["Gewitter mit Hagel", "⛈️"]
+};
+const wmo = (code, day = 1) => { const w = WMO[code] || ["", "🌡️"]; return { text: w[0], icon: (!day && w[2]) || w[1] }; };
+const deg = (v) => (v == null ? "–" : Math.round(v) + "°");
+function wxDay(k) {
+  const d = wx.data && wx.data.daily;
+  if (!d) return null;
+  const i = d.time.indexOf(k);
+  return i < 0 ? null : { code: d.weather_code[i], max: d.temperature_2m_max[i], min: d.temperature_2m_min[i], pp: d.precipitation_probability_max ? d.precipitation_probability_max[i] : null };
+}
+function renderWeather() {
+  const el = $("#wx");
+  if (!wx.data) {
+    el.hidden = !wx.err;
+    el.className = "panel wx err";
+    el.innerHTML = `Wetter gerade nicht erreichbar. <a href="https://www.dwd.de/DE/wetter/wetterundklima_vorort/baden-wuerttemberg/ravensburg/_node.html" target="_blank" rel="noopener">Wetter beim DWD ansehen</a>`;
+    return;
+  }
+  const c = wx.data.current, h = wx.data.hourly;
+  const now = wmo(c.weather_code, c.is_day);
+  const today = wxDay(key(new Date()));
+  const hourKey = c.time.slice(0, 13);
+  let i0 = h.time.findIndex((t) => t.slice(0, 13) === hourKey);
+  if (i0 < 0) i0 = 0;
+  const hours = h.time.slice(i0, i0 + 12).map((t, j) => {
+    const i = i0 + j, w = wmo(h.weather_code[i], h.is_day ? h.is_day[i] : 1), pp = h.precipitation_probability ? h.precipitation_probability[i] : null;
+    return `<div class="h" title="${esc(w.text)}"><span class="hh">${j === 0 ? "Jetzt" : t.slice(11, 13) + " Uhr"}</span><span class="hi">${w.icon}</span><span class="ht">${deg(h.temperature_2m[i])}</span><span class="hp">${pp >= 20 ? pp + " %" : ""}</span></div>`;
+  }).join("");
+  const stand = fmt(new Date(wx.at), { hour: "2-digit", minute: "2-digit" });
+  el.className = "panel wx";
+  el.hidden = false;
+  el.innerHTML = `<div class="now"><span class="ic" aria-hidden="true">${now.icon}</span>
+      <div><div class="t">${deg(c.temperature_2m)}</div>
+      <div class="d">${esc(now.text)} · gefühlt ${deg(c.apparent_temperature)}${today ? ` · <b>${deg(today.max)}</b> / ${deg(today.min)}` : ""}${today && today.pp != null ? ` · Regen ${today.pp} %` : ""}</div></div></div>
+    <div class="hrs" aria-label="Die nächsten Stunden">${hours}</div>
+    <div class="src">Ravensburg · Wind ${Math.round(c.wind_speed_10m)} km/h · Daten: DWD-Modell ICON über <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Stand ${stand} Uhr</div>`;
+}
+async function loadWeather(force) {
+  try {
+    const c = JSON.parse(localStorage.getItem(WX_CACHE) || "null");
+    if (c && c.data && !wx.data) { wx.data = c.data; wx.at = c.at; }
+    if (!force && c && Date.now() - c.at < 20 * 60e3) { renderWeather(); return; }
+  } catch (e) { /* kein Zwischenspeicher */ }
+  try {
+    const r = await fetch(WX_URL);
+    if (!r.ok) throw new Error("http " + r.status);
+    const j = await r.json();
+    if (!j.current || !j.daily) throw new Error("leer");
+    wx.data = j; wx.at = Date.now(); wx.err = false;
+    try { localStorage.setItem(WX_CACHE, JSON.stringify({ at: wx.at, data: j })); } catch (e) { /* egal */ }
+  } catch (e) { wx.err = true; }
+  renderWeather();
+  if (view === "week") render();
+}
+
+/* ---------- Anfahrt ----------
+   Fahrzeit + Puffer vor Terminbeginn = Abfahrtszeit. Einstellungen bleiben im Browser gespeichert.
+   "first": nur vor dem ersten Termin des Tages. "gaps": zusätzlich nach Pausen, die lang genug sind,
+   um heimzufahren (hin und zurück plus mindestens 30 Minuten daheim). */
+const TRAVEL_KEY = "semesterplaner.anfahrt.v1";
+const travel = { on: false, min: 30, buf: 5, mode: "first" };
+try { const t = JSON.parse(localStorage.getItem(TRAVEL_KEY) || "null"); if (t) Object.assign(travel, t); } catch (e) { /* Standardwerte */ }
+function saveTravel() { try { localStorage.setItem(TRAVEL_KEY, JSON.stringify(travel)); } catch (e) { /* egal */ } }
+const hm = (m) => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+function durText(min) {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+function departures(list) {
+  const out = new Map();
+  if (!travel.on) return out;
+  const lead = travel.min + travel.buf;
+  const byDay = new Map();
+  list.forEach((e) => { if (!byDay.has(e.date)) byDay.set(e.date, []); byDay.get(e.date).push(e); });
+  for (const evs of byDay.values()) {
+    evs.sort((x, y) => x.a - y.a);
+    let lastEnd = null;
+    for (const e of evs) {
+      const longGap = lastEnd != null && e.a - lastEnd >= 2 * travel.min + 30;
+      if (lastEnd == null || (travel.mode === "gaps" && longGap)) out.set(e.id, { dep: Math.max(0, e.a - lead), first: lastEnd == null });
+      lastEnd = Math.max(lastEnd == null ? 0 : lastEnd, e.b);
+    }
+  }
+  return out;
+}
+const visible = () => all().filter((e) => !hidden.has(filterKey(e)));
+const depMs = (date, m) => parseKey(date).getTime() + m * 60e3; /* ohne Zeitumstellung-Sonderfall, reicht für die Anzeige */
+function nextDeparture() {
+  const deps = departures(visible()), now = Date.now();
+  return all().map((e) => ({ e, d: deps.get(e.id) })).find((x) => x.d && depMs(x.e.date, x.e.a) > now) || null;
+}
+function renderTravel() {
+  const b = $("#travelbtn");
+  b.classList.toggle("on", travel.on);
+  b.querySelector(".pill").textContent = travel.on ? `${travel.min + travel.buf} min` : "aus";
+  $("#tOn").checked = travel.on;
+  if (document.activeElement !== $("#tMin")) $("#tMin").value = travel.min;
+  if (document.activeElement !== $("#tBuf")) $("#tBuf").value = travel.buf;
+  $("#tMode").value = travel.mode;
+  $("#travelpanel").classList.toggle("off", !travel.on);
+  let info = "Gib ein, wie lange du zur Hochschule brauchst. Der Kalender zeigt dann, wann du losfahren musst.";
+  if (travel.on) {
+    const n = nextDeparture();
+    info = n
+      ? `Nächste Abfahrt: ${relLabel(n.e.date)} um ${hm(n.d.dep)} Uhr, damit du um ${n.e.start} bei „${titleOf(n.e)}“ bist (${travel.min} min Fahrt + ${travel.buf} min Puffer).`
+      : "Keine kommenden Termine.";
+  }
+  $("#tInfo").textContent = info;
+}
+$("#travelbtn").addEventListener("click", () => {
+  const p = $("#travelpanel"); p.hidden = !p.hidden;
+  $("#travelbtn").setAttribute("aria-expanded", String(!p.hidden));
+  renderTravel();
+});
+$("#tOn").addEventListener("change", (ev) => { travel.on = ev.target.checked; saveTravel(); render(); });
+function numIn(el, lo, hi, fb) { const v = Math.round(+el.value); return Number.isFinite(v) && el.value !== "" ? Math.min(hi, Math.max(lo, v)) : fb; }
+$("#tMin").addEventListener("input", (ev) => { travel.min = numIn(ev.target, 1, 300, travel.min); saveTravel(); render(); });
+$("#tBuf").addEventListener("input", (ev) => { travel.buf = numIn(ev.target, 0, 120, travel.buf); saveTravel(); render(); });
+$("#tMode").addEventListener("change", (ev) => { travel.mode = ev.target.value === "gaps" ? "gaps" : "first"; saveTravel(); render(); });
+["#tMin", "#tBuf"].forEach((s) => $(s).addEventListener("blur", () => renderTravel()));
 
 /* ---------- Klicks ---------- */
 function disarmLater() { clearTimeout(armTimer); armTimer = setTimeout(() => { armed = null; render(); }, 4000); }
@@ -982,6 +1351,8 @@ function boot() {
   showEdit();
   render();
   setInterval(tick, 1000);
+  loadWeather();
+  setInterval(() => { if (!document.hidden) loadWeather(true); }, 30 * 60e3);
   connect();
 }
 /* termine.js immer frisch laden, damit kein alter Zwischenspeicher alte Termine zeigt */

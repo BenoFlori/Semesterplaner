@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Semesterplaner – Apple-Vergleich</title>
+<title>Semesterplaner</title>
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -332,7 +332,7 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
   .nx:hover { box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 2px 4px rgb(0 0 0 / 0.05), 0 12px 24px -10px rgb(0 0 0 / 0.14); }
   .ev:hover { filter: saturate(1.15) brightness(0.98); }
 }
-/* ===== Vergleich: Apple-Stil (nur Optik, Logik unverändert) ===== */
+/* ===== Apple-Stil (nur Optik, Logik unverändert) ===== */
 :root {
   --bg: #f5f5f7; --surface: #ffffff; --sunken: rgb(118 118 128 / 0.12); --fg: #1d1d1f; --muted: #6e6e73; --faint: #aeaeb2;
   --line: rgb(60 60 67 / 0.18); --line-faint: rgb(60 60 67 / 0.08);
@@ -1022,7 +1022,7 @@ async function loadMensa() {
   mensa.state = "loading"; render();
   const today = key(new Date());
   const fresh = (d) => d && d.some((x) => x.date >= today);
-  let days = await fetchMensa("../mensa.xml?t=" + Date.now());
+  let days = await fetchMensa("mensa.xml?t=" + Date.now());
   if (!fresh(days)) {
     const live = await fetchMensa(MENSA_XML);
     if (live && live.length) days = live;
@@ -1452,7 +1452,7 @@ function boot() {
   let done = false;
   const go = () => { if (!done) { done = true; boot(); } };
   const sc = document.createElement("script");
-  sc.src = "../termine.js?t=" + Date.now();
+  sc.src = "termine.js?t=" + Date.now();
   sc.onload = go; sc.onerror = go;
   document.head.appendChild(sc);
   setTimeout(go, 4000);

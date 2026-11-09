@@ -6,6 +6,14 @@
 <title>Semesterplaner</title>
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<!-- Als App installierbar (Startbildschirm auf Handy und PC) -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Semesterplan">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
@@ -1517,6 +1525,10 @@ function boot() {
   document.head.appendChild(sc);
   setTimeout(go, 4000);
 })();
+/* App-Modus: Service Worker anmelden (nur auf der echten Website, nicht in Vorschauen) */
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => { /* Seite läuft auch ohne */ }); });
+}
 async function connect() {
   if (!(window.claude && window.claude.use)) return;
   try {

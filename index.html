@@ -505,8 +505,14 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 .cd .u b { display: block; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: clamp(1.25rem, 5vw, 2rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
 .cd .u span { display: block; margin-top: 4px; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
 .cd .live { margin-top: 10px; font-weight: 600; color: var(--now); }
-.cd ul { list-style: none; margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
-.cd li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.85rem; }
+.cd ul { list-style: none; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.cd li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; font-size: 0.85rem; }
+.cd li .mt { display: flex; flex-direction: column; min-width: 0; }
+.cd li .mn { font-weight: 600; overflow-wrap: anywhere; }
+.cd .mini { display: flex; gap: 4px; background: #07110b; border: 2px solid #1b1b1f; border-radius: 8px; padding: 5px 8px; box-shadow: inset 0 0 0 1px #2b3036; }
+.cd .mini span { display: flex; flex-direction: column; align-items: center; min-width: 2.1em; }
+.cd .mini b { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 1.1rem; font-weight: 600; line-height: 1.1; color: #ff3b30; text-shadow: 0 0 6px rgb(255 59 48 / 0.6); }
+.cd .mini i { font-style: normal; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #ff8a80; }
 .cd li .d { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
 .bunker { position: relative; margin-top: 12px; border-radius: var(--r-md); overflow: hidden; background: #26221e; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2); }
 .bunker svg { display: block; width: 100%; max-width: 620px; margin: 0 auto; height: auto; }
@@ -2016,10 +2022,8 @@ async function connect() {
     const newSig = x.title + x.s + running + rest.length + now.getDate();
     if (newSig !== sig) {
       sig = newSig;
-      const more = rest.map((r) => {
-        const days = Math.ceil((r.s - now) / 864e5);
-        return `<li><span>${esc2(r.title)}</span><span class="d">${fmt(r.s)} · in ${days} ${days === 1 ? "Tag" : "Tagen"}</span></li>`;
-      }).join("");
+      const more = rest.map((r, i) => `<li data-r="${i}"><div class="mt"><span class="mn">${esc2(r.title)}</span><span class="d">${fmt(r.s)} ${pad(r.s.getHours())}:${pad(r.s.getMinutes())} Uhr</span></div>
+        <div class="mini" role="timer">${[["w", "Wo"], ["d", "Tg"], ["h", "Std"], ["m", "Min"], ["s", "Sek"]].map(([k, l]) => `<span><b data-v="${k}">0</b><i>${l}</i></span>`).join("")}</div></li>`).join("");
       box.innerHTML = `<div class="hd"><span class="cap">${running ? "Klausur läuft" : "Countdown bis zur nächsten Klausur"}</span><span class="cap">${open.length} ${open.length === 1 ? "Klausur" : "Klausuren"} offen</span></div>
         <div class="tt">${esc2(x.title)}</div>
         <div class="sub">${fmt(x.s)} ${pad(x.s.getHours())}:${pad(x.s.getMinutes())} Uhr${x.room ? " · " + esc2(x.room) : ""}</div>
@@ -2028,11 +2032,20 @@ async function connect() {
         ${bunker(running)}
         ${more ? `<ul>${more}</ul>` : ""}`;
     }
-    {
-      let t = running ? 0 : Math.max(0, Math.floor((x.s - now) / 1000));
+    const split = (ms) => {
+      let t = Math.max(0, Math.floor(ms / 1000));
       const v = { w: Math.floor(t / 604800) };
       t %= 604800; v.d = Math.floor(t / 86400); t %= 86400;
       v.h = pad(Math.floor(t / 3600)); t %= 3600; v.m = pad(Math.floor(t / 60)); v.s = pad(t % 60);
+      return v;
+    };
+    box.querySelectorAll("[data-r]").forEach((li) => {
+      const r = rest[+li.getAttribute("data-r")]; if (!r) return;
+      const v = split(r.s - now);
+      li.querySelectorAll("[data-v]").forEach((el) => { const n = String(v[el.getAttribute("data-v")]); if (el.textContent !== n) el.textContent = n; });
+    });
+    {
+      const v = split(running ? 0 : x.s - now);
       box.querySelectorAll("[data-u]").forEach((el) => { const n = String(v[el.getAttribute("data-u")]); if (el.textContent !== n) el.textContent = n; });
       const sr = box.querySelector("[data-sr]");
       if (sr && now.getSeconds() === 0 || sr && !sr.textContent) sr.textContent = `Noch ${v.w} Wochen, ${v.d} Tage, ${+v.h} Stunden und ${+v.m} Minuten.`;

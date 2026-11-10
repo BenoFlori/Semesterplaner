@@ -2,7 +2,7 @@
    Immer zuerst aus dem Netz laden (damit neue Termine sofort da sind),
    nur ohne Netz die zuletzt gespeicherte Version zeigen.
    Wetter, Mensa-Live-Daten und Schriften von anderen Seiten laufen ganz normal durch. */
-const CACHE = "semesterplan-v4";
+const CACHE = "semesterplan-v5";
 const CORE = ["./", "./index.html", "./termine.js", "./kalender-ics.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

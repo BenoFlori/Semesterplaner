@@ -494,6 +494,41 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 .pgh .note { margin: 0; }
 @media (max-width: 560px) { .pf-grid { grid-template-columns: minmax(0, 1fr); } .pf-grid .pf-wide { grid-column: auto; } }
 
+/* Widget-Anleitung */
+.wg { display: flex; flex-direction: column; gap: 14px; }
+.wg-hero { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.wg-hero > div:first-child { flex: 1 1 260px; min-width: 0; }
+.wg h2 { margin: 0 0 6px; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+.wg .note { margin: 0; max-width: 62ch; }
+.wg-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; counter-reset: st; }
+.wg-steps > li { counter-increment: st; position: relative; padding: 14px 16px 14px 56px; background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); min-width: 0; }
+.wg-steps > li::before { content: counter(st); position: absolute; left: 16px; top: 13px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-weight: 700; font-size: 0.85rem; display: grid; place-items: center; }
+.wg-steps h3 { margin: 2px 0 4px; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
+.wg-steps p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.wg-steps p + p, .wg-steps p + .wg-acts, .wg-steps .wg-acts + p { margin-top: 8px; }
+.wg-acts a { text-decoration: none; }
+.wg-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.wg-ok { font-size: 0.85rem; color: #1f9d55; font-weight: 600; }
+.wg kbd { font: inherit; font-weight: 600; color: var(--fg); background: var(--sunken); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.wg code { font-family: var(--font-num); font-size: 0.85em; background: var(--sunken); padding: 1px 5px; border-radius: 5px; color: var(--fg); }
+.wg-params { margin: 8px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; font-size: 0.9rem; color: var(--muted); }
+.wg-warn { background: var(--danger-soft); color: var(--danger); padding: 10px 12px; border-radius: var(--r-md); font-size: 0.88rem; }
+.wg details summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+.wg pre { margin: 10px 0 0; max-height: 320px; overflow: auto; background: var(--sunken); border-radius: var(--r-md); padding: 12px; font-family: var(--font-num); font-size: 0.74rem; line-height: 1.45; white-space: pre; }
+/* kleine Vorschau, wie das Widget aussieht */
+.wg-mock { flex: 0 0 auto; width: 300px; max-width: 100%; aspect-ratio: 2.1 / 1; background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-md); padding: 14px 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; font-size: 0.78rem; overflow: hidden; }
+.wg-mock .mh1 { grid-column: 1 / -1; color: var(--accent); font-weight: 600; font-size: 0.72rem; margin-bottom: -4px; }
+.wg-mock .d { font-size: 0.6rem; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; margin: 4px 0 3px; }
+.wg-mock .r { display: flex; gap: 6px; margin-bottom: 5px; min-width: 0; }
+.wg-mock .r i { flex: 0 0 3px; border-radius: 2px; background: hsl(var(--h) 70% 50%); }
+.wg-mock .r b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wg-mock .r span { color: var(--muted); font-size: 0.68rem; font-family: var(--font-num); }
+.wg-mock .x { width: 104px; color: var(--danger); }
+.wg-mock .x strong { display: block; font-size: 1rem; font-weight: 800; line-height: 1.1; }
+.wg-mock .x b { display: block; color: var(--fg); font-size: 0.72rem; }
+.wg-mock .x span { color: var(--muted); font-size: 0.66rem; }
+@media (max-width: 560px) { .wg-steps > li { padding-left: 48px; } .wg-steps > li::before { left: 12px; } .wg-mock { width: 100%; } }
+
 /* Prüfungs-Countdown */
 .cd { --h: 4; --sat: 75%; position: relative; overflow: hidden; padding-left: 20px; }
 .cd::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: hsl(var(--h) var(--sat) var(--ev-line-l)); }
@@ -677,6 +712,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
       <button type="button" id="tabcd" aria-pressed="false">Countdown</button>
       <button type="button" id="tabmensa" aria-pressed="false">Mensa</button>
       <button type="button" id="tabpartys" aria-pressed="false">Partys</button>
+      <button type="button" id="tabwidget" aria-pressed="false">Widget</button>
     </div>
     <div class="nav" id="nav"></div>
   </div>
@@ -685,6 +721,340 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
   <main id="view"></main>
 </div>
 
+<!-- Skript für das iPad-Widget (App Scriptable). __SITE__ wird beim Kopieren durch die Adresse dieser Seite ersetzt. -->
+<script type="text/plain" id="widgetsrc">
+// Semesterplan-Widget für Scriptable (iPad und iPhone)
+// Lädt die Termine bei jeder Aktualisierung neu von der Website.
+// Ändert sich etwas in termine.js, zeigt das Widget es beim nächsten Neuladen von selbst an.
+//
+// Parameter im Widget (lange drücken → Widget bearbeiten → Parameter), optional:
+//   leer      → nächste Termine (bei klein: nächster Termin + Klausur-Countdown)
+//   klausur   → nur Klausur-Countdown
+//   termine   → nur Termine, ohne Countdown
+//   heute     → nur heute und morgen
+
+const SITE = "__SITE__";
+const DATA = SITE + "termine.js";
+const CACHE_FILE = "semesterplan-termine.json";
+
+const HUE = {
+  "Analysis & Lineare Algebra": 220, "Logik & Algebra": 255, "BWL: Einführung": 140, "BWL: Marketing": 168,
+  "Grundlagen der IT": 282, "Einführung in die Programmierung": 335, "Einführung in die Wirtschaftsinformatik": 192,
+  "Vertrags- und Schuldrecht": 105, "Wissenschaftliches Arbeiten": 312, "Präsentations- & Kommunikationskompetenz": 68
+};
+const WT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+const WT_LANG = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+
+const C = {
+  bg: Color.dynamic(new Color("#ffffff"), new Color("#1c1c1e")),
+  fg: Color.dynamic(new Color("#1d1d1f"), new Color("#f2f2f7")),
+  muted: Color.dynamic(new Color("#6e6e73"), new Color("#a1a1aa")),
+  faint: Color.dynamic(new Color("#aeaeb2"), new Color("#636366")),
+  accent: Color.dynamic(new Color("#007aff"), new Color("#0a84ff")),
+  exam: Color.dynamic(new Color("#ff3b30"), new Color("#ff453a")),
+  now: Color.dynamic(new Color("#34c759"), new Color("#30d158"))
+};
+
+// ---------- Daten laden ----------
+async function loadTermine() {
+  const fm = FileManager.local();
+  const path = fm.joinPath(fm.documentsDirectory(), CACHE_FILE);
+  try {
+    const req = new Request(DATA + "?t=" + Date.now());
+    req.timeoutInterval = 15;
+    const txt = await req.loadString();
+    const list = parseTermine(txt);
+    if (!list.length) throw new Error("leer");
+    fm.writeString(path, JSON.stringify({ at: Date.now(), list }));
+    return { list, offline: false, at: new Date() };
+  } catch (e) {
+    if (fm.fileExists(path)) {
+      try {
+        const c = JSON.parse(fm.readString(path));
+        return { list: c.list, offline: true, at: new Date(c.at) };
+      } catch (e2) { /* kaputt */ }
+    }
+    return { list: [], offline: true, at: null };
+  }
+}
+function parseTermine(txt) {
+  const a = txt.indexOf("["), b = txt.lastIndexOf("]");
+  if (a < 0 || b < a) return [];
+  const arr = JSON.parse(txt.slice(a, b + 1));
+  return arr.filter((e) => e && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && /^\d{2}:\d{2}$/.test(e.start) && /^\d{2}:\d{2}$/.test(e.end));
+}
+
+// ---------- Hilfen ----------
+const toDate = (d, t) => { const [y, m, dd] = d.split("-").map(Number); const [h, mi] = t.split(":").map(Number); return new Date(y, m - 1, dd, h, mi); };
+const dayKey = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+const isAllDay = (e) => e.start === "08:00" && e.end === "18:00" && e.kind === "sonstiges";
+const titleOf = (e) => (e.kind === "tutorium" ? "Tutorium: " + e.title : e.title);
+function hue(e) {
+  if (e.kind !== "vorlesung" && e.kind !== "tutorium") return 215;
+  if (HUE[e.title] != null) return HUE[e.title];
+  let h = 0; for (const c of e.title) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+function hsl(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+  const f = (n) => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))));
+  return "#" + [f(0), f(8), f(4)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+function colorOf(e) {
+  if (e.kind === "pruefung") return C.exam;
+  if (e.kind === "sonstiges") return C.faint;
+  const h = hue(e);
+  return Color.dynamic(new Color(hsl(h, 70, 48)), new Color(hsl(h, 60, 64)));
+}
+function dayLabel(d, now) {
+  const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - t0) / 864e5);
+  if (diff === 0) return "Heute";
+  if (diff === 1) return "Morgen";
+  if (diff < 7) return WT_LANG[d.getDay()];
+  return WT[d.getDay()] + ", " + d.getDate() + ". " + MON[d.getMonth()];
+}
+function daysUntil(d, now) {
+  const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const b = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return Math.round((b - a) / 864e5);
+}
+
+function prepare(list, now) {
+  const evs = list.map((e) => ({ ...e, a: toDate(e.date, e.start), b: toDate(e.date, e.end) }))
+    .filter((e) => e.b > now)
+    .sort((x, y) => x.a - y.a || x.b - y.b);
+  return { up: evs, exams: evs.filter((e) => e.kind === "pruefung") };
+}
+
+// ---------- Bausteine ----------
+function txt(stack, s, size, color, opts) {
+  opts = opts || {};
+  const t = stack.addText(s);
+  t.font = opts.bold ? Font.semiboldSystemFont(size) : opts.heavy ? Font.boldRoundedSystemFont(size) : opts.mono ? Font.mediumMonospacedSystemFont(size) : Font.systemFont(size);
+  t.textColor = color;
+  t.lineLimit = opts.lines || 1;
+  if (opts.scale) t.minimumScaleFactor = opts.scale;
+  return t;
+}
+function header(w, data, small) {
+  const h = w.addStack(); h.centerAlignContent();
+  txt(h, small ? "SEMESTERPLAN" : "📅 Semesterplan", small ? 10 : 12, C.accent, { bold: true });
+  h.addSpacer();
+  if (data.offline && data.at) txt(h, "offline", 10, C.faint);
+  w.addSpacer(small ? 4 : 6);
+}
+function eventRow(parent, e, now, opts) {
+  opts = opts || {};
+  const row = parent.addStack(); row.layoutHorizontally(); row.spacing = 6;
+  const bar = row.addStack(); bar.size = new Size(3, opts.compact ? 26 : 30); bar.backgroundColor = colorOf(e); bar.cornerRadius = 1.5;
+  const col = row.addStack(); col.layoutVertically();
+  txt(col, titleOf(e), opts.compact ? 12 : 13, C.fg, { bold: true, scale: 0.8 });
+  const sub = col.addStack(); sub.centerAlignContent(); sub.spacing = 4;
+  const live = e.a <= now && now < e.b;
+  if (live) {
+    txt(sub, "läuft · noch", 11, C.now, { bold: true });
+    const d = sub.addDate(e.b); d.applyRelativeStyle(); d.font = Font.semiboldSystemFont(11); d.textColor = C.now; d.lineLimit = 1;
+  } else {
+    txt(sub, isAllDay(e) ? "ganztägig" : e.start + "–" + e.end, 11, C.muted, { mono: !isAllDay(e) });
+    if (e.room && !opts.noRoom) txt(sub, "· " + e.room, 11, C.muted, { scale: 0.7 });
+  }
+  return row;
+}
+function examBox(parent, e, now, big) {
+  const n = daysUntil(e.a, now);
+  const box = parent.addStack(); box.layoutVertically();
+  txt(box, n <= 0 ? "Heute" : n === 1 ? "Morgen" : "noch " + n + " Tage", big ? 24 : 18, C.exam, { heavy: true, scale: 0.6 });
+  txt(box, e.title.replace(/^Klausur\s*/i, "Klausur "), big ? 13 : 11, C.fg, { bold: true, scale: 0.7, lines: 2 });
+  txt(box, WT[e.a.getDay()] + ", " + e.a.getDate() + ". " + MON[e.a.getMonth()] + " · " + e.start, 11, C.muted);
+  return box;
+}
+function empty(w, s) { w.addSpacer(); txt(w, s, 13, C.muted, { lines: 3 }); w.addSpacer(); }
+
+// ---------- Layouts ----------
+function small(w, d, now, mode) {
+  header(w, d, true);
+  if (mode === "klausur" || (mode !== "termine" && !d.up.length && d.exams.length)) {
+    if (!d.exams.length) return empty(w, "Keine Klausuren mehr 🎉");
+    w.addSpacer();
+    examBox(w, d.exams[0], now, true);
+    if (d.exams[1]) { w.addSpacer(4); txt(w, "danach: " + d.exams[1].title.replace(/^Klausur\s*/i, "") + " (" + daysUntil(d.exams[1].a, now) + " T.)", 10, C.muted, { scale: 0.7 }); }
+    return;
+  }
+  const e = d.up[0];
+  if (!e) return empty(w, "Keine Termine mehr");
+  txt(w, dayLabel(e.a, now), 11, C.muted, { bold: true });
+  w.addSpacer(2);
+  const bar = w.addStack(); bar.size = new Size(28, 3); bar.backgroundColor = colorOf(e); bar.cornerRadius = 1.5;
+  w.addSpacer(4);
+  txt(w, titleOf(e), 15, C.fg, { bold: true, lines: 3, scale: 0.7 });
+  w.addSpacer(2);
+  if (e.a <= now) {
+    const s = w.addStack(); s.spacing = 3; txt(s, "noch", 11, C.now, { bold: true });
+    const t = s.addDate(e.b); t.applyRelativeStyle(); t.font = Font.semiboldSystemFont(11); t.textColor = C.now;
+  } else txt(w, isAllDay(e) ? "ganztägig" : e.start + "–" + e.end + (e.room ? " · " + e.room : ""), 11, C.muted, { scale: 0.7 });
+  w.addSpacer();
+  if (mode !== "termine" && d.exams[0]) {
+    const n = daysUntil(d.exams[0].a, now);
+    txt(w, "📝 " + d.exams[0].title.replace(/^Klausur\s*/i, "") + ": " + (n <= 0 ? "heute" : n === 1 ? "morgen" : n + " Tage"), 10, C.exam, { bold: true, scale: 0.7 });
+  }
+}
+
+// max = Platz in "Zeilen": ein Termin kostet 1, eine Tages-Überschrift etwa eine halbe Zeile
+function list(parent, evs, now, max, opts) {
+  opts = opts || {};
+  let lastDay = "", used = 0, shown = 0;
+  for (const e of evs) {
+    const k = dayKey(e.a);
+    const cost = 1 + (k !== lastDay ? 0.55 : 0);
+    if (used + cost > max + 0.01) break;
+    if (k !== lastDay) {
+      if (lastDay) parent.addSpacer(opts.gap || 5);
+      txt(parent, dayLabel(e.a, now).toUpperCase(), 10, k === dayKey(now) ? C.accent : C.muted, { bold: true });
+      parent.addSpacer(3);
+      lastDay = k;
+    } else parent.addSpacer(4);
+    eventRow(parent, e, now, opts);
+    used += cost; shown++;
+  }
+  return shown;
+}
+
+function medium(w, d, now, mode) {
+  header(w, d, false);
+  const evs = filterMode(d.up, now, mode);
+  if (mode === "klausur") return examsRow(w, d, now, 3);
+  const body = w.addStack(); body.layoutHorizontally(); body.topAlignContent();
+  const left = body.addStack(); left.layoutVertically();
+  if (!evs.length) txt(left, "Keine Termine", 13, C.muted);
+  else list(left, evs, now, 3.6, { compact: true });
+  if (mode !== "termine" && mode !== "heute" && d.exams.length) {
+    body.addSpacer();
+    const right = body.addStack(); right.layoutVertically(); right.size = new Size(110, 0);
+    examBox(right, d.exams[0], now, false);
+  } else body.addSpacer();
+  w.addSpacer();
+}
+
+function examsRow(w, d, now, max) {
+  if (!d.exams.length) return empty(w, "Keine Klausuren mehr 🎉");
+  const row = w.addStack(); row.layoutHorizontally(); row.topAlignContent();
+  d.exams.slice(0, max).forEach((e, i) => { if (i) row.addSpacer(); examBox(row, e, now, i === 0); });
+  row.addSpacer();
+  w.addSpacer();
+}
+
+function large(w, d, now, mode, xl) {
+  header(w, d, false);
+  if (mode !== "termine" && mode !== "heute") {
+    if (mode === "klausur") return examsRow(w, d, now, xl ? 4 : 3);
+    if (d.exams.length) {
+      const strip = w.addStack(); strip.layoutHorizontally(); strip.centerAlignContent(); strip.spacing = 8;
+      strip.backgroundColor = Color.dynamic(new Color("#ff3b30", 0.08), new Color("#ff453a", 0.16)); strip.cornerRadius = 10; strip.setPadding(6, 10, 6, 10);
+      d.exams.slice(0, xl ? 4 : 3).forEach((e, i) => {
+        if (i) txt(strip, "·", 12, C.faint);
+        const n = daysUntil(e.a, now);
+        txt(strip, e.title.replace(/^Klausur\s*/i, "") + " " + (n <= 0 ? "heute" : n === 1 ? "morgen" : n + " T."), 11, C.exam, { bold: true, scale: 0.6 });
+      });
+      strip.addSpacer();
+      w.addSpacer(8);
+    }
+  }
+  const evs = filterMode(d.up, now, mode);
+  if (!evs.length) return empty(w, "Keine Termine");
+  const room = d.exams.length && mode !== "termine" && mode !== "heute" ? 7.2 : 8.2;
+  if (!xl) { list(w, evs, now, room); w.addSpacer(); return; }
+  // sehr groß (nur iPad): zwei Spalten
+  const cols = w.addStack(); cols.layoutHorizontally(); cols.topAlignContent();
+  const a = cols.addStack(); a.layoutVertically();
+  const n = list(a, evs, now, room);
+  cols.addSpacer(16);
+  const b = cols.addStack(); b.layoutVertically();
+  list(b, evs.slice(n), now, room);
+  cols.addSpacer();
+  w.addSpacer();
+}
+
+function filterMode(evs, now, mode) {
+  if (mode !== "heute") return evs;
+  const t = dayKey(now), m = dayKey(new Date(now.getTime() + 864e5));
+  return evs.filter((e) => { const k = dayKey(e.a); return k === t || k === m; });
+}
+
+// Sperrbildschirm (iPadOS 17 / iOS 16 und neuer)
+function accessory(w, d, now, fam, mode) {
+  const e = mode === "klausur" ? null : d.up[0], x = d.exams[0];
+  if (fam === "accessoryCircular") {
+    w.addAccessoryWidgetBackground = true;
+    const n = x ? daysUntil(x.a, now) : null;
+    const s = w.addStack(); s.layoutVertically(); s.centerAlignContent();
+    const t1 = txt(s, n == null ? "–" : String(Math.max(0, n)), 20, Color.white(), { heavy: true }); t1.centerAlignText();
+    const t2 = txt(s, "Tage", 9, Color.white()); t2.centerAlignText();
+    return;
+  }
+  if (fam === "accessoryInline") {
+    if (e) txt(w, (e.a <= now ? "Jetzt: " : dayLabel(e.a, now) + " " + e.start + " ") + titleOf(e), 12, Color.white());
+    else if (x) txt(w, x.title + " in " + daysUntil(x.a, now) + " Tagen", 12, Color.white());
+    else txt(w, "Keine Termine", 12, Color.white());
+    return;
+  }
+  // accessoryRectangular
+  if (!e && x) {
+    txt(w, "📝 " + x.title, 13, Color.white(), { bold: true, scale: 0.7 });
+    txt(w, "noch " + daysUntil(x.a, now) + " Tage", 12, Color.white());
+    return;
+  }
+  if (!e) { txt(w, "Keine Termine", 13, Color.white()); return; }
+  txt(w, dayLabel(e.a, now) + " · " + (isAllDay(e) ? "ganztägig" : e.start), 11, Color.white(), { bold: true });
+  txt(w, titleOf(e), 13, Color.white(), { bold: true, lines: 2, scale: 0.7 });
+  if (e.room) txt(w, e.room, 11, Color.white(), { scale: 0.7 });
+}
+
+// ---------- Start ----------
+async function build(fam) {
+  const now = new Date();
+  const raw = await loadTermine();
+  const d = { ...prepare(raw.list, now), offline: raw.offline, at: raw.at };
+  const mode = String(args.widgetParameter || "").trim().toLowerCase();
+  const w = new ListWidget();
+  w.url = SITE;
+  if (fam.startsWith("accessory")) accessory(w, d, now, fam, mode);
+  else {
+    w.backgroundColor = C.bg;
+    w.setPadding(14, 14, 14, 14);
+    if (!raw.list.length) { header(w, d, fam === "small"); empty(w, "Termine konnten nicht geladen werden. Bitte Internet prüfen."); }
+    else if (fam === "small") small(w, d, now, mode);
+    else if (fam === "medium") medium(w, d, now, mode);
+    else large(w, d, now, mode, fam === "extraLarge");
+  }
+  // Nach spätestens 30 Minuten neu laden, oder früher, wenn ein Termin beginnt oder endet
+  let next = new Date(now.getTime() + 30 * 60e3);
+  for (const e of d.up.slice(0, 2)) for (const t of [e.a, e.b]) if (t > now && t < next) next = t;
+  w.refreshAfterDate = next;
+  return w;
+}
+
+const fam = config.widgetFamily || "medium";
+const widget = await build(fam);
+if (config.runsInWidget) Script.setWidget(widget);
+else {
+  // In der App: Vorschau zeigen
+  const pick = new Alert();
+  pick.title = "Semesterplan-Widget";
+  pick.message = "Welche Größe als Vorschau?";
+  ["Klein", "Mittel", "Groß", "Sehr groß (iPad)"].forEach((s) => pick.addAction(s));
+  pick.addCancelAction("Fertig");
+  const i = await pick.presentSheet();
+  const fams = ["small", "medium", "large", "extraLarge"];
+  if (i >= 0 && i < 4) {
+    const v = await build(fams[i]);
+    if (i === 0) await v.presentSmall(); else if (i === 1) await v.presentMedium(); else if (i === 2) await v.presentLarge(); else await v.presentExtraLarge();
+  }
+}
+Script.complete();
+</script>
 <script src="kalender-ics.js"></script>
 <script>
 //<parse>
@@ -1026,7 +1396,7 @@ function renderNav() {
        <button type="button" class="btn ghost" data-act="today">Heute</button>`;
   } else if (view === "mensa") {
     $("#nav").innerHTML = mensaNav();
-  } else if (view === "partys" || view === "countdown") {
+  } else if (view === "partys" || view === "countdown" || view === "widget") {
     $("#nav").innerHTML = "";
   } else {
     $("#nav").innerHTML = `<button type="button" class="btn ghost" data-act="past">${showPast ? "Vergangene ausblenden" : "Vergangene anzeigen"}</button>`;
@@ -1168,11 +1538,12 @@ function render() {
   $("#tabcd").setAttribute("aria-pressed", view === "countdown");
   $("#tabmensa").setAttribute("aria-pressed", view === "mensa");
   $("#tabpartys").setAttribute("aria-pressed", view === "partys");
+  $("#tabwidget").setAttribute("aria-pressed", view === "widget");
   renderNext(); renderNav(); renderTravel();
-  const noChips = view === "mensa" || view === "partys" || view === "countdown";
+  const noChips = view === "mensa" || view === "partys" || view === "countdown" || view === "widget";
   $("#chips").hidden = noChips;
   if (!noChips) renderChips();
-  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : view === "countdown" ? '<section class="panel cd" id="countdown" aria-label="Countdown bis zu den Prüfungen"></section>' : mensaHTML();
+  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : view === "widget" ? widgetHTML() : view === "countdown" ? '<section class="panel cd" id="countdown" aria-label="Countdown bis zu den Prüfungen"></section>' : mensaHTML();
   if (view === "countdown" && window.cdTick) window.cdTick(true);
   if (view === "mensa") fillPhotos();
   const ta2 = $("#noteTa");
@@ -1197,7 +1568,7 @@ function leftText(sec) {
 function tick() {
   const now = new Date();
   /* Wenn ein Termin anfängt oder endet (oder ein neuer Tag beginnt), alles neu zeichnen */
-  if (liveSignature() !== liveSig) { if (view === "mensa" || view === "partys" || view === "countdown") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
+  if (liveSignature() !== liveSig) { if (view === "mensa" || view === "partys" || view === "countdown" || view === "widget") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
   const secs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   document.querySelectorAll(".depleft[data-dep]").forEach((el) => {
     const ms = +el.dataset.dep - now.getTime(), toStart = +el.dataset.start - now.getTime();
@@ -1708,6 +2079,7 @@ $("#tablist").addEventListener("click", () => { view = "list"; armed = null; ren
 $("#tabcd").addEventListener("click", () => { view = "countdown"; armed = null; render(); });
 $("#tabmensa").addEventListener("click", () => { view = "mensa"; armed = null; render(); });
 $("#tabpartys").addEventListener("click", () => { view = "partys"; armed = null; render(); });
+$("#tabwidget").addEventListener("click", () => { view = "widget"; armed = null; render(); });
 
 $("#expcopy").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(exportText()); $("#expmsg").textContent = "Kopiert. Auf GitHub termine.js öffnen, alles ersetzen, speichern."; }
@@ -1784,6 +2156,122 @@ $("#caldl").addEventListener("click", () => {
   const a = document.createElement("a"); a.href = url; a.download = "semesterplan.ics"; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 5000);
   $("#calmsg").textContent = "Datei geladen. Auf dem iPhone: in „Dateien“ öffnen und „Alle hinzufügen“ tippen. Am Mac: Doppelklick.";
+});
+
+/* ---------- Widget für iPad / iPhone ----------
+   Das Widget läuft in der kostenlosen App Scriptable. Es lädt bei jeder Aktualisierung termine.js
+   von dieser Website. Ändert sich etwas auf GitHub, zeigt das Widget es beim nächsten Neuladen von selbst.
+   Das Skript steht oben in <script id="widgetsrc">; hier wird nur die Adresse der Seite eingesetzt. */
+const siteBase = () => new URL("./", location.href.split("#")[0].split("?")[0]).href;
+const siteOnline = () => /^https:$/.test(location.protocol);
+let wgMsg = "";
+function widgetSource() {
+  const src = ($("#widgetsrc") || {}).textContent || "";
+  return src.replace(/^\s*\n/, "").replace("__SITE__", siteOnline() ? siteBase() : "https://DEIN-NAME.github.io/DEIN-REPO/");
+}
+function widgetMock() {
+  const now = new Date(), today = key(now), nowM = nowMin();
+  const up = all().filter((e) => e.date > today || (e.date === today && e.b > nowM));
+  const ex = up.find((e) => e.kind === "pruefung");
+  let html = '<div class="wg-mock" aria-hidden="true"><div class="mh1">📅 Semesterplan</div><div>';
+  let last = "", n = 0;
+  for (const e of up) {
+    if (n >= 3 || (e.date !== last && n >= 2)) break;
+    if (e.date !== last) { html += `<div class="d">${esc(relLabel(e.date).toUpperCase())}</div>`; last = e.date; }
+    const live = e.date === today && e.a <= nowM;
+    html += `<div class="r" style="--h:${hueOf(e)}"><i></i><div style="min-width:0"><b>${esc(titleOf(e))}</b><span>${live ? "läuft gerade" : e.start + "–" + e.end}</span></div></div>`;
+    n++;
+  }
+  if (!n) html += '<div class="d">Keine Termine</div>';
+  html += "</div>";
+  if (ex) {
+    const days = Math.round((parseKey(ex.date) - parseKey(today)) / 864e5);
+    html += `<div class="x"><strong>${days <= 0 ? "Heute" : days === 1 ? "Morgen" : "noch " + days + " Tage"}</strong><b>${esc(ex.title)}</b><span>${esc(fmt(parseKey(ex.date), { weekday: "short", day: "numeric", month: "short" }))}</span></div>`;
+  }
+  return html + "</div>";
+}
+function widgetHTML() {
+  const warn = siteOnline() ? "" : `<p class="wg-warn">Diese Seite ist gerade nicht über ihre Internet-Adresse geöffnet. Öffne den Semesterplaner online (die github.io-Adresse) und kopiere das Skript dort, sonst weiß das Widget nicht, woher es die Termine holen soll.</p>`;
+  return `<section class="wg" aria-label="Widget für iPad und iPhone">
+    <div class="panel wg-hero">
+      <div>
+        <h2>Semesterplan als Widget</h2>
+        <p class="note">Die nächsten Termine und der Klausur-Countdown direkt auf dem Home-Bildschirm vom iPad (geht auch am iPhone). Das Widget holt sich die Termine immer frisch von dieser Website: Wenn sich etwas ändert, ist es beim nächsten Aktualisieren von selbst drin. Einmal einrichten dauert etwa 3 Minuten.</p>
+      </div>
+      ${widgetMock()}
+    </div>
+    ${warn}
+    <ol class="wg-steps">
+      <li>
+        <h3>Scriptable installieren</h3>
+        <p>Lade die kostenlose App <b>Scriptable</b> aus dem App Store. Mit ihr kann man eigene Widgets bauen.</p>
+        <div class="wg-acts" style="margin-top:8px"><a class="btn ghost" href="https://apps.apple.com/de/app/scriptable/id1405459188" target="_blank" rel="noopener">Scriptable im App Store</a></div>
+      </li>
+      <li>
+        <h3>Skript kopieren</h3>
+        <p>Öffne diese Seite auf dem iPad in Safari und tippe auf <kbd>Skript kopieren</kbd>.</p>
+        <div class="wg-acts" style="margin-top:8px">
+          <button class="btn" type="button" data-wg="copy">Skript kopieren</button>
+          <button class="btn ghost" type="button" data-wg="dl">Als Datei laden</button>
+          <span class="wg-ok" id="wgmsg" aria-live="polite">${esc(wgMsg)}</span>
+        </div>
+      </li>
+      <li>
+        <h3>In Scriptable einfügen</h3>
+        <p>Öffne Scriptable und tippe oben rechts auf <kbd>+</kbd>. Tippe in das leere Feld, halte kurz gedrückt und wähle <kbd>Einfügen</kbd>.</p>
+        <p>Tippe oben auf den Namen („Untitled Script“) und nenne das Skript <b>Semesterplan</b>. Dann oben links auf <kbd>Fertig</kbd>.</p>
+        <p>Zum Ausprobieren kannst du unten rechts auf <kbd>▶</kbd> tippen. Dann zeigt Scriptable eine Vorschau in jeder Größe.</p>
+      </li>
+      <li>
+        <h3>Widget auf den Home-Bildschirm legen</h3>
+        <p>Halte auf dem Home-Bildschirm einen Finger auf eine freie Stelle, bis die Apps wackeln. Tippe oben links auf <kbd>Bearbeiten</kbd> und dann auf <kbd>Widget hinzufügen</kbd> (bei älteren iPadOS-Versionen auf das <kbd>+</kbd>).</p>
+        <p>Suche nach <b>Scriptable</b>, wische zur gewünschten Größe (klein, mittel, groß oder sehr groß) und tippe auf <kbd>Widget hinzufügen</kbd>.</p>
+      </li>
+      <li>
+        <h3>Skript auswählen</h3>
+        <p>Das Widget zeigt erst „Select script in widget configurator“. Tippe es an (während die Apps noch wackeln) oder halte es gedrückt und wähle <kbd>Widget bearbeiten</kbd>. Bei <b>Script</b> wählst du <b>Semesterplan</b>. Fertig: Tippe daneben, dann erscheinen deine Termine.</p>
+        <p>Bei <b>When Interacting</b> kannst du alles so lassen. Ein Tipp aufs Widget öffnet diese Website.</p>
+      </li>
+      <li>
+        <h3>Optional: Was das Widget zeigen soll</h3>
+        <p>Im selben Menü gibt es das Feld <b>Parameter</b>. Leer lassen passt meistens. Sonst eins dieser Wörter eintragen:</p>
+        <ul class="wg-params">
+          <li><code>klausur</code></li><li>nur der Countdown bis zu den Klausuren</li>
+          <li><code>termine</code></li><li>nur die nächsten Termine, ohne Countdown</li>
+          <li><code>heute</code></li><li>nur Termine von heute und morgen</li>
+        </ul>
+        <p>Du kannst mehrere Widgets anlegen, z. B. ein großes mit Terminen und ein kleines mit <code>klausur</code>. Am Sperrbildschirm (iPadOS 17 und neuer) geht es auch: Sperrbildschirm gedrückt halten, <kbd>Anpassen</kbd>, dann Scriptable wählen.</p>
+      </li>
+    </ol>
+    <div class="panel">
+      <p class="note"><b>Wie oft aktualisiert es sich?</b> Das entscheidet das iPad selbst, meist alle 15 bis 30 Minuten und immer dann, wenn ein Termin beginnt oder endet. Neue oder geänderte Termine auf GitHub sind also nach spätestens etwa einer halben Stunde im Widget. Ohne Internet zeigt es den zuletzt geladenen Stand und „offline“. Eigene Notizen von dieser Seite sieht das Widget nicht, die bleiben im Browser.</p>
+    </div>
+    <details class="panel">
+      <summary>Skript ansehen</summary>
+      <pre>${esc(widgetSource())}</pre>
+    </details>
+  </section>`;
+}
+$("#view").addEventListener("click", async (ev) => {
+  const b = ev.target.closest("[data-wg]");
+  if (!b) return;
+  const out = () => { const m = $("#wgmsg"); if (m) m.textContent = wgMsg; };
+  if (b.dataset.wg === "copy") {
+    try { await navigator.clipboard.writeText(widgetSource()); wgMsg = "✓ Kopiert. Jetzt in Scriptable einfügen."; }
+    catch (e) {
+      /* Fallback für ältere Browser: Text markieren und kopieren */
+      const t = document.createElement("textarea"); t.value = widgetSource(); t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select(); t.setSelectionRange(0, t.value.length);
+      let ok = false; try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+      t.remove();
+      wgMsg = ok ? "✓ Kopiert. Jetzt in Scriptable einfügen." : "Kopieren ging nicht. Öffne unten „Skript ansehen“ und kopiere den Text von Hand.";
+    }
+    out();
+  } else if (b.dataset.wg === "dl") {
+    await saveFile("Semesterplan.js", widgetSource());
+    wgMsg = "Datei geladen. In der Dateien-App antippen und mit Scriptable teilen.";
+    out();
+  }
 });
 
 /* ---------- Partys ----------

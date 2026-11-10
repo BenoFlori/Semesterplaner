@@ -2,8 +2,8 @@
    Immer zuerst aus dem Netz laden (damit neue Termine sofort da sind),
    nur ohne Netz die zuletzt gespeicherte Version zeigen.
    Wetter, Mensa-Live-Daten und Schriften von anderen Seiten laufen ganz normal durch. */
-const CACHE = "semesterplan-v3";
-const CORE = ["./", "./index.html", "./termine.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const CACHE = "semesterplan-v4";
+const CORE = ["./", "./index.html", "./termine.js", "./kalender-ics.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).catch(() => {}).then(() => self.skipWaiting()));

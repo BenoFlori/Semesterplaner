@@ -543,6 +543,46 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 @keyframes bkWave { 0%, 60%, 100% { transform: rotate(0deg); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(6deg); } 90% { transform: rotate(-10deg); } }
 @media (max-width: 520px) { .tabs { display: flex; width: 100%; } .tabs button { flex: 1 1 auto; min-width: 0; padding: 5px 6px; font-size: 0.84rem; } }
 @media (max-width: 420px) { .cd .units { gap: 5px; } .cd .u span { font-size: 0.58rem; letter-spacing: 0.02em; } }
+
+/* Kalender-Export */
+.cal { display: flex; flex-direction: column; gap: 12px; }
+.cal .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.cal .opt { background: var(--sunken); border-radius: var(--r-md); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.cal .opt b { font-weight: 600; letter-spacing: -0.005em; }
+.cal .opt .hint { font-size: 0.8rem; }
+.cal .opt .ctl { margin-top: 2px; }
+.cal .chk { display: inline-flex; gap: 8px; align-items: center; font-size: 0.85rem; cursor: pointer; }
+.cal code { font-family: var(--font-num); font-size: 0.78rem; overflow-wrap: anywhere; background: var(--surface); padding: 2px 6px; border-radius: 6px; }
+.cal .msg { margin: 0; font-size: 0.82rem; color: var(--muted); }
+
+/* Eigene Notizen */
+.detail .noteed { flex: 1 1 100%; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 12px; }
+.noteed .lbl { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-weight: 600; font-size: 0.9rem; }
+.noteed .lbl small { font-weight: 500; color: var(--muted); font-size: 0.76rem; }
+.noteed textarea { width: 100%; min-height: 76px; resize: vertical; padding: 9px 11px; background: var(--sunken); border: 0; box-shadow: inset var(--ring); border-radius: var(--r-md); line-height: 1.45; font-size: 0.9rem; }
+@media (pointer: coarse) { .noteed textarea { font-size: 16px; } }
+.noteed .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 0.82rem; color: var(--muted); }
+.noteed .row label { display: inline-flex; gap: 6px; align-items: center; color: var(--fg); cursor: pointer; }
+.noteed .prev { font-size: 0.82rem; color: var(--muted); background: var(--sunken); border-radius: var(--r-md); padding: 8px 10px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.noteed .prev b { color: var(--fg); font-weight: 600; }
+.ev .nt { position: absolute; top: 2px; right: 3px; font-size: 0.7rem; line-height: 1; }
+.ev .nt:empty { display: none; }
+.nx .nt, .li .nt { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; white-space: pre-wrap; }
+.nx .nt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.li .notebtn { all: unset; cursor: pointer; display: inline-block; margin-top: 2px; font-size: 0.78rem; font-weight: 500; color: var(--accent); border-radius: 4px; }
+.li .notebtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.li .notebtn:hover { text-decoration: underline; }
+.li .nt.done, .hw .done { text-decoration: line-through; opacity: 0.7; }
+.hw { margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+.hw .cap { margin: 0; }
+.hw ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.hw li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; align-items: start; }
+.hw li input { margin-top: 3px; }
+.hw li button { all: unset; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 1px; border-radius: 6px; }
+.hw li button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hw li .w { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hw li .x { font-size: 0.9rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+.dish .ck { align-self: flex-start; margin-top: 4px; font-size: 0.78rem; color: var(--accent); text-underline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -551,6 +591,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
     <h1>Semesterplaner</h1>
     <div class="hdr-r">
       <span id="status" role="status"></span>
+      <button type="button" class="btn ghost" id="calbtn" aria-expanded="false" aria-controls="calpanel">📅 Kalender</button>
       <button type="button" class="btn ghost" id="travelbtn" aria-expanded="false" aria-controls="travelpanel">🚗 Anfahrt <span class="pill">aus</span></button>
     </div>
   </header>
@@ -567,6 +608,27 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
       </select></label>
     </div>
     <p class="note" id="tInfo"></p>
+  </section>
+
+  <section class="panel cal" id="calpanel" hidden aria-labelledby="calcap">
+    <span class="cap" id="calcap">In Apple Kalender (oder Google, Outlook) übernehmen</span>
+    <div class="opts">
+      <div class="opt" id="calsub">
+        <b>Abonnieren</b>
+        <span class="hint">Alle Termine erscheinen in deinem Kalender. Neue oder geänderte Termine kommen von selbst nach. Deine Notizen sind nicht dabei.</span>
+        <div class="ctl">
+          <a class="btn" id="calsubbtn" href="#">In Kalender abonnieren</a>
+          <button type="button" class="btn ghost" id="calcopy">Link kopieren</button>
+        </div>
+      </div>
+      <div class="opt">
+        <b>Als Datei laden</b>
+        <span class="hint" id="calcount">Einmalig importieren. Spätere Änderungen kommen nicht von selbst nach.</span>
+        <label class="chk"><input type="checkbox" id="calnotes" checked> Meine Notizen mit in die Termine</label>
+        <div class="ctl"><button type="button" class="btn ghost" id="caldl">.ics herunterladen</button></div>
+      </div>
+    </div>
+    <p class="msg" id="calmsg" aria-live="polite"></p>
   </section>
 
   <section class="panel wx" id="wx" aria-label="Wetter in Ravensburg" hidden></section>
@@ -623,6 +685,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
   <main id="view"></main>
 </div>
 
+<script src="kalender-ics.js"></script>
 <script>
 //<parse>
 const WD_RE = "(?:montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so)";
@@ -712,6 +775,24 @@ const hidden = new Set();
 let EDIT = /(^|[?&])edit(=|&|$)/.test(location.search);
 let sampleFn = null;
 const WORK = "semesterplaner.arbeitskopie.v2";
+
+/* ---------- Eigene Notizen ----------
+   Jede Person schreibt ihre Notizen (z. B. Hausaufgaben) nur für sich. Sie bleiben im Browser auf diesem Gerät
+   (localStorage) und gehen nirgendwo hin, auch nicht zu GitHub. Schlüssel: Art|Fach|Datum|Beginn, damit eine Notiz
+   am Termin hängen bleibt, auch wenn termine.js neu sortiert wird. */
+const NOTES_KEY = "semesterplaner.notizen.v1";
+let notes = {};
+try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || "{}") || {}; } catch (e) { notes = {}; }
+const noteOf = (e) => notes[ckey(e)] || null;
+const noteText = (e) => { const n = noteOf(e); return n && n.t ? n.t : ""; };
+function setNote(e, patch) {
+  const k = ckey(e);
+  const n = { t: "", done: false, ...(notes[k] || {}), ...patch, at: Date.now() };
+  if (!n.t.trim()) delete notes[k]; else notes[k] = n;
+  try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); } catch (err) { /* voll oder gesperrt */ }
+}
+const noteMark = (e) => { const n = noteOf(e); return n && n.t ? (n.done ? "✅" : "📝") : ""; };
+let focusNote = false;
 
 function all() {
   return Object.entries(events)
@@ -917,6 +998,7 @@ function renderNext() {
       ${e.date === key(new Date()) && e.a <= nowMin() ? `<div class="left" data-end="${e.b}"></div>` : ""}
       <div class="tt">${esc(titleOf(e))}</div>
       ${e.prof ? `<div class="pf">${esc(e.prof)}</div>` : ""}
+      ${noteText(e) ? `<div class="nt">${noteMark(e)} ${esc(noteText(e))}</div>` : ""}
     </button>`).join("");
 }
 function renderChips() {
@@ -998,7 +1080,7 @@ function weekHTML() {
       const w = 100 / e.n;
       const tip = `${titleOf(e)} ${e.start}–${e.end}${e.prof ? ", " + e.prof : ""}${e.room ? ", " + e.room : ""}`;
       const live = k === todayKey && e.a <= nowM && nowM < e.b;
-      return `<button type="button" class="ev k-${e.kind}${e.id === sel ? " sel" : ""}${live ? " live" : ""}" data-act="sel" data-id="${esc(e.id)}" style="--h:${hueOf(e)};top:${top}px;height:${ht}px;left:calc(${e.lane * w}% + 2px);width:calc(${w}% - 4px)" title="${esc(tip)}"><span class="t">${e.start}–${e.end}</span>${live ? `<span class="left" data-end="${e.b}"></span>` : ""}${e.kind === "tutorium" ? '<span class="tg">Tutorium</span>' : ""}<span class="n">${esc(e.title)}</span>${e.prof ? `<span class="p">${esc(e.prof)}</span>` : ""}</button>`;
+      return `<button type="button" class="ev k-${e.kind}${e.id === sel ? " sel" : ""}${live ? " live" : ""}" data-act="sel" data-id="${esc(e.id)}" style="--h:${hueOf(e)};top:${top}px;height:${ht}px;left:calc(${e.lane * w}% + 2px);width:calc(${w}% - 4px)" title="${esc(tip + (noteText(e) ? "\nNotiz: " + noteText(e) : ""))}"><span class="nt" aria-hidden="true">${noteMark(e)}</span><span class="t">${e.start}–${e.end}</span>${live ? `<span class="left" data-end="${e.b}"></span>` : ""}${e.kind === "tutorium" ? '<span class="tg">Tutorium</span>' : ""}<span class="n">${esc(e.title)}</span>${e.prof ? `<span class="p">${esc(e.prof)}</span>` : ""}</button>`;
     }).join("");
     const depBlocks = evs.filter((e) => deps.has(e.id)).map((e) => {
       const d = deps.get(e.id).dep;
@@ -1017,6 +1099,7 @@ function weekHTML() {
         ${cur.prof ? `<span class="hint">${esc(cur.kind === "tutorium" ? "Tutor/in" : "Dozent/in")}: ${esc(cur.prof)}</span>` : ""}
         <span class="hint">${fmt(parseKey(cur.date), { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${cur.start}–${cur.end} Uhr (${cur.b - cur.a} Min.)${cur.room ? ", Raum " + esc(cur.room) : ""}</span></div>
       <div class="acts">${delButton(cur.id, "Termin löschen")}${n > 1 ? delButton("course:" + cur.kind + "|" + cur.title, `Alle ${n} Termine löschen`) : ""}</div>
+      ${noteEditor(cur)}
     </div>`;
   } else if (!inWeek.length) {
     const nx = upcoming()[0];
@@ -1024,12 +1107,45 @@ function weekHTML() {
   }
   return `<div class="scroll"><div class="wk" data-h0="${h0}" data-h1="${h1}" data-hh="${HH}" style="--nd:${nd};--hh:${HH}px"><div class="corner"></div>${heads}${gut}${cols}</div></div>${extra}`;
 }
+function noteEditor(cur) {
+  const n = noteOf(cur) || { t: "", done: false };
+  /* Letzte Notiz zum selben Fach davor: oft steht dort die Hausaufgabe für heute */
+  const before = all().filter((e) => e.title === cur.title && e.kind === cur.kind && (e.date < cur.date || (e.date === cur.date && e.a < cur.a)) && noteText(e)).pop();
+  return `<div class="noteed">
+    <label class="lbl" for="noteTa">📝 Meine Notiz / Hausaufgabe <small>nur für dich, bleibt auf diesem Gerät</small></label>
+    ${before ? `<div class="prev"><b>Vom ${fmt(parseKey(before.date), { weekday: "short", day: "numeric", month: "numeric" })}:</b> ${esc(noteText(before))}${noteOf(before).done ? " ✅" : ""}</div>` : ""}
+    <textarea id="noteTa" data-id="${esc(cur.id)}" placeholder="z. B. Übungsblatt 3, Aufgabe 2 bis nächste Woche" maxlength="4000">${esc(n.t)}</textarea>
+    <div class="row">
+      <label><input type="checkbox" id="noteDone" data-id="${esc(cur.id)}"${n.done ? " checked" : ""}${n.t ? "" : " disabled"}> erledigt</label>
+      <span id="noteSaved" aria-live="polite">${n.t ? "Gespeichert" : ""}</span>
+    </div>
+  </div>`;
+}
+function openNotes() {
+  const today = key(new Date());
+  return all().filter((e) => { const n = noteOf(e); return n && n.t && (!n.done || e.date >= today); })
+    .sort((x, y) => (noteOf(x).done - noteOf(y).done) || x.date.localeCompare(y.date) || x.a - y.a);
+}
+function notesPanel() {
+  const list = openNotes();
+  if (!list.length) return "";
+  const open = list.filter((e) => !noteOf(e).done).length;
+  return `<section class="panel hw" aria-label="Meine Notizen">
+    <span class="cap">📝 Meine Notizen · ${open} offen</span>
+    <ul>${list.map((e) => `<li>
+      <input type="checkbox" data-act="notedone" data-id="${esc(e.id)}" aria-label="Erledigt: ${esc(titleOf(e))}"${noteOf(e).done ? " checked" : ""}>
+      <button type="button" data-act="note" data-id="${esc(e.id)}" data-date="${e.date}">
+        <span class="w">${fmt(parseKey(e.date), { weekday: "short", day: "2-digit", month: "2-digit" })} · ${esc(titleOf(e))}</span>
+        <span class="x${noteOf(e).done ? " done" : ""}">${esc(noteText(e))}</span>
+      </button></li>`).join("")}</ul>
+  </section>`;
+}
 function listHTML() {
   const today = key(new Date());
   const items = all().filter((e) => !hidden.has(filterKey(e)) && (showPast || e.date >= today));
   if (!items.length) return `<div class="empty">${all().length ? "Keine kommenden Termine." : (EDIT ? "Noch keine Termine. Füge oben welche ein." : "Noch keine Termine eingetragen.")}</div>`;
   const deps = departures(visible());
-  let html = '<ul class="list">', month = "";
+  let html = notesPanel() + '<ul class="list">', month = "";
   for (const e of items) {
     const d = parseKey(e.date);
     const m = fmt(d, { month: "long", year: "numeric" });
@@ -1038,13 +1154,15 @@ function listHTML() {
     html += `<li class="li k-${e.kind}${e.date < today ? " past" : ""}" style="--h:${hueOf(e)}">
       <div class="d"><b>${fmt(d, { weekday: "short" })}</b>${pad(d.getDate())}.${pad(d.getMonth() + 1)}.</div>
       <div class="tm">${e.start}–${e.end}</div>
-      <div class="tt"><div class="l1">${esc(e.title)}${e.kind === "tutorium" ? ' <span class="tag">Tutorium</span>' : e.kind === "pruefung" ? ' <span class="tag">Klausur</span>' : ""}</div>${l2 ? `<div class="l2">${esc(l2)}</div>` : ""}${deps.has(e.id) && e.date >= today ? `<div class="dp">🚗 Losfahren ${hm(deps.get(e.id).dep)} Uhr</div>` : ""}</div>
+      <div class="tt"><div class="l1">${esc(e.title)}${e.kind === "tutorium" ? ' <span class="tag">Tutorium</span>' : e.kind === "pruefung" ? ' <span class="tag">Klausur</span>' : ""}</div>${l2 ? `<div class="l2">${esc(l2)}</div>` : ""}${deps.has(e.id) && e.date >= today ? `<div class="dp">🚗 Losfahren ${hm(deps.get(e.id).dep)} Uhr</div>` : ""}${noteText(e) ? `<div class="nt${noteOf(e).done ? " done" : ""}">${noteMark(e)} ${esc(noteText(e))}</div>` : ""}<button type="button" class="btn ghost notebtn" data-act="note" data-id="${esc(e.id)}" data-date="${e.date}">${noteText(e) ? "Notiz bearbeiten" : "📝 Notiz"}</button></div>
       ${delButton(e.id, "Löschen")}
     </li>`;
   }
   return html + "</ul>";
 }
 function render() {
+  const ae = document.activeElement;
+  const keep = ae && ae.id === "noteTa" ? { id: ae.dataset.id, a: ae.selectionStart, b: ae.selectionEnd } : null;
   $("#tabweek").setAttribute("aria-pressed", view === "week");
   $("#tablist").setAttribute("aria-pressed", view === "list");
   $("#tabcd").setAttribute("aria-pressed", view === "countdown");
@@ -1057,6 +1175,10 @@ function render() {
   $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : view === "countdown" ? '<section class="panel cd" id="countdown" aria-label="Countdown bis zu den Prüfungen"></section>' : mensaHTML();
   if (view === "countdown" && window.cdTick) window.cdTick(true);
   if (view === "mensa") fillPhotos();
+  const ta2 = $("#noteTa");
+  if (ta2 && keep && ta2.dataset.id === keep.id) { ta2.focus({ preventScroll: true }); try { ta2.setSelectionRange(keep.a, keep.b); } catch (e) { /* egal */ } }
+  else if (ta2 && focusNote) { ta2.scrollIntoView({ block: "center", behavior: "smooth" }); ta2.focus({ preventScroll: true }); }
+  focusNote = false;
   liveSig = liveSignature();
   tick();
 }
@@ -1182,6 +1304,12 @@ function dishEmoji(d) {
   if (/gemüse|brokkoli|karotte|wirsing|ratatouille/.test(s)) return "🥦";
   return "🍽️";
 }
+/* Chefkoch hat keine offene Schnittstelle und erlaubt nicht, seine Fotos auf anderen Seiten zu zeigen.
+   Deshalb nur ein Link auf die Chefkoch-Suche nach dem Gericht (Verlinken ist erlaubt). */
+function chefkochURL(name) {
+  const q = name.replace(/\([^)]*\)/g, " ").split(/\s+(?:dazu|an|auf)\s+|,/i)[0].trim().split(/\s+/).slice(0, 5).join(" ");
+  return "https://www.chefkoch.de/rs/s0/" + encodeURIComponent(q) + "/Rezepte.html";
+}
 function dishCard(d) {
   const [stud, staff, guest] = d.p;
   const others = [staff && "Bedienstete " + euro(staff), guest && "Gäste " + euro(guest)].filter(Boolean).join(" · ");
@@ -1193,6 +1321,7 @@ function dishCard(d) {
       <span class="nm">${esc(d.name)}</span>
       ${d.extra ? `<span class="sub">${esc(d.extra)}</span>` : ""}
       ${veg ? `<span class="tags"><span class="tg2">${veg}</span></span>` : ""}
+      <a class="ck" href="${esc(chefkochURL(d.name))}" target="_blank" rel="noopener">Rezept dazu auf Chefkoch ↗</a>
       ${others ? `<span class="others">${esc(others)}</span>` : ""}
     </div>
   </article>`;
@@ -1217,7 +1346,7 @@ function mensaHTML() {
     <h2 class="mh">Mensa Ravensburg · ${esc(label)}</h2>
     ${main.length ? `<div class="mgrid">${main.map(dishCard).join("")}</div>` : ""}
     ${side.length ? `<h2 class="mh">Beilagen, Salate und Desserts</h2><div class="mlist">${side.map(sideRow).join("")}</div>` : ""}
-    <p class="note">Die Fotos sind Symbolbilder (Rezeptfotos von TheMealDB, bei schwäbischen Klassikern von Wikipedia), passend zum Namen des Gerichts ausgesucht. Sie zeigen nicht das Essen aus der Mensa. Preise auf den Fotos gelten für Studierende. Speiseplan, Preise und Allergene: <a href="${MENSA_PAGE}" target="_blank" rel="noopener">Seezeit</a>.</p>
+    <p class="note">Die Fotos sind Symbolbilder (Rezeptfotos von TheMealDB, bei schwäbischen Klassikern von Wikipedia), passend zum Namen des Gerichts ausgesucht. Sie zeigen nicht das Essen aus der Mensa. Fotos von Chefkoch dürfen hier nicht gezeigt werden, deshalb führt bei jedem Gericht ein Link zu passenden Rezepten auf Chefkoch. Preise auf den Fotos gelten für Studierende. Speiseplan, Preise und Allergene: <a href="${MENSA_PAGE}" target="_blank" rel="noopener">Seezeit</a>.</p>
   </div>`;
 }
 
@@ -1557,6 +1686,8 @@ document.addEventListener("click", async (ev) => {
   }
   else if (act === "chip") { const k = el.dataset.k; hidden.has(k) ? hidden.delete(k) : hidden.add(k); }
   else if (act === "sel") sel = sel === el.dataset.id ? null : el.dataset.id;
+  else if (act === "note") { view = "week"; weekStart = monday(parseKey(el.dataset.date)); sel = el.dataset.id; focusNote = true; }
+  else if (act === "notedone") { const e = all().find((x) => x.id === el.dataset.id); if (e) setNote(e, { done: el.checked }); }
   else if (act === "goto") { view = "week"; weekStart = monday(parseKey(el.dataset.date)); if (el.dataset.id) sel = el.dataset.id; }
   else if (act === "del") {
     const id = el.dataset.id;
@@ -1590,6 +1721,69 @@ $("#expreset").addEventListener("click", () => {
   try { localStorage.removeItem(WORK); } catch (e) { /* egal */ }
   loadData(); updateExport(); render();
   $("#expmsg").textContent = "Zurückgesetzt auf den veröffentlichten Stand.";
+});
+
+/* ---------- Notiz-Eingabe ---------- */
+document.addEventListener("input", (ev) => {
+  if (ev.target.id !== "noteTa") return;
+  const e = all().find((x) => x.id === ev.target.dataset.id);
+  if (!e) return;
+  setNote(e, { t: ev.target.value });
+  const has = !!ev.target.value.trim();
+  const d = $("#noteDone"); if (d) { d.disabled = !has; if (!has) d.checked = false; }
+  const s = $("#noteSaved"); if (s) s.textContent = has ? "Gespeichert" : "";
+  const m = document.querySelector(`.ev[data-id="${CSS.escape(e.id)}"] .nt`); if (m) m.textContent = noteMark(e);
+});
+document.addEventListener("change", (ev) => {
+  if (ev.target.id === "noteDone") {
+    const e = all().find((x) => x.id === ev.target.dataset.id);
+    if (e) { setNote(e, { done: ev.target.checked }); const m = document.querySelector(`.ev[data-id="${CSS.escape(e.id)}"] .nt`); if (m) m.textContent = noteMark(e); renderNext(); }
+  } else if (ev.target.id === "noteTa") renderNext();
+});
+
+/* ---------- Kalender-Export ----------
+   Abonnieren: termine.ics liegt neben index.html (eine GitHub Action baut sie aus termine.js).
+   Apple-Geräte öffnen webcal://-Links direkt in Kalender und fragen, ob abonniert werden soll.
+   Datei: wird hier im Browser gebaut, mit den eingeblendeten Fächern und auf Wunsch den eigenen Notizen. */
+const icsHref = () => new URL("termine.ics", location.href.split("#")[0].split("?")[0]).href;
+let icsOnline = null;
+async function checkIcs() {
+  if (icsOnline !== null || !/^https?:$/.test(location.protocol)) return;
+  try { const r = await fetch("termine.ics?t=" + Date.now(), { method: "HEAD", cache: "no-store" }); icsOnline = r.ok; }
+  catch (e) { icsOnline = false; }
+  renderCal();
+}
+function renderCal() {
+  const web = icsHref().replace(/^https?:/, "webcal:");
+  const ok = icsOnline === true;
+  const sub = $("#calsubbtn");
+  sub.href = ok ? web : "#";
+  sub.toggleAttribute("aria-disabled", !ok);
+  sub.style.opacity = ok ? "" : "0.4";
+  sub.style.pointerEvents = ok ? "" : "none";
+  $("#calcopy").disabled = !ok;
+  if (icsOnline === false) $("#calmsg").textContent = "Abonnieren geht erst, wenn termine.ics auf GitHub liegt (die Action „Kalender-Datei bauen“ legt sie an). Die Datei zum Herunterladen geht schon.";
+  const vis = visible().length, total = all().length;
+  $("#calcount").textContent = `Einmalig importieren: ${vis} Termine${vis < total ? ` (ausgeblendete Fächer fehlen, ${total} insgesamt)` : ""}. Spätere Änderungen kommen nicht von selbst nach.`;
+}
+$("#calbtn").addEventListener("click", () => {
+  const p = $("#calpanel"); p.hidden = !p.hidden;
+  $("#calbtn").setAttribute("aria-expanded", String(!p.hidden));
+  if (!p.hidden) { renderCal(); checkIcs(); }
+});
+$("#calcopy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(icsHref()); $("#calmsg").textContent = "Link kopiert. Bei Google Kalender: Weitere Kalender → Per URL hinzufügen."; }
+  catch (e) { $("#calmsg").textContent = "Kopieren ging nicht. Link: " + icsHref(); }
+});
+$("#caldl").addEventListener("click", () => {
+  if (!window.makeICS) { $("#calmsg").textContent = "kalender-ics.js fehlt. Lade die Seite neu."; return; }
+  const withNotes = $("#calnotes").checked;
+  const ics = window.makeICS(visible(), { notes: withNotes ? noteText : null, url: /^https:/.test(location.protocol) ? location.href.split("#")[0].split("?")[0] : "" });
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = "semesterplan.ics"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  $("#calmsg").textContent = "Datei geladen. Auf dem iPhone: in „Dateien“ öffnen und „Alle hinzufügen“ tippen. Am Mac: Doppelklick.";
 });
 
 /* ---------- Partys ----------

@@ -493,6 +493,50 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 .pgh[open] summary { margin-bottom: 8px; }
 .pgh .note { margin: 0; }
 @media (max-width: 560px) { .pf-grid { grid-template-columns: minmax(0, 1fr); } .pf-grid .pf-wide { grid-column: auto; } }
+
+/* Prüfungs-Countdown */
+.cd { --h: 4; --sat: 75%; position: relative; overflow: hidden; padding-left: 20px; }
+.cd::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: hsl(var(--h) var(--sat) var(--ev-line-l)); }
+.cd .hd { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.cd .tt { font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; margin-top: 2px; overflow-wrap: anywhere; }
+.cd .sub { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+.cd .units { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.cd .u { background: var(--sunken); border-radius: var(--r-md); padding: 10px 4px 8px; text-align: center; min-width: 0; }
+.cd .u b { display: block; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: clamp(1.25rem, 5vw, 2rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+.cd .u span { display: block; margin-top: 4px; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.cd .live { margin-top: 10px; font-weight: 600; color: var(--now); }
+.cd ul { list-style: none; margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+.cd li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.85rem; }
+.cd li .d { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.bunker { position: relative; margin-top: 12px; border-radius: var(--r-md); overflow: hidden; background: #26221e; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2); }
+.bunker svg { display: block; width: 100%; max-width: 620px; margin: 0 auto; height: auto; }
+.bunker .seg { font-family: var(--font-num); font-size: 30px; font-weight: 600; fill: #ff3b30; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.bunker .seg.ghost { fill: #ff3b30; opacity: 0.08; filter: none; }
+.bunker .ul { font-family: var(--font-ui); font-size: 7.5px; font-weight: 700; letter-spacing: 0.08em; fill: #ff8a80; text-anchor: middle; }
+.bunker .plate { font-family: var(--font-ui); font-size: 9.5px; font-weight: 800; letter-spacing: 0.12em; fill: #1b1b1f; text-anchor: middle; }
+.bunker .book { font-family: var(--font-ui); font-size: 5.5px; font-weight: 800; fill: #fff; text-anchor: middle; }
+.bunker .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.bunker .beacon path { transform-box: fill-box; }
+@media (prefers-reduced-motion: no-preference) {
+  .bunker .beacon path { animation: bkFlash 1.4s steps(1) infinite; }
+  .bunker .beacon.b2 path { animation-delay: 0.7s; }
+  .bunker.alarm .beacon path { animation-duration: 0.4s; }
+  .bunker .lamp { transform-origin: 200px 0; animation: bkSwing 4s ease-in-out infinite; }
+  .bunker .pupil { animation: bkLook 6s ease-in-out infinite; }
+  .bunker .eyes { transform-origin: 179px 153px; animation: bkBlink 5s infinite; }
+  .bunker .sweat { animation: bkSweat 2.4s ease-in infinite; }
+  .bunker .steam { animation: bkSteam 3s ease-in-out infinite; }
+  .bunker .arm { transform-origin: 195px 186px; animation: bkWave 3.2s ease-in-out infinite; }
+}
+@keyframes bkFlash { 0% { fill: #ff3b30; filter: drop-shadow(0 0 6px #ff3b30); } 50% { fill: #7a1a16; filter: none; } }
+@keyframes bkSwing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes bkLook { 0%, 40% { transform: translate(0, 0); } 50%, 70% { transform: translate(-4px, -2px); } 80%, 100% { transform: translate(0, 0); } }
+@keyframes bkBlink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+@keyframes bkSweat { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+@keyframes bkSteam { 0%, 100% { opacity: 0.2; transform: translateY(0); } 50% { opacity: 0.8; transform: translateY(-3px); } }
+@keyframes bkWave { 0%, 60%, 100% { transform: rotate(0deg); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(6deg); } 90% { transform: rotate(-10deg); } }
+@media (max-width: 520px) { .tabs { display: flex; width: 100%; } .tabs button { flex: 1 1 auto; min-width: 0; padding: 5px 6px; font-size: 0.84rem; } }
+@media (max-width: 420px) { .cd .units { gap: 5px; } .cd .u span { font-size: 0.58rem; letter-spacing: 0.02em; } }
 </style>
 </head>
 <body>
@@ -562,6 +606,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tabweek" aria-pressed="true">Woche</button>
       <button type="button" id="tablist" aria-pressed="false">Liste</button>
+      <button type="button" id="tabcd" aria-pressed="false">Countdown</button>
       <button type="button" id="tabmensa" aria-pressed="false">Mensa</button>
       <button type="button" id="tabpartys" aria-pressed="false">Partys</button>
     </div>
@@ -893,7 +938,7 @@ function renderNav() {
        <button type="button" class="btn ghost" data-act="today">Heute</button>`;
   } else if (view === "mensa") {
     $("#nav").innerHTML = mensaNav();
-  } else if (view === "partys") {
+  } else if (view === "partys" || view === "countdown") {
     $("#nav").innerHTML = "";
   } else {
     $("#nav").innerHTML = `<button type="button" class="btn ghost" data-act="past">${showPast ? "Vergangene ausblenden" : "Vergangene anzeigen"}</button>`;
@@ -996,12 +1041,15 @@ function listHTML() {
 function render() {
   $("#tabweek").setAttribute("aria-pressed", view === "week");
   $("#tablist").setAttribute("aria-pressed", view === "list");
+  $("#tabcd").setAttribute("aria-pressed", view === "countdown");
   $("#tabmensa").setAttribute("aria-pressed", view === "mensa");
   $("#tabpartys").setAttribute("aria-pressed", view === "partys");
   renderNext(); renderNav(); renderTravel();
-  $("#chips").hidden = view === "mensa" || view === "partys";
-  if (view !== "mensa" && view !== "partys") renderChips();
-  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : mensaHTML();
+  const noChips = view === "mensa" || view === "partys" || view === "countdown";
+  $("#chips").hidden = noChips;
+  if (!noChips) renderChips();
+  $("#view").innerHTML = view === "week" ? weekHTML() : view === "list" ? listHTML() : view === "partys" ? partysHTML() : view === "countdown" ? '<section class="panel cd" id="countdown" aria-label="Countdown bis zu den Prüfungen"></section>' : mensaHTML();
+  if (view === "countdown" && window.cdTick) window.cdTick(true);
   if (view === "mensa") fillPhotos();
   liveSig = liveSignature();
   tick();
@@ -1021,7 +1069,7 @@ function leftText(sec) {
 function tick() {
   const now = new Date();
   /* Wenn ein Termin anfängt oder endet (oder ein neuer Tag beginnt), alles neu zeichnen */
-  if (liveSignature() !== liveSig) { if (view === "mensa" || view === "partys") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
+  if (liveSignature() !== liveSig) { if (view === "mensa" || view === "partys" || view === "countdown") { liveSig = liveSignature(); renderNext(); } else { render(); return; } }
   const secs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   document.querySelectorAll(".depleft[data-dep]").forEach((el) => {
     const ms = +el.dataset.dep - now.getTime(), toStart = +el.dataset.start - now.getTime();
@@ -1520,6 +1568,7 @@ document.addEventListener("click", async (ev) => {
 });
 $("#tabweek").addEventListener("click", () => { view = "week"; armed = null; render(); });
 $("#tablist").addEventListener("click", () => { view = "list"; armed = null; render(); });
+$("#tabcd").addEventListener("click", () => { view = "countdown"; armed = null; render(); });
 $("#tabmensa").addEventListener("click", () => { view = "mensa"; armed = null; render(); });
 $("#tabpartys").addEventListener("click", () => { view = "partys"; armed = null; render(); });
 
@@ -1852,6 +1901,147 @@ async function connect() {
     }
   } catch (e) { /* bleibt bei der statischen Ansicht */ }
 }
+</script>
+
+<script>
+/* ---------- Countdown bis zur nächsten Klausur ----------
+   Nimmt alle Termine mit kind "pruefung" (auch im Bearbeitungsmodus neu eingetragene)
+   und zählt jede Sekunde bis zum Beginn der nächsten herunter. */
+(function () {
+  const pad = (n) => String(n).padStart(2, "0");
+  const WD = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  const at = (d, t) => { const [y, m, dd] = d.split("-").map(Number); const [h, mi] = (t || "00:00").split(":").map(Number); return new Date(y, m - 1, dd, h, mi); };
+  const fmt = (d) => WD[d.getDay()] + ", " + pad(d.getDate()) + "." + pad(d.getMonth() + 1) + ".";
+  const esc2 = (x) => String(x).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  function exams() {
+    let list;
+    try { list = all(); } catch (_) { list = window.TERMINE || []; }
+    return list.filter((e) => e.kind === "pruefung" && e.date)
+      .map((e) => ({ title: e.title, room: e.room || "", s: at(e.date, e.start), e: at(e.date, e.end || e.start) }))
+      .sort((a, b) => a.s - b.s);
+  }
+  /* Comic-Szene: kleines Männchen im Bunker, hinter ihm der Zähler wie ein Atom-Countdown */
+  function bunker(running) {
+    return `<div class="bunker${running ? " alarm" : ""}">
+<svg viewBox="0 0 400 260" role="img" aria-label="Comic: ein kleiner Mann mit blonder Föhnfrisur, Anzug und roter Krawatte steht in seinem Bunker, hinter ihm zählt ein großer Zähler wie ein Atom-Countdown bis zur Klausur herunter">
+  <defs>
+    <filter id="bkGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="bkHaz" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="16" height="16" fill="#f5c400"/><rect width="8" height="16" fill="#1b1b1f"/></pattern>
+    <radialGradient id="bkLight" cx="50%" cy="0%" r="100%"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="400" height="260" fill="#26221e"/>
+  <path d="M8 260V74Q200 -6 392 74V260Z" fill="#717a84" stroke="#1b1b1f" stroke-width="4"/>
+  <g stroke="#5d656e" stroke-width="2" fill="none">
+    <path d="M8 120H392M8 172H392"/><path d="M70 74V120M150 47V120M250 47V120M330 74V120M40 120V172M120 120V172M200 120V172M280 120V172M360 120V172"/>
+  </g>
+  <g fill="#4d545c"><circle cx="30" cy="96" r="2.5"/><circle cx="370" cy="96" r="2.5"/><circle cx="30" cy="150" r="2.5"/><circle cx="370" cy="150" r="2.5"/></g>
+  <!-- Rohre links -->
+  <g stroke="#1b1b1f" stroke-width="3">
+    <path d="M22 60V210" stroke="#1b1b1f" stroke-width="13"/><path d="M22 60V210" stroke="#b5683a" stroke-width="7"/>
+    <path d="M38 80V210" stroke="#1b1b1f" stroke-width="11"/><path d="M38 80V210" stroke="#8e9aa6" stroke-width="5"/>
+    <circle cx="22" cy="140" r="11" fill="#c4231a"/><path d="M11 140H33M22 129V151" stroke-width="2.5"/>
+  </g>
+  <!-- Strahlenwarnzeichen rechts -->
+  <g transform="translate(352 150)">
+    <circle r="20" fill="#f5c400" stroke="#1b1b1f" stroke-width="3"/>
+    <g fill="#1b1b1f"><circle r="3.2"/><path d="M-2.25 -3.9L-7.5 -12.99A15 15 0 0 1 7.5 -12.99L2.25 -3.9A4.5 4.5 0 0 0 -2.25 -3.9Z"/><path d="M4.5 0L15 0A15 15 0 0 1 7.5 12.99L2.25 3.9A4.5 4.5 0 0 0 4.5 0Z"/><path d="M-2.25 3.9L-7.5 12.99A15 15 0 0 1 -15 0L-4.5 0A4.5 4.5 0 0 0 -2.25 3.9Z"/></g>
+  </g>
+  <!-- Lampe -->
+  <g class="lamp">
+    <path d="M200 0V18" stroke="#1b1b1f" stroke-width="2.5"/>
+    <path d="M120 214L188 30H212L280 214Z" fill="url(#bkLight)" class="cone"/>
+    <path d="M188 30Q200 14 212 30Z" fill="#3a4048" stroke="#1b1b1f" stroke-width="3"/>
+    <circle cx="200" cy="31" r="4" fill="#fff3c4"/>
+  </g>
+  <!-- Der große Zähler -->
+  <g>
+    <rect x="128" y="34" width="144" height="16" rx="3" fill="#f5c400" stroke="#1b1b1f" stroke-width="3"/>
+    <text x="200" y="46" class="plate">T-MINUS KLAUSUR</text>
+    <rect x="72" y="56" width="256" height="84" rx="9" fill="#2b3036" stroke="#1b1b1f" stroke-width="4"/>
+    <rect x="84" y="72" width="232" height="58" rx="4" fill="#07110b" stroke="#1b1b1f" stroke-width="2.5"/>
+    <g filter="url(#bkGlow)"><text x="107.2" y="112" class="seg ghost">8</text><text x="107.2" y="112" class="seg" data-u="w">0</text><text x="107.2" y="124" class="ul">WOCHEN</text><line x1="130.4" y1="76" x2="130.4" y2="128" stroke="#1f2a22" stroke-width="1.5"/><text x="153.6" y="112" class="seg ghost">8</text><text x="153.6" y="112" class="seg" data-u="d">0</text><text x="153.6" y="124" class="ul">TAGE</text><line x1="176.8" y1="76" x2="176.8" y2="128" stroke="#1f2a22" stroke-width="1.5"/><text x="200.0" y="112" class="seg ghost">88</text><text x="200.0" y="112" class="seg" data-u="h">0</text><text x="200.0" y="124" class="ul">STD</text><line x1="223.2" y1="76" x2="223.2" y2="128" stroke="#1f2a22" stroke-width="1.5"/><text x="246.4" y="112" class="seg ghost">88</text><text x="246.4" y="112" class="seg" data-u="m">0</text><text x="246.4" y="124" class="ul">MIN</text><line x1="269.6" y1="76" x2="269.6" y2="128" stroke="#1f2a22" stroke-width="1.5"/><text x="292.8" y="112" class="seg ghost">88</text><text x="292.8" y="112" class="seg" data-u="s">0</text><text x="292.8" y="124" class="ul">SEK</text></g>
+    <circle cx="80" cy="64" r="2" fill="#1b1b1f"/><circle cx="320" cy="64" r="2" fill="#1b1b1f"/><circle cx="80" cy="132" r="2" fill="#1b1b1f"/><circle cx="320" cy="132" r="2" fill="#1b1b1f"/>
+    <g class="beacon"><path d="M58 70a12 12 0 0 1 24 0z" fill="#ff3b30" stroke="#1b1b1f" stroke-width="3"/><rect x="55" y="70" width="30" height="6" rx="2" fill="#2b3036" stroke="#1b1b1f" stroke-width="3"/></g>
+    <g class="beacon b2"><path d="M318 70a12 12 0 0 1 24 0z" fill="#ff3b30" stroke="#1b1b1f" stroke-width="3"/><rect x="315" y="70" width="30" height="6" rx="2" fill="#2b3036" stroke="#1b1b1f" stroke-width="3"/></g>
+  </g>
+  <!-- Boden mit Warnstreifen -->
+  <rect x="8" y="214" width="384" height="46" fill="#474d55" stroke="#1b1b1f" stroke-width="4"/>
+  <rect x="10" y="214" width="380" height="8" fill="url(#bkHaz)"/>
+  <path d="M8 222H392" stroke="#1b1b1f" stroke-width="2.5"/>
+  <!-- Schreibtisch mit Büchern und Kaffee -->
+  <g stroke="#1b1b1f" stroke-width="3">
+    <rect x="236" y="186" width="96" height="8" rx="2" fill="#9a6a3d"/>
+    <path d="M244 194V222M324 194V222" stroke-width="5"/>
+    <rect x="250" y="174" width="34" height="8" fill="#2563eb"/><rect x="254" y="166" width="28" height="8" fill="#c4231a"/><rect x="249" y="158" width="32" height="8" fill="#2f9e44"/>
+    <rect x="298" y="168" width="14" height="18" rx="2" fill="#f1f1f3"/><path d="M312 172q7 0 7 6t-7 6" fill="none" stroke-width="2.5"/>
+  </g>
+  <path class="steam" d="M302 162q-3 -5 0 -10t0 -10M308 162q3 -5 0 -10t0 -10" fill="none" stroke="#e8e8ec" stroke-width="2" stroke-linecap="round"/>
+  <text x="266" y="172" class="book">MATHE</text>
+  <!-- Das Männchen: kleine Comic-Karikatur mit Föhnfrisur, Anzug und langer roter Krawatte -->
+  <g transform="translate(179 224) scale(0.8) translate(-179 -224)"><g class="guy">
+    <path d="M172 222v-18M186 222v-18" stroke="#1b1b1f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M166 224h12M180 224h12" stroke="#1b1b1f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M159 207q0 -36 20 -36q20 0 20 36z" fill="#1f2a44" stroke="#1b1b1f" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M172 172l7 12l7 -12z" fill="#fff" stroke="#1b1b1f" stroke-width="2"/>
+    <path d="M176.5 178h5l2.5 30l-5 6l-5 -6z" fill="#d62828" stroke="#1b1b1f" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M163 186q-14 4 -12 16" fill="none" stroke="#1f2a44" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="151" cy="203" r="4.5" fill="#f0a868" stroke="#1b1b1f" stroke-width="2.5"/>
+    <g class="arm"><path d="M195 186q14 -2 20 -14" fill="none" stroke="#1f2a44" stroke-width="6" stroke-linecap="round"/><circle cx="216" cy="171" r="4.5" fill="#f0a868" stroke="#1b1b1f" stroke-width="2.5"/></g>
+    <circle cx="179" cy="150" r="24" fill="#f0a868" stroke="#1b1b1f" stroke-width="3.5"/>
+    <path d="M153 146q-3 -26 24 -30q30 -4 34 18q2 8 -4 10q-6 -12 -22 -12q-14 0 -20 10q-4 8 -12 4z" fill="#f5d061" stroke="#1b1b1f" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M166 124q14 -6 34 4" fill="none" stroke="#d9a92e" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="eyes">
+      <ellipse cx="170" cy="153" rx="6.5" ry="5.5" fill="#fff" stroke="#1b1b1f" stroke-width="2.5"/>
+      <ellipse cx="188" cy="153" rx="6.5" ry="5.5" fill="#fff" stroke="#1b1b1f" stroke-width="2.5"/>
+      <circle class="pupil" cx="171.5" cy="152" r="2.6" fill="#1b1b1f"/><circle class="pupil" cx="189.5" cy="152" r="2.6" fill="#1b1b1f"/>
+      <path d="M164 146q6 -3 12 0M182 146q6 -3 12 0" fill="none" stroke="#e8c050" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <ellipse cx="179" cy="167" rx="4" ry="3.2" fill="#a8432b" stroke="#1b1b1f" stroke-width="2.2"/>
+    <path class="sweat" d="M203 152q4 6 0 9q-4 -3 0 -9z" fill="#7cc4ff" stroke="#1b1b1f" stroke-width="1.5"/>
+  </g></g>
+</svg>
+<span class="sr" data-sr></span></div>`;
+  }
+  let sig = "";
+  function tickCd(force) {
+    const box = document.getElementById("countdown");
+    if (!box) { sig = ""; return; }
+    if (force) sig = "";
+    const now = new Date();
+    const open = exams().filter((x) => x.e > now);
+    if (!open.length) { if (sig !== "none") { sig = "none"; box.innerHTML = '<span class="cap">Countdown</span><div class="tt">Keine Klausuren mehr offen 🎉</div><div class="sub">Sobald neue Klausuren im Plan stehen, zählt der Countdown wieder.</div>'; } return; }
+    const x = open[0];
+    const running = x.s <= now;
+    const rest = open.slice(1);
+    const newSig = x.title + x.s + running + rest.length + now.getDate();
+    if (newSig !== sig) {
+      sig = newSig;
+      const more = rest.map((r) => {
+        const days = Math.ceil((r.s - now) / 864e5);
+        return `<li><span>${esc2(r.title)}</span><span class="d">${fmt(r.s)} · in ${days} ${days === 1 ? "Tag" : "Tagen"}</span></li>`;
+      }).join("");
+      box.innerHTML = `<div class="hd"><span class="cap">${running ? "Klausur läuft" : "Countdown bis zur nächsten Klausur"}</span><span class="cap">${open.length} ${open.length === 1 ? "Klausur" : "Klausuren"} offen</span></div>
+        <div class="tt">${esc2(x.title)}</div>
+        <div class="sub">${fmt(x.s)} ${pad(x.s.getHours())}:${pad(x.s.getMinutes())} Uhr${x.room ? " · " + esc2(x.room) : ""}</div>
+        ${running ? `<div class="live">Läuft gerade, noch bis ${pad(x.e.getHours())}:${pad(x.e.getMinutes())} Uhr. Viel Erfolg!</div>` :
+        ""}
+        ${bunker(running)}
+        ${more ? `<ul>${more}</ul>` : ""}`;
+    }
+    {
+      let t = running ? 0 : Math.max(0, Math.floor((x.s - now) / 1000));
+      const v = { w: Math.floor(t / 604800) };
+      t %= 604800; v.d = Math.floor(t / 86400); t %= 86400;
+      v.h = pad(Math.floor(t / 3600)); t %= 3600; v.m = pad(Math.floor(t / 60)); v.s = pad(t % 60);
+      box.querySelectorAll("[data-u]").forEach((el) => { const n = String(v[el.getAttribute("data-u")]); if (el.textContent !== n) el.textContent = n; });
+      const sr = box.querySelector("[data-sr]");
+      if (sr && now.getSeconds() === 0 || sr && !sr.textContent) sr.textContent = `Noch ${v.w} Wochen, ${v.d} Tage, ${+v.h} Stunden und ${+v.m} Minuten.`;
+    }
+  }
+  window.cdTick = tickCd;
+  tickCd(true);
+  setInterval(tickCd, 1000);
+})();
 </script>
 </body>
 </html>

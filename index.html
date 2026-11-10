@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* Hell/Dunkel: gespeicherte Wahl sofort setzen, damit die Seite beim Laden nicht kurz falsch aufblitzt */
+try { const t = localStorage.getItem("semesterplaner.theme.v1"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) { /* egal */ }
+</script>
 <title>Semesterplaner</title>
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -230,6 +234,7 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
 @media (prefers-reduced-motion: no-preference) { .ph img { transition: opacity 280ms ease, transform 420ms var(--ease-out); } }
 @media (prefers-reduced-motion: reduce) { .ph.wait::before { animation: none; } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dish .tg2 { color: rgb(120 220 160); } :root:not([data-theme="light"]) .ph.wait::before { background-image: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.06) 50%, transparent 70%); } }
+:root[data-theme="dark"] .dish .tg2 { color: rgb(120 220 160); } :root[data-theme="dark"] .ph.wait::before { background-image: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.06) 50%, transparent 70%); }
 
 /* Wetter */
 .wx { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 22px; align-items: center; padding: 14px 16px; }
@@ -315,6 +320,8 @@ h1 { margin: 0; font-size: 1.75rem; font-weight: 650; letter-spacing: -0.03em; l
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .dep, :root:not([data-theme="light"]) .nx .dp, :root:not([data-theme="light"]) .li .dp, :root:not([data-theme="light"]) #travelbtn.on .pill { color: rgb(110 231 160); }
 }
+:root[data-theme="dark"] .dep, :root[data-theme="dark"] .nx .dp, :root[data-theme="dark"] .li .dp, :root[data-theme="dark"] #travelbtn.on .pill { color: rgb(110 231 160); }
+#themebtn { min-width: 40px; padding-left: 10px; padding-right: 10px; font-size: 1rem; line-height: 1; }
 .mz .note a, .empty a { color: var(--accent); text-underline-offset: 2px; }
 
 /* Details und leere Zustände */
@@ -627,6 +634,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
     <div class="hdr-r">
       <span id="status" role="status"></span>
       <button type="button" class="btn ghost" id="calbtn" aria-expanded="false" aria-controls="calpanel">📅 Kalender</button>
+      <button type="button" class="btn ghost" id="themebtn" aria-label="Dunkles Design einschalten" title="Hell / Dunkel umschalten">🌙</button>
       <button type="button" class="btn ghost" id="travelbtn" aria-expanded="false" aria-controls="travelpanel">🚗 Anfahrt <span class="pill">aus</span></button>
     </div>
   </header>
@@ -2080,6 +2088,26 @@ $("#tabcd").addEventListener("click", () => { view = "countdown"; armed = null; 
 $("#tabmensa").addEventListener("click", () => { view = "mensa"; armed = null; render(); });
 $("#tabpartys").addEventListener("click", () => { view = "partys"; armed = null; render(); });
 $("#tabwidget").addEventListener("click", () => { view = "widget"; armed = null; render(); });
+
+/* ---------- Hell / Dunkel ----------
+   Ohne Wahl folgt die Seite dem Gerät. Ein Tipp auf den Knopf wechselt und merkt sich das auf diesem Gerät. */
+const THEME_KEY = "semesterplaner.theme.v1";
+const darkMq = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+const isDark = () => (document.documentElement.dataset.theme || (darkMq && darkMq.matches ? "dark" : "light")) === "dark";
+function paintTheme() {
+  const d = isDark(), b = $("#themebtn");
+  b.textContent = d ? "☀️" : "🌙";
+  b.setAttribute("aria-label", d ? "Helles Design einschalten" : "Dunkles Design einschalten");
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => { if (document.documentElement.dataset.theme) m.setAttribute("media", "all"); m.setAttribute("content", d ? "#000000" : "#f5f5f7"); });
+}
+$("#themebtn").addEventListener("click", () => {
+  const next = isDark() ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* egal */ }
+  paintTheme();
+});
+if (darkMq && darkMq.addEventListener) darkMq.addEventListener("change", paintTheme);
+paintTheme();
 
 $("#expcopy").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(exportText()); $("#expmsg").textContent = "Kopiert. Auf GitHub termine.js öffnen, alles ersetzen, speichern."; }

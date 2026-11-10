@@ -473,16 +473,16 @@
 </item>
 <item language='de'>
 <category>Dessert I</category>
-<title>Stracciatellajoghurt (31)</title>
+<title>Grießquark mit roter Grütze (25a,31)</title>
 <description></description>
-<kennzeichnungen>31,51</kennzeichnungen>
+<kennzeichnungen></kennzeichnungen>
 <beilagen></beilagen>
 <preis1>0,90</preis1>
 <preis2>1,00</preis2>
 <preis3>1,30</preis3>
 <einheit></einheit>
 <color></color>
-<icons>51</icons>
+<icons></icons>
 <kj>786.0</kj>
 <kcal>188.0</kcal>
 <fett>7.5</fett>
@@ -503,6 +503,42 @@
 <co2_bewertung></co2_bewertung>
 <co2_einsparung>28.00</co2_einsparung>
 <h2o_wert>5.44</h2o_wert>
+<h2o_bewertung></h2o_bewertung>
+<tierwohl></tierwohl>
+<regenwald></regenwald>
+</item>
+<item language='de'>
+<category>Dessert II</category>
+<title>Rahmkartoffel (28,31)</title>
+<description></description>
+<kennzeichnungen>28,31,51</kennzeichnungen>
+<beilagen></beilagen>
+<preis1>0,90</preis1>
+<preis2>1,00</preis2>
+<preis3>1,30</preis3>
+<einheit></einheit>
+<color></color>
+<icons>51</icons>
+<kj>855.0</kj>
+<kcal>204.0</kcal>
+<fett>10.4</fett>
+<gesfett>3.1</gesfett>
+<eiweiss>4.0</eiweiss>
+<kh>22.0</kh>
+<zucker>2.9</zucker>
+<salz>2.2</salz>
+<kj_100>475.0</kj_100>
+<kcal_100>113.0</kcal_100>
+<fett_100>5.8</fett_100>
+<gesfett_100>1.7</gesfett_100>
+<eiweiss_100>2.2</eiweiss_100>
+<kh_100>12.2</kh_100>
+<zucker_100>1.6</zucker_100>
+<salz_100>1.2</salz_100>
+<co2_wert>184</co2_wert>
+<co2_bewertung></co2_bewertung>
+<co2_einsparung>53.00</co2_einsparung>
+<h2o_wert>4.81</h2o_wert>
 <h2o_bewertung></h2o_bewertung>
 <tierwohl></tierwohl>
 <regenwald></regenwald>

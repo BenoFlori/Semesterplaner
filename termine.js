@@ -70,7 +70,7 @@ window.TERMINE = [
   {"title": "Einführung in die Programmierung", "kind": "tutorium", "prof": "Ghays Alnema, Anton Nguyen, Jan Wieland", "room": "", "date": "2026-11-09", "start": "14:45", "end": "16:15"},
   {"title": "Analysis & Lineare Algebra", "kind": "vorlesung", "prof": "Prof. Dr. Ing. Fechter", "room": "MP2-3.13", "date": "2026-11-10", "start": "10:45", "end": "13:15"},
   {"title": "Wissenschaftliches Arbeiten", "kind": "vorlesung", "prof": "Frau Lutz", "room": "MP2-3.13", "date": "2026-11-10", "start": "14:00", "end": "16:30"},
-  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-10", "start": "14:45", "end": "16:15"},
+  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-10", "start": "16:45", "end": "19:00"},
   {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-11", "start": "08:00", "end": "10:30"},
   {"title": "Logik & Algebra", "kind": "vorlesung", "prof": "Prof. Dr. Kirchberg", "room": "MP2-3.13", "date": "2026-11-11", "start": "10:45", "end": "13:15"},
   {"title": "Analysis & Lineare Algebra", "kind": "tutorium", "prof": "", "room": "", "date": "2026-11-11", "start": "16:45", "end": "18:15"},

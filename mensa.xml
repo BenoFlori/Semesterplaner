@@ -1127,7 +1127,7 @@
 </item>
 <item language='de'>
 <category>Sättigung I</category>
-<title>Bio-Spiral Nudeln (25a)</title>
+<title>Reis</title>
 <description></description>
 <kennzeichnungen></kennzeichnungen>
 <beilagen></beilagen>
@@ -1136,7 +1136,7 @@
 <preis3>1,30</preis3>
 <einheit></einheit>
 <color></color>
-<icons>24</icons>
+<icons></icons>
 <kj>1289.2</kj>
 <kcal>308.0</kcal>
 <fett>3.4</fett>
@@ -1163,7 +1163,7 @@
 </item>
 <item language='de'>
 <category>Gemüse I</category>
-<title>Mandelbrokkoli (32a)</title>
+<title>Blumenkohlgemüse</title>
 <description></description>
 <kennzeichnungen></kennzeichnungen>
 <beilagen></beilagen>
@@ -1172,7 +1172,7 @@
 <preis3>1,30</preis3>
 <einheit></einheit>
 <color></color>
-<icons>24</icons>
+<icons></icons>
 <kj>428.7</kj>
 <kcal>102.0</kcal>
 <fett>4.2</fett>
@@ -1271,7 +1271,7 @@
 </item>
 <item language='de'>
 <category>Dessert I</category>
-<title>Waldfruchtpudding (31)</title>
+<title>Stracciatellajoghurt (31)</title>
 <description></description>
 <kennzeichnungen>31,51</kennzeichnungen>
 <beilagen></beilagen>

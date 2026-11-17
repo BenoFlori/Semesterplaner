@@ -125,4 +125,5 @@ window.TERMINE = [
   {"title": "Hl. Abend", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-24", "start": "08:00", "end": "18:00"},
   {"title": "Weihnachtsfeiertag", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-25", "start": "08:00", "end": "18:00"},
   {"title": "Weihnachtsfeiertag", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-26", "start": "08:00", "end": "18:00"}
+  {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-19", "start": "09:00", "end": "10:00"},
 ];

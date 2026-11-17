@@ -83,11 +83,12 @@ window.TERMINE = [
   {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-17", "start": "08:00", "end": "10:30"},
   {"title": "Analysis & Lineare Algebra", "kind": "vorlesung", "prof": "Prof. Dr. Ing. Fechter", "room": "MP2-3.13", "date": "2026-11-17", "start": "10:45", "end": "13:15"},
   {"title": "Logik & Algebra", "kind": "vorlesung", "prof": "Prof. Dr. Kirchberg", "room": "MP2-3.13", "date": "2026-11-17", "start": "14:00", "end": "16:30"},
+  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-17", "start": "16:45", "end": "19:00"},
   {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-18", "start": "08:00", "end": "10:30"},
   {"title": "Logik & Algebra", "kind": "vorlesung", "prof": "Prof. Dr. Kirchberg", "room": "MP2-3.13", "date": "2026-11-18", "start": "10:45", "end": "13:15"},
   {"title": "Einführung in die Wirtschaftsinformatik", "kind": "vorlesung", "prof": "Herr Berlet", "room": "MP2-3.13", "date": "2026-11-18", "start": "14:00", "end": "16:30"},
   {"title": "Analysis & Lineare Algebra", "kind": "tutorium", "prof": "", "room": "", "date": "2026-11-18", "start": "16:45", "end": "18:15"},
-  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-17", "start": "16:45", "end": "19:00"},
+  {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-19", "start": "09:00", "end": "10:00"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-11-20", "start": "09:00", "end": "12:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-11-20", "start": "13:00", "end": "16:15"},
   {"title": "BWL: Marketing", "kind": "vorlesung", "prof": "Frau Einetter", "room": "MP2-3.13", "date": "2026-11-23", "start": "07:30", "end": "10:45"},
@@ -125,5 +126,4 @@ window.TERMINE = [
   {"title": "Hl. Abend", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-24", "start": "08:00", "end": "18:00"},
   {"title": "Weihnachtsfeiertag", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-25", "start": "08:00", "end": "18:00"},
   {"title": "Weihnachtsfeiertag", "kind": "sonstiges", "prof": "", "room": "", "date": "2026-12-26", "start": "08:00", "end": "18:00"}
-  {"title": "BWL: Einführung", "kind": "vorlesung", "prof": "Prof. Dr. Möslein-Tröppner", "room": "MP2-3.13", "date": "2026-11-19", "start": "09:00", "end": "10:00"},
 ];

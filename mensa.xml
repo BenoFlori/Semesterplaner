@@ -801,7 +801,7 @@
 </item>
 <item language='de'>
 <category>KombinierBar</category>
-<title>Süßkartoffel-Erdnuss Curry (29,30) | Basmatireis </title>
+<title>Süßkartoffel-Erdnuss Curry (29,30)</title>
 <description></description>
 <kennzeichnungen>24,29,30</kennzeichnungen>
 <beilagen></beilagen>
@@ -827,8 +827,10 @@
 <kh_100>5.1</kh_100>
 <zucker_100>2.0</zucker_100>
 <salz_100>0.4</salz_100>
-<co2_einsparung></co2_einsparung>
-<h2o_wert></h2o_wert>
+<co2_wert>609</co2_wert>
+<co2_bewertung></co2_bewertung>
+<co2_einsparung>70.00</co2_einsparung>
+<h2o_wert>38.58</h2o_wert>
 <h2o_bewertung></h2o_bewertung>
 <tierwohl></tierwohl>
 <regenwald></regenwald>
@@ -861,44 +863,46 @@
 <kh_100>0.0</kh_100>
 <zucker_100>0.0</zucker_100>
 <salz_100>0.3</salz_100>
-<co2_einsparung></co2_einsparung>
-<h2o_wert></h2o_wert>
+<co2_wert>146</co2_wert>
+<co2_bewertung></co2_bewertung>
+<co2_einsparung>58.00</co2_einsparung>
+<h2o_wert>10.00</h2o_wert>
 <h2o_bewertung></h2o_bewertung>
 <tierwohl></tierwohl>
 <regenwald></regenwald>
 </item>
 <item language='de'>
 <category>Gemüse I</category>
-<title>Indisches Gemüse (34)</title>
+<title>Rahmgemüse (8,31,33)</title>
 <description></description>
-<kennzeichnungen>24,34</kennzeichnungen>
+<kennzeichnungen>8,31,33</kennzeichnungen>
 <beilagen></beilagen>
 <preis1>0,90</preis1>
 <preis2>1,00</preis2>
 <preis3>1,30</preis3>
 <einheit></einheit>
 <color></color>
-<icons>24</icons>
-<kj>289.6</kj>
-<kcal>69.0</kcal>
-<fett>2.7</fett>
-<gesfett>0.2</gesfett>
-<eiweiss>2.8</eiweiss>
-<kh>6.5</kh>
-<zucker>4.4</zucker>
-<salz>0.7</salz>
-<kj_100>193.0</kj_100>
-<kcal_100>46.0</kcal_100>
-<fett_100>1.8</fett_100>
-<gesfett_100>0.1</gesfett_100>
-<eiweiss_100>1.9</eiweiss_100>
-<kh_100>4.3</kh_100>
-<zucker_100>2.9</zucker_100>
-<salz_100>0.4</salz_100>
-<co2_wert>70</co2_wert>
+<icons></icons>
+<kj>539.3</kj>
+<kcal>129.0</kcal>
+<fett>5.7</fett>
+<gesfett>2.4</gesfett>
+<eiweiss>3.4</eiweiss>
+<kh>13.6</kh>
+<zucker>3.5</zucker>
+<salz>1.1</salz>
+<kj_100>360.0</kj_100>
+<kcal_100>86.0</kcal_100>
+<fett_100>3.8</fett_100>
+<gesfett_100>1.6</gesfett_100>
+<eiweiss_100>2.3</eiweiss_100>
+<kh_100>9.1</kh_100>
+<zucker_100>2.3</zucker_100>
+<salz_100>0.7</salz_100>
+<co2_wert>217</co2_wert>
 <co2_bewertung></co2_bewertung>
-<co2_einsparung>61.00</co2_einsparung>
-<h2o_wert>12.25</h2o_wert>
+<co2_einsparung>37.00</co2_einsparung>
+<h2o_wert>4.50</h2o_wert>
 <h2o_bewertung></h2o_bewertung>
 <tierwohl></tierwohl>
 <regenwald></regenwald>

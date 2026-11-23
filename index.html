@@ -625,6 +625,51 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 .hw li .w { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .hw li .x { font-size: 0.9rem; overflow-wrap: anywhere; white-space: pre-wrap; }
 .dish .ck { align-self: flex-start; margin-top: 4px; font-size: 0.78rem; color: var(--accent); text-underline-offset: 2px; }
+/* ---------- Schnee ---------- */
+#snowfx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+#snowdoc { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 5; }
+#snowhdr { position: fixed; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 11; }
+#snowdoc canvas, #snowhdr canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
+.snowp .amt { display: grid; grid-template-columns: auto minmax(0, 1fr) 3.2em; gap: 12px; align-items: center; font-size: 0.9rem; color: var(--muted); max-width: 420px; }
+.snowp .amt output { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--fg); text-align: right; font-size: 0.85rem; }
+.snowp input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; min-height: 28px; }
+.snowp.off .amt { opacity: 0.4; pointer-events: none; }
+.snowp .ctl { margin-top: 0; }
+
+/* ---------- Hinweis: als App auf iPhone/iPad ---------- */
+.a2 { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgb(0 0 0 / 0.38); padding: 12px max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
+@media (min-width: 640px) { .a2 { align-items: center; } }
+.a2 .sheet { position: relative; width: 100%; max-width: 460px; max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; background: var(--surface); color: var(--fg); border-radius: 24px; padding: 22px 20px 18px; box-shadow: 0 20px 60px -12px rgb(0 0 0 / 0.35); }
+.a2 h2 { margin: 0 40px 4px 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.a2 .lead { margin: 0 0 14px; color: var(--muted); font-size: 0.92rem; }
+.a2 .x { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--sunken); color: var(--muted); font-size: 1rem; line-height: 1; display: grid; place-items: center; }
+.a2 ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: st; }
+.a2 li { counter-increment: st; background: var(--sunken); border-radius: 18px; padding: 12px; display: grid; gap: 10px; }
+.a2 li p { margin: 0; font-size: 0.92rem; line-height: 1.4; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; }
+.a2 li p::before { content: counter(st); width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 0.85rem; display: grid; place-items: center; }
+.a2 li p small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.a2 svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.a2 .qr { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 14px; align-items: center; background: var(--sunken); border-radius: 18px; padding: 12px; margin-bottom: 12px; }
+.a2 .qr p { margin: 0; font-size: 0.92rem; line-height: 1.4; }
+.a2 .qr small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 4px; overflow-wrap: anywhere; }
+.a2 .qrc { width: 124px; height: 124px; padding: 8px; background: #fff; border-radius: 12px; }
+.a2 .qrc img, .a2 .qrc canvas { width: 108px !important; height: 108px !important; display: block; image-rendering: pixelated; }
+.a2 .qr.noqr { grid-template-columns: minmax(0, 1fr); } .a2 .qr.noqr .qrc { display: none; }
+.a2 .andr { margin: 12px 0 0; font-size: 0.82rem; color: var(--muted); }
+.a2 .ok { margin-top: 14px; width: 100%; min-height: 46px; font-size: 1rem; }
+.a2 .until { margin: 10px 0 0; text-align: center; font-size: 0.75rem; color: var(--faint); }
+.i-bg { fill: var(--bg); } .i-sf { fill: var(--surface); } .i-sk { fill: var(--sunken); } .i-fg { fill: var(--fg); } .i-mu { fill: var(--muted); } .i-fa { fill: var(--faint); }
+.i-ac { fill: var(--accent); } .i-acs { stroke: var(--accent); fill: none; } .i-ln { stroke: var(--line); fill: none; } .i-fgs { stroke: var(--fg); fill: none; } .i-mus { stroke: var(--muted); fill: none; }
+.a2 svg text { font-family: var(--font-ui); }
+.i-tap { fill: rgb(10 132 255 / 0.18); stroke: var(--accent); stroke-width: 2; }
+@media (prefers-reduced-motion: no-preference) {
+  .a2 { animation: a2fade 220ms ease both; }
+  .a2 .sheet { animation: a2up 380ms var(--ease-out) both; }
+  .i-tap { animation: a2tap 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+}
+@keyframes a2fade { from { opacity: 0; } }
+@keyframes a2up { from { transform: translateY(40px); opacity: 0; } }
+@keyframes a2tap { 0%, 100% { transform: scale(0.8); opacity: 0.55; } 50% { transform: scale(1.12); opacity: 1; } }
 </style>
 </head>
 <body>
@@ -635,6 +680,7 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
       <span id="status" role="status"></span>
       <button type="button" class="btn ghost" id="calbtn" aria-expanded="false" aria-controls="calpanel">📅 Kalender</button>
       <button type="button" class="btn ghost" id="themebtn" aria-label="Dunkles Design einschalten" title="Hell / Dunkel umschalten">🌙</button>
+      <button type="button" class="btn ghost" id="snowbtn" aria-expanded="false" aria-controls="snowpanel" title="Schnee einstellen">❄️</button>
       <button type="button" class="btn ghost" id="travelbtn" aria-expanded="false" aria-controls="travelpanel">🚗 Anfahrt <span class="pill">aus</span></button>
     </div>
   </header>
@@ -651,6 +697,14 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
       </select></label>
     </div>
     <p class="note" id="tInfo"></p>
+  </section>
+
+  <section class="panel tp snowp" id="snowpanel" hidden aria-labelledby="snowcap">
+    <span class="cap" id="snowcap">Schnee</span>
+    <label class="sw"><input type="checkbox" id="snowOn"><span class="ui"></span>Es schneit</label>
+    <label class="amt" for="snowAmt"><span>Menge</span><input type="range" id="snowAmt" min="5" max="100" step="1"><output id="snowAmtOut" for="snowAmt"></output></label>
+    <div class="ctl"><button type="button" class="btn ghost" id="snowShake">Schnee abschütteln</button></div>
+    <p class="note">Der Schnee bleibt auf den Kästen liegen und wird mit der Zeit immer mehr. Fahr mit der Maus (oder dem Finger) drüber, dann stäubt er weg.</p>
   </section>
 
   <section class="panel cal" id="calpanel" hidden aria-labelledby="calcap">
@@ -2764,6 +2818,471 @@ async function connect() {
   window.cdTick = tickCd;
   tickCd(true);
   setInterval(tickCd, 1000);
+})();
+</script>
+<script>
+/* ---------- Schnee ----------
+   Flocken fallen über die ganze Seite. Ein Teil bleibt auf der Oberkante von Kästen, Knöpfen und Karten liegen,
+   die Schneedecke wächst mit der Zeit. Maus (oder Finger) drüber: der Schnee stäubt weg.
+   Liegende Flocken = kleine Leinwände direkt über den Kästen (scrollen ohne Neuzeichnen). Fallende = eine Leinwand übers Fenster.
+   Einstellungen (an/aus, Menge) und die liegende Schneedecke merkt sich das Gerät. */
+(function () {
+  const KEY = "semesterplaner.schnee.v1", PACK = "semesterplaner.schnee.decke.v2";
+  const cfg = { on: true, amt: 45 };
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { /* Standard */ }
+  const saveCfg = () => { try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { /* egal */ } };
+  const coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+  const small = () => innerWidth < 700;
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  const COL = 4;            // Breite einer Schneesäule in px
+  const MAXH = 20;          // höchste Schneedecke in px
+  const CVH = MAXH + 8;     // Höhe der Leinwand über einem Kasten
+  const SINK = 2;           // so weit überlappt der Schnee die Kante
+  const EXTRA = 26;         // Platz nach unten, damit der Schnee den runden Ecken folgen kann
+  const SEL = "header .btn, .bar .tabs, .nav .btn, .chip, .panel, .nx, .scroll, .dish, .mrow, .empty, .mh + .li, .list > .li:first-child, #view > *, #view > * > *";
+
+  const fx = document.createElement("canvas"); fx.id = "snowfx"; fx.setAttribute("aria-hidden", "true");
+  const docL = document.createElement("div"); docL.id = "snowdoc"; docL.setAttribute("aria-hidden", "true");
+  const hdrL = document.createElement("div"); hdrL.id = "snowhdr"; hdrL.setAttribute("aria-hidden", "true");
+  document.body.append(docL, hdrL, fx);
+  const fctx = fx.getContext("2d");
+  const header = document.querySelector("header");
+  const wrap = document.querySelector(".wrap");
+
+  const isDark = () => (document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+  let dark = isDark();
+
+  /* Flocken-Bild einmal vorzeichnen (schneller als jede Flocke einzeln mit Schatten) */
+  let sprite;
+  function makeSprite() {
+    const R = 16, c = document.createElement("canvas"); c.width = c.height = R * 2;
+    const g = c.getContext("2d"), gr = g.createRadialGradient(R, R, 0, R, R, R);
+    if (dark) { gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.45, "rgba(255,255,255,0.9)"); gr.addColorStop(1, "rgba(255,255,255,0)"); }
+    else { gr.addColorStop(0, "rgba(236,243,252,1)"); gr.addColorStop(0.32, "rgba(196,211,232,0.95)"); gr.addColorStop(0.7, "rgba(178,196,222,0.35)"); gr.addColorStop(1, "rgba(178,196,222,0)"); }
+    g.fillStyle = gr; g.fillRect(0, 0, R * 2, R * 2);
+    sprite = c;
+  }
+  makeSprite();
+
+  /* ---- liegender Schnee: eine "Fläche" pro Kasten ---- */
+  const surf = new Map();   // Schlüssel -> Fläche (bleibt auch, wenn der Kasten gerade nicht zu sehen ist)
+  let act = [];             // gerade sichtbare Flächen
+  try {
+    const p = JSON.parse(localStorage.getItem(PACK) || "null");
+    if (p && typeof p === "object") for (const k in p) {
+      const s = String(p[k]); const a = new Float32Array(s.length);
+      for (let i = 0; i < s.length; i++) a[i] = (s.charCodeAt(i) - 48) / 2;
+      surf.set(k, { key: k, cols: a, w: (a.length - 1) * COL, x: 0, y: 0, cv: null, dirty: true, rad: 10, cap: MAXH });
+    }
+  } catch (e) { /* neu anfangen */ }
+  function saveSnow() {
+    const o = {};
+    surf.forEach((s, k) => { let any = false, t = ""; for (let i = 0; i < s.cols.length; i++) { const v = Math.max(0, Math.min(60, Math.round(s.cols[i] * 2))); if (v) any = true; t += String.fromCharCode(48 + v); } if (any) o[k] = t; });
+    try { localStorage.setItem(PACK, JSON.stringify(o)); } catch (e) { /* voll: egal */ }
+  }
+
+  function keyFor(el, count) {
+    const tab = el.closest("#view") ? ((document.querySelector('.tabs button[aria-pressed="true"]') || {}).id || "") + ">" : "";
+    const base = tab + (el.id ? "#" + el.id : el.tagName + "." + [...el.classList].filter((c) => !/^(sel|live|on|past|today|k-)/.test(c)).slice(0, 2).join("."));
+    const n = (count.get(base) || 0) + 1; count.set(base, n);
+    return base + ":" + n;
+  }
+  function resample(a, n) {
+    if (a.length === n) return a;
+    const b = new Float32Array(n);
+    for (let i = 0; i < n; i++) b[i] = a[Math.min(a.length - 1, Math.round(i * (a.length - 1) / Math.max(1, n - 1)))] || 0;
+    return b;
+  }
+  let hdrTop0 = 0;
+  function measure() {
+    if (!cfg.on) return;
+    const sy = scrollY, sx = scrollX, count = new Map(), seen = new Set(), list = [];
+    hdrTop0 = header ? header.getBoundingClientRect().top : 0;
+    for (const el of document.querySelectorAll(SEL)) {
+      const par = el.parentElement && el.parentElement.closest(".scroll, .hrs, .tabs, .a2, #snowpanel");
+      if (par || el.closest("[hidden]")) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 34 || r.height < 14) continue;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === "hidden" || +cs.opacity < 0.5) continue;
+      if (cs.backgroundColor === "rgba(0, 0, 0, 0)" && cs.backgroundImage === "none") continue;
+      const fixed = !!(header && header.contains(el));
+      const top = fixed ? r.top : r.top + sy, left = fixed ? r.left : r.left + sx;
+      if (list.some((o) => o.el.contains(el) && Math.abs(o.y - top) < 8)) continue;   // liegt bündig im Kasten darüber
+      const key = keyFor(el, count);
+      let s = surf.get(key);
+      const n = Math.ceil(r.width / COL) + 1;
+      if (!s) { s = { key, cols: new Float32Array(n), dirty: true }; surf.set(key, s); }
+      if (s.cols.length !== n) { s.cols = resample(s.cols, n); s.dirty = true; }
+      const rad = Math.min(parseFloat(cs.borderTopLeftRadius) || 0, r.height / 2, r.width / 2);
+      const cap = Math.max(5, Math.min(MAXH, r.width * 0.09, fixed ? 10 : MAXH));
+      if (s.w !== r.width || s.rad !== rad || s.cap !== cap) s.dirty = true;
+      Object.assign(s, { el, fixed, x: left, y: top, w: r.width, rad, cap });
+      if (!s.cv) {
+        s.cv = document.createElement("canvas"); s.ctx = s.cv.getContext("2d"); s.dirty = true;
+      }
+      const pw = Math.ceil(r.width) + 8;
+      if (s.cv.width !== Math.round(pw * DPR)) { s.cv.width = Math.round(pw * DPR); s.cv.height = Math.round((CVH + EXTRA) * DPR); s.cv.style.width = pw + "px"; s.cv.style.height = (CVH + EXTRA) + "px"; s.dirty = true; }
+      const host = fixed ? hdrL : docL;
+      if (s.cv.parentNode !== host) host.appendChild(s.cv);
+      s.cv.style.transform = `translate(${(left - 4).toFixed(1)}px, ${(top - CVH + SINK).toFixed(1)}px)`;
+      seen.add(key); list.push(s);
+    }
+    surf.forEach((s) => { if (!seen.has(s.key) && s.cv) { s.cv.remove(); s.cv = null; s.el = null; } });
+    act = list;
+  }
+  let mTimer = 0;
+  const soon = () => { if (!mTimer) mTimer = setTimeout(() => { mTimer = 0; measure(); }, 120); };
+
+  /* Höhe darf an runden Ecken nicht so hoch werden (sonst hängt der Schnee in der Luft) */
+  function capAt(s, i) {
+    const x = i * COL, d = Math.min(x, s.w - x), r = s.rad;
+    const t = Math.max(0, Math.min(1, (d - r * 0.3 - 1) / (r * 0.7 + 4)));
+    return s.cap * t * t * (3 - 2 * t);
+  }
+  /* wie weit die Oberkante an runden Ecken nach unten abfällt */
+  function dyAt(s, i) {
+    const x = Math.min(s.w, i * COL), d = Math.min(x, s.w - x), r = s.rad;
+    if (d >= r) return 0;
+    return r - Math.sqrt(Math.max(0, r * r - (r - d) * (r - d)));
+  }
+  function deposit(s, i, amt) {
+    const c = s.cols, n = c.length;
+    const add = (j, v) => { if (j >= 0 && j < n) c[j] = Math.min(capAt(s, j), c[j] + v); };
+    add(i, amt); add(i - 1, amt * 0.6); add(i + 1, amt * 0.6); add(i - 2, amt * 0.25); add(i + 2, amt * 0.25);
+    for (let j = Math.max(1, i - 5); j < Math.min(n - 1, i + 6); j++) {   // rutscht ab, wenn es zu steil wird
+      const dl = c[j] - c[j - 1], dr = c[j] - c[j + 1];
+      if (dl > 2.2) { const m = (dl - 2.2) / 2; c[j] -= m; c[j - 1] += m; }
+      if (dr > 2.2) { const m = (dr - 2.2) / 2; c[j] -= m; c[j + 1] += m; }
+    }
+    s.dirty = true;
+  }
+  function drawSurf(s) {
+    const g = s.ctx, c = s.cols, n = c.length;
+    g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    g.clearRect(0, 0, s.cv.width, s.cv.height);
+    s.dirty = false;
+    let mx = 0; for (let i = 0; i < n; i++) if (c[i] > mx) mx = c[i];
+    if (mx < 0.3) return;
+    const base = CVH - SINK + 0.5, X = (i) => 4 + Math.min(s.w, i * COL);
+    const B = (i) => base + dyAt(s, i) + SINK;                               // Kante des Kastens (leicht überlappt)
+    const Y = (i) => (c[i] > 0.25 ? base + dyAt(s, i) - c[i] : B(i));        // Oberfläche des Schnees
+    const top = () => { g.moveTo(X(0), Y(0)); for (let i = 1; i < n; i++) { const xm = (X(i - 1) + X(i)) / 2, ym = (Y(i - 1) + Y(i)) / 2; g.quadraticCurveTo(X(i - 1), Y(i - 1), xm, ym); } g.lineTo(X(n - 1), Y(n - 1)); };
+    g.beginPath(); top();
+    for (let i = n - 1; i >= 0; i--) g.lineTo(X(i), B(i));
+    g.closePath();
+    const gr = g.createLinearGradient(0, base - mx, 0, base + SINK);
+    if (dark) { gr.addColorStop(0, "#ffffff"); gr.addColorStop(1, "#dfe7f2"); }
+    else { gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.6, "#f6f9fd"); gr.addColorStop(1, "#dfe7f2"); }
+    g.save();
+    g.shadowColor = dark ? "rgba(0,0,0,0.5)" : "rgba(60,80,110,0.28)"; g.shadowBlur = 3; g.shadowOffsetY = 1;
+    g.fillStyle = gr; g.fill();
+    g.restore();
+    g.beginPath();
+    for (let i = 0, pen = false; i < n; i++) {   // Rand nur dort, wo wirklich Schnee liegt
+      if (c[i] > 0.6) { const xm = i ? (X(i - 1) + X(i)) / 2 : X(0), ym = i ? (Y(i - 1) + Y(i)) / 2 : Y(0); pen ? g.quadraticCurveTo(X(i - 1), Y(i - 1), xm, ym) : g.moveTo(xm, ym); pen = true; }
+      else pen = false;
+    }
+    g.lineWidth = 0.75; g.strokeStyle = dark ? "rgba(255,255,255,0.6)" : "rgba(150,170,200,0.5)"; g.stroke();
+  }
+
+  /* ---- fallende Flocken und Staubwölkchen ---- */
+  let flakes = [], puffs = [], W = 0, H = 0, running = false, last = 0, tAll = 0, saveT = 0;
+  function sizeFx() {
+    W = innerWidth; H = innerHeight;
+    fx.width = Math.round(W * DPR); fx.height = Math.round(H * DPR);
+  }
+  const target = () => Math.round(cfg.amt / 100 * (small() || coarse ? 150 : 300));
+  function newFlake(anyY) {
+    const r = 0.7 + Math.pow(Math.random(), 2.2) * 2.8;
+    return { x: Math.random() * (W + 80) - 40, y: anyY ? Math.random() * H : -6 - Math.random() * 40, r,
+      vy: 22 + r * 13 + Math.random() * 8, sw: 8 + Math.random() * 22, f: 0.4 + Math.random() * 1.1, ph: Math.random() * 6.28, a: 0.55 + Math.random() * 0.45 };
+  }
+  function frame(t) {
+    if (!running) return;
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (t - last) / 1000 || 0.016); last = t; tAll += dt;
+    const want = target();
+    while (flakes.length < want) flakes.push(newFlake(flakes.length < want * 0.6 && tAll < 0.2));
+    if (flakes.length > want) flakes.length = want;
+
+    const sy = scrollY, sx = scrollX;
+    const hr = header ? header.getBoundingClientRect() : null;
+    const hdy = hr ? hr.top - hdrTop0 : 0, hBot = hr ? hr.bottom : 0;
+    hdrL.style.transform = hdy ? `translateY(${hdy}px)` : "";
+    // Flächen, auf die gerade etwas fallen kann (im Fenster, nicht unter der Kopfzeile)
+    const vis = [];
+    for (const s of act) {
+      const top = s.fixed ? s.y + hdy : s.y - sy, left = s.fixed ? s.x : s.x - sx;
+      if (top < -10 || top > H + 4) continue;
+      if (!s.fixed && top < hBot) continue;
+      vis.push([s, left, top]);
+    }
+    const wind = Math.sin(tAll * 0.13) * 14 + Math.sin(tAll * 0.031) * 10;
+    const stick = 0.2 + cfg.amt / 100 * 0.12;
+    const g = fctx;
+    g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    g.clearRect(0, 0, W, H);
+    for (let k = 0; k < flakes.length; k++) {
+      const p = flakes[k], py = p.y;
+      p.y += p.vy * dt;
+      p.x += (Math.sin(tAll * p.f + p.ph) * p.sw * 0.9 + wind) * dt;
+      let landed = false;
+      for (let v = 0; v < vis.length; v++) {
+        const [s, left, top] = vis[v], lx = p.x - left;
+        if (lx < 0 || lx > s.w) continue;
+        const i = Math.round(lx / COL), sTop = top + dyAt(s, i) - s.cols[i];
+        if (py < sTop && p.y >= sTop) {
+          if (p.stk === undefined) p.stk = Math.random();
+          if (p.stk < stick) { deposit(s, i, 0.5 + p.r * 0.9); landed = true; break; }
+          p.stk = Math.random();
+        }
+      }
+      if (landed || p.y > H + 10 || p.x < -60 || p.x > W + 60) { flakes[k] = newFlake(false); continue; }
+      const d = p.r * 2.6;
+      g.globalAlpha = p.a;
+      g.drawImage(sprite, p.x - d / 2, p.y - d / 2, d, d);
+    }
+    for (let k = puffs.length - 1; k >= 0; k--) {
+      const q = puffs[k];
+      q.life -= dt;
+      if (q.life <= 0) { puffs[k] = puffs[puffs.length - 1]; puffs.pop(); continue; }
+      q.vx *= 1 - 1.8 * dt; q.vy += 34 * dt; q.vy *= 1 - 1.2 * dt;
+      q.x += q.vx * dt; q.y += q.vy * dt;
+      const vx = q.fixed ? q.x : q.x - sx, vy = q.fixed ? q.y + hdy : q.y - sy, d = q.r * 2.6 * (1 + (1 - q.life / q.l0) * 0.6);
+      g.globalAlpha = Math.max(0, q.life / q.l0) * 0.95;
+      g.drawImage(sprite, vx - d / 2, vy - d / 2, d, d);
+    }
+    g.globalAlpha = 1;
+    for (const s of act) if (s.dirty && s.cv) drawSurf(s);
+    saveT += dt; if (saveT > 15) { saveT = 0; saveSnow(); }
+  }
+
+  /* ---- wegstäuben ---- */
+  function blow(cx, cy, radius, strength) {
+    if (!cfg.on) return;
+    const sy = scrollY, sx = scrollX;
+    const hdy = header ? header.getBoundingClientRect().top - hdrTop0 : 0;
+    for (const s of act) {
+      const left = s.fixed ? s.x : s.x - sx, top = s.fixed ? s.y + hdy : s.y - sy;
+      if (cx < left - radius || cx > left + s.w + radius) continue;
+      if (cy > top + 10 || cy < top - MAXH - radius) continue;
+      const i0 = Math.max(0, Math.floor((cx - left - radius) / COL)), i1 = Math.min(s.cols.length - 1, Math.ceil((cx - left + radius) / COL));
+      let gone = 0;
+      for (let i = i0; i <= i1; i++) {
+        const h = s.cols[i]; if (h < 0.3) continue;
+        const px = left + i * COL, dx = px - cx, dy = (top + dyAt(s, i) - h) - cy, dd = Math.sqrt(dx * dx + dy * dy);
+        if (dd > radius) continue;
+        const take = h * strength * (1 - dd / radius);
+        s.cols[i] = h - take; gone += take;
+        if (Math.random() < take * 0.5 && puffs.length < 380) {
+          const dir = dx === 0 ? (Math.random() - 0.5) : Math.sign(dx);
+          const docX = s.fixed ? px : px + sx, docY = s.fixed ? top - h * Math.random() - hdy : top - h * Math.random() + sy;
+          const l0 = 0.7 + Math.random() * 0.8;
+          puffs.push({ x: docX, y: docY, vx: dir * (20 + Math.random() * 60) + (Math.random() - 0.5) * 30, vy: -30 - Math.random() * 70, r: 0.8 + Math.random() * 1.6, life: l0, l0, fixed: s.fixed });
+        }
+      }
+      if (gone > 0) s.dirty = true;
+    }
+  }
+  let lastBlow = 0;
+  document.addEventListener("pointermove", (e) => {
+    if (!running) return;
+    const now = performance.now(); if (now - lastBlow < 16) return; lastBlow = now;
+    blow(e.clientX, e.clientY, e.pointerType === "mouse" ? 26 : 34, 0.5);
+  }, { passive: true });
+  document.addEventListener("pointerdown", (e) => { if (running && e.pointerType !== "mouse") blow(e.clientX, e.clientY, 34, 0.6); }, { passive: true });
+
+  function shakeAll() {
+    const sy = scrollY, sx = scrollX;
+    for (const s of surf.values()) {
+      if (s.cv && puffs.length < 380) {
+        const left = s.fixed ? s.x : s.x - sx, top = s.fixed ? s.y : s.y - sy;
+        if (top > -20 && top < H + 20) for (let i = 0; i < s.cols.length; i += 3) if (s.cols[i] > 1 && Math.random() < 0.5 && puffs.length < 380) {
+          const l0 = 0.6 + Math.random() * 0.9;
+          puffs.push({ x: s.fixed ? left + i * COL : left + i * COL + sx, y: s.fixed ? top - s.cols[i] : top - s.cols[i] + sy, vx: (Math.random() - 0.5) * 90, vy: -20 - Math.random() * 80, r: 0.8 + Math.random() * 1.6, life: l0, l0, fixed: s.fixed });
+        }
+      }
+      s.cols.fill(0); s.dirty = true;
+    }
+    saveSnow();
+  }
+
+  function start() {
+    if (running) return;
+    running = true; fx.hidden = docL.hidden = hdrL.hidden = false;
+    sizeFx(); measure(); last = performance.now(); tAll = 0;
+    requestAnimationFrame(frame);
+  }
+  function stop() {
+    running = false; flakes = []; puffs = [];
+    fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, fx.width, fx.height);
+    fx.hidden = docL.hidden = hdrL.hidden = true;
+  }
+  addEventListener("resize", () => { if (running) { sizeFx(); soon(); } });
+  addEventListener("pagehide", saveSnow);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) saveSnow(); else last = performance.now(); });
+  if (wrap) new MutationObserver((ms) => {
+    if (!running) return;
+    for (const m of ms) {
+      if (m.type === "attributes") { soon(); return; }
+      for (const nd of m.addedNodes) if (nd.nodeType === 1) { soon(); return; }
+      for (const nd of m.removedNodes) if (nd.nodeType === 1) { soon(); return; }
+    }
+  }).observe(wrap, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "aria-pressed", "class", "open"] });
+  if (window.ResizeObserver && wrap) new ResizeObserver(() => { if (running) soon(); }).observe(wrap);
+  setInterval(() => { if (running && !document.hidden) measure(); }, 1500);
+  const reTheme = () => { const d = isDark(); if (d !== dark) { dark = d; makeSprite(); surf.forEach((s) => { s.dirty = true; }); } };
+  new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (window.matchMedia) { const mq = matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", reTheme); }
+
+  /* ---- Bedienfeld ---- */
+  const btn = document.getElementById("snowbtn"), panel = document.getElementById("snowpanel");
+  const on = document.getElementById("snowOn"), amt = document.getElementById("snowAmt"), out = document.getElementById("snowAmtOut");
+  function paint() {
+    on.checked = cfg.on; amt.value = cfg.amt; out.textContent = cfg.amt + " %";
+    panel.classList.toggle("off", !cfg.on);
+    btn.setAttribute("aria-label", "Schnee-Einstellungen, Schnee ist " + (cfg.on ? "an" : "aus"));
+    btn.style.opacity = cfg.on ? "" : "0.55";
+  }
+  btn.addEventListener("click", () => { panel.hidden = !panel.hidden; btn.setAttribute("aria-expanded", String(!panel.hidden)); });
+  on.addEventListener("change", () => { cfg.on = on.checked; saveCfg(); paint(); cfg.on ? start() : (saveSnow(), stop()); });
+  amt.addEventListener("input", () => { cfg.amt = Math.max(5, Math.min(100, Math.round(+amt.value) || 45)); saveCfg(); paint(); });
+  document.getElementById("snowShake").addEventListener("click", shakeAll);
+  paint();
+  if (cfg.on) { if (document.readyState === "complete") start(); else addEventListener("load", start); setTimeout(start, 1500); }
+  else stop();
+})();
+</script>
+<script>
+/* ---------- Hinweis "Als App auf den Home-Bildschirm" ----------
+   Auf iPhone/iPad und am Laptop/PC (dort mit QR-Code, damit man es aufs Handy holt), nicht auf Android. Nur bis einschließlich Sonntag 29.11.2026, nicht wenn die Seite schon als App läuft,
+   und nach dem Schließen nie wieder. Zum Ansehen auf jedem Gerät: Adresse mit ?appinfo öffnen. */
+(function () {
+  const KEY = "semesterplaner.apphinweis.v2";
+  const UNTIL = new Date(2026, 10, 30, 0, 0, 0);   // Montag 30.11.2026, 0 Uhr: ab dann nicht mehr
+  const force = /[?&]appinfo\b/.test(location.search);
+  const ua = navigator.userAgent || "";
+  const iOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const app = navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === "1"; } catch (e) { /* egal */ }
+  const desk = !iOS && !/Android|Mobi/i.test(ua);
+  if (!force && (!(iOS || desk) || app || seen || new Date() >= UNTIL)) return;
+  const siteUrl = location.origin + location.pathname;
+  const other = /CriOS|FxiOS|EdgiOS/.test(ua);
+  const iPad = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  /* Bilder: selbst gezeichnet, passen sich hell/dunkel an */
+  const finger = (x, y) => `<circle class="i-tap" cx="${x}" cy="${y}" r="17"/>`;
+  const step1 = `<svg viewBox="0 0 320 150" role="img" aria-label="Safari unten: Adressleiste, rechts daneben der Knopf mit drei Punkten. Darüber das Menü mit Teilen.">
+  <rect class="i-bg" width="320" height="150"/>
+  <rect class="i-sf" x="150" y="8" width="160" height="78" rx="14"/>
+  <g font-size="12"><text class="i-fg" x="164" y="31">Teilen</text><text class="i-fg" x="164" y="56">Zu Favoriten</text><text class="i-fg" x="164" y="79" opacity=".55">Lesezeichen …</text></g>
+  <rect x="154" y="14" width="152" height="24" rx="8" fill="rgb(10 132 255 / .14)"/>
+  <g class="i-acs" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M290 30v-11M286 22.5l4-4 4 4M285 25h-2v9h14v-9h-2"/></g>
+  <path class="i-ln" d="M160 44h140M160 67h140"/>
+  <rect class="i-sf" x="10" y="102" width="300" height="40" rx="20"/>
+  <circle class="i-sk" cx="32" cy="122" r="14"/><path class="i-fgs" d="M35 115l-7 7 7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect class="i-sk" x="54" y="110" width="200" height="24" rx="12"/>
+  <text class="i-mu" x="154" y="126.5" font-size="11.5" text-anchor="middle">${location.host || "semesterplan"}</text>
+  <circle class="i-sk" cx="282" cy="122" r="14"/>
+  <g class="i-fg"><circle cx="275" cy="122" r="1.9"/><circle cx="282" cy="122" r="1.9"/><circle cx="289" cy="122" r="1.9"/></g>
+  ${finger(282, 122)}
+  <text class="i-ac" x="10" y="20" font-size="11" font-weight="600">① ••• tippen</text>
+  <text class="i-ac" x="10" y="38" font-size="11" font-weight="600">② „Teilen“</text>
+</svg>`;
+  const step2 = `<svg viewBox="0 0 320 150" role="img" aria-label="Das Teilen-Menü: weiter unten steht Zum Home-Bildschirm mit einem Plus im Quadrat.">
+  <rect class="i-bg" width="320" height="150"/>
+  <rect class="i-sf" x="14" y="10" width="292" height="130" rx="16"/>
+  <g font-size="12.5">
+    <text class="i-fg" x="30" y="36">Kopieren</text>
+    <text class="i-fg" x="30" y="66">Zur Leseliste hinzufügen</text>
+    <rect x="20" y="78" width="280" height="28" rx="8" fill="rgb(10 132 255 / .14)"/>
+    <text class="i-fg" x="30" y="96" font-weight="600">Zum Home-Bildschirm</text>
+    <text class="i-fg" x="30" y="128" opacity=".55">Lesezeichen hinzufügen</text>
+  </g>
+  <g class="i-mus" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="278" y="25" width="10" height="13" rx="2"/><path d="M282 22h8v12"/>
+    <path d="M276 60h16M279 56v-2h10v2M279 60v6h10v-6" />
+    <path d="M281 118h8l2 2v10l-6-4-6 4v-10z"/>
+  </g>
+  <g class="i-acs" stroke-width="1.9" stroke-linecap="round"><rect x="275" y="83" width="18" height="18" rx="5"/><path d="M284 87.5v9M279.5 92h9"/></g>
+  <path class="i-ln" d="M30 48h264M30 78h264M30 108h264"/>
+  ${finger(284, 92)}
+</svg>`;
+  const step3 = `<svg viewBox="0 0 320 150" role="img" aria-label="Fenster Zum Home-Bildschirm: App-Symbol mit Namen Semesterplan, Schalter Als Web-App öffnen ist an, oben rechts Hinzufügen.">
+  <rect class="i-bg" width="320" height="150"/>
+  <g font-size="12.5"><text class="i-ac" x="16" y="26">Abbrechen</text><text class="i-fg" x="160" y="26" text-anchor="middle" font-weight="600">Zum Home-Bildschirm</text><text class="i-ac" x="304" y="26" text-anchor="end" font-weight="700">Hinzufügen</text></g>
+  ${finger(278, 22)}
+  <rect class="i-sf" x="14" y="40" width="292" height="100" rx="14"/>
+  <clipPath id="a2ic"><rect x="26" y="50" width="44" height="44" rx="11"/></clipPath>
+  <rect class="i-sk" x="26" y="50" width="44" height="44" rx="11"/>
+  <image href="apple-touch-icon.png" x="26" y="50" width="44" height="44" clip-path="url(#a2ic)"/>
+  <text class="i-fg" x="84" y="68" font-size="13.5" font-weight="600">Semesterplan</text>
+  <text class="i-mu" x="84" y="86" font-size="10.5">${location.host || "semesterplan"}</text>
+  <path class="i-ln" d="M26 106h268"/>
+  <text class="i-fg" x="26" y="127" font-size="12.5">Als Web-App öffnen</text>
+  <rect x="250" y="113" width="42" height="22" rx="11" fill="#34c759"/><circle cx="281" cy="124" r="9" fill="#fff"/>
+</svg>`;
+  const icons = ["#ff9f0a", "#30d158", "#0a84ff", "#bf5af2", "#ff375f", "#64d2ff", "#ffd60a", "#5e5ce6"];
+  let grid = "";
+  for (let i = 0; i < 7; i++) { const x = 22 + (i % 4) * 74, y = 12 + Math.floor(i / 4) * 66; grid += `<rect x="${x}" y="${y}" width="44" height="44" rx="11" fill="${icons[i]}" opacity=".85"/><rect class="i-fa" x="${x + 6}" y="${y + 50}" width="32" height="5" rx="2.5" opacity=".6"/>`; }
+  const step4 = `<svg viewBox="0 0 320 150" role="img" aria-label="Home-Bildschirm mit dem neuen Semesterplan-Symbol zwischen den anderen Apps.">
+  <rect class="i-sk" width="320" height="150"/>
+  ${grid}
+  <clipPath id="a2ic2"><rect x="244" y="78" width="44" height="44" rx="11"/></clipPath>
+  <image href="apple-touch-icon.png" x="244" y="78" width="44" height="44" clip-path="url(#a2ic2)"/>
+  <text class="i-fg" x="266" y="136" font-size="10" text-anchor="middle" font-weight="600">Semesterplan</text>
+  <g class="i-ac"><path d="M296 76l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z"/><path d="M232 72l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4z" opacity=".7"/></g>
+</svg>`;
+  const host = location.host + location.pathname.replace(/index\.html$/, "").replace(/\/$/, "");
+  const s1 = desk ? `Tippe in Safari unten rechts auf <b>•••</b> und dann auf <b>Teilen</b>.<small>Auf dem iPad oben rechts. Bei älterem iOS gibt es direkt das Teilen-Symbol (Quadrat mit Pfeil nach oben).</small>` : other
+    ? `Tippe auf das <b>Teilen-Symbol</b> (Quadrat mit Pfeil nach oben). In Chrome ist es oben rechts in der Adressleiste.<small>Klappt es nicht, öffne die Seite einmal in Safari.</small>`
+    : `Tippe in Safari ${iPad ? "oben rechts" : "unten rechts"} auf <b>•••</b> und dann auf <b>Teilen</b>.<small>Bei älterem iOS gibt es direkt das Teilen-Symbol (Quadrat mit Pfeil nach oben), dann einfach das antippen.</small>`;
+
+  function show() {
+    if (document.querySelector(".a2")) return;
+    const box = document.createElement("div");
+    box.className = "a2";
+    box.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="a2t">
+      <button type="button" class="x" aria-label="Schließen">✕</button>
+      ${iOS ? `<h2 id="a2t">Semesterplan als App 📲</h2>
+      <p class="lead">Leg dir die Seite auf den Home-Bildschirm. Dann öffnet sie sich wie eine richtige App: ohne Adressleiste, mit eigenem Symbol, und sie geht auch ohne Netz.</p>` : `<h2 id="a2t">Neu: Semesterplan als App aufs Handy 📲</h2>
+      <p class="lead">Du kannst dir den Semesterplan jetzt auf dein iPhone holen. Dann öffnet er sich wie eine richtige App: ohne Adressleiste, mit eigenem Symbol, und geht auch ohne Netz.</p>
+      <div class="qr"><div class="qrc" aria-hidden="true"></div><p><b>Scann den Code mit der iPhone-Kamera</b>, dann öffnet sich die Seite in Safari. Dort einfach diese Schritte machen:<small>Oder öffne <b>${host}</b> direkt im Handy-Browser.</small></p></div>`}
+      <ol>
+        <li><p><span>${s1}</span></p>${step1}</li>
+        <li><p><span>Wisch im Menü nach unten und tippe auf <b>Zum Home-Bildschirm</b>.<small>Steht es nicht da, erst auf „Mehr“ tippen.</small></span></p>${step2}</li>
+        <li><p><span>Lass <b>Als Web-App öffnen</b> an und tippe oben rechts auf <b>Hinzufügen</b>.</span></p>${step3}</li>
+        <li><p><span>Fertig! Ab jetzt den Semesterplan einfach über das Symbol öffnen.</span></p>${step4}</li>
+      </ol>
+      ${desk ? `<p class="andr">Android? Im Chrome-Menü <b>⋮</b> auf <b>Zum Startbildschirm hinzufügen</b> bzw. <b>App installieren</b> tippen.</p>` : ""}
+      <button type="button" class="btn ok">Verstanden</button>
+      <p class="until">Dieser Hinweis kommt nur diese Woche und nach dem Schließen nicht wieder.</p>
+    </div>`;
+    const close = () => {
+      try { localStorage.setItem(KEY, "1"); } catch (e) { /* egal */ }
+      box.remove(); document.removeEventListener("keydown", esc);
+    };
+    const esc = (e) => { if (e.key === "Escape") close(); };
+    box.addEventListener("click", (e) => { if (e.target === box || e.target.closest(".x, .ok")) close(); });
+    document.addEventListener("keydown", esc);
+    document.body.appendChild(box);
+    box.querySelector(".ok").focus({ preventScroll: true });
+    const qc = box.querySelector(".qrc");
+    if (qc) {
+      const draw = () => { try { new QRCode(qc, { text: siteUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M }); } catch (e) { qc.parentNode.classList.add("noqr"); } };
+      if (window.QRCode) draw();
+      else {
+        const sc = document.createElement("script");
+        sc.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+        sc.onload = draw; sc.onerror = () => qc.parentNode.classList.add("noqr");
+        document.head.appendChild(sc);
+      }
+    }
+  }
+  setTimeout(show, force ? 300 : 1800);
 })();
 </script>
 </body>

@@ -2921,10 +2921,10 @@ async function connect() {
       if (s.w !== r.width || s.rad !== rad || s.cap !== cap) s.dirty = true;
       Object.assign(s, { el, fixed, x: left, y: top, w: r.width, rad, cap });
       if (!s.cv) {
-        s.cv = document.createElement("canvas"); s.ctx = s.cv.getContext("2d"); s.dirty = true;
+        s.cv = document.createElement("canvas"); s.cv.width = 0; s.ctx = s.cv.getContext("2d"); s.dirty = true;   // Breite 0: sonst bleibt bei zufällig 300 px die Standardgröße hängen
       }
       const pw = Math.ceil(r.width) + 8;
-      if (s.cv.width !== Math.round(pw * DPR)) { s.cv.width = Math.round(pw * DPR); s.cv.height = Math.round((CVH + EXTRA) * DPR); s.cv.style.width = pw + "px"; s.cv.style.height = (CVH + EXTRA) + "px"; s.dirty = true; }
+      if (s.cv.width !== Math.round(pw * DPR) || s.cv.style.width !== pw + "px") { s.cv.width = Math.round(pw * DPR); s.cv.height = Math.round((CVH + EXTRA) * DPR); s.cv.style.width = pw + "px"; s.cv.style.height = (CVH + EXTRA) + "px"; s.dirty = true; }
       if (fixed) {   // Knöpfe oben: Schnee sitzt direkt im Knopf, passt dadurch immer genau
         s.cv.className = "snowcap"; s.cv.style.transform = "";
         if (s.cv.parentNode !== el) el.appendChild(s.cv);

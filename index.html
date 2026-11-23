@@ -2841,7 +2841,7 @@ async function connect() {
   const CVH = MAXH + 8;     // Höhe der Leinwand über einem Kasten
   const SINK = 2;           // so weit überlappt der Schnee die Kante
   const EXTRA = 26;         // Platz nach unten, damit der Schnee den runden Ecken folgen kann
-  const SEL = "header .btn, .bar .tabs, .nav .btn, .chip, .panel, .nx, .scroll, .dish, .mrow, .empty, .mh + .li, .list > .li:first-child, #view > *, #view > * > *";
+  const SEL = "header .btn, .wxbar, .bar .tabs, .nav .btn, .chip, .panel, .nx, .scroll, .dish, .mrow, .empty, .mh + .li, .list > .li:first-child, #view > *, #view > * > *";
 
   const fx = document.createElement("canvas"); fx.id = "snowfx"; fx.setAttribute("aria-hidden", "true");
   const docL = document.createElement("div"); docL.id = "snowdoc"; docL.setAttribute("aria-hidden", "true");

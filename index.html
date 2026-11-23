@@ -630,6 +630,8 @@ h1 { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.022em; }
 #snowdoc { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 5; }
 #snowhdr { position: fixed; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 11; }
 #snowdoc canvas, #snowhdr canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
+header .btn { position: relative; }
+header .btn > canvas.snowcap { position: absolute; left: -4px; top: -26px; pointer-events: none; z-index: 1; }
 .snowp .amt { display: grid; grid-template-columns: auto minmax(0, 1fr) 3.2em; gap: 12px; align-items: center; font-size: 0.9rem; color: var(--muted); max-width: 420px; }
 .snowp .amt output { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--fg); text-align: right; font-size: 0.85rem; }
 .snowp input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; min-height: 28px; }
@@ -2923,12 +2925,19 @@ async function connect() {
       }
       const pw = Math.ceil(r.width) + 8;
       if (s.cv.width !== Math.round(pw * DPR)) { s.cv.width = Math.round(pw * DPR); s.cv.height = Math.round((CVH + EXTRA) * DPR); s.cv.style.width = pw + "px"; s.cv.style.height = (CVH + EXTRA) + "px"; s.dirty = true; }
-      const host = fixed ? hdrL : docL;
-      if (s.cv.parentNode !== host) host.appendChild(s.cv);
-      s.cv.style.transform = `translate(${(left - 4).toFixed(1)}px, ${(top - CVH + SINK).toFixed(1)}px)`;
+      if (fixed) {   // Knöpfe oben: Schnee sitzt direkt im Knopf, passt dadurch immer genau
+        s.cv.className = "snowcap"; s.cv.style.transform = "";
+        if (s.cv.parentNode !== el) el.appendChild(s.cv);
+      } else {
+        s.cv.className = "";
+        if (s.cv.parentNode !== docL) docL.appendChild(s.cv);
+        s.cv.style.transform = `translate(${(left - 4).toFixed(1)}px, ${(top - CVH + SINK).toFixed(1)}px)`;
+      }
       seen.add(key); list.push(s);
     }
     surf.forEach((s) => { if (!seen.has(s.key) && s.cv) { s.cv.remove(); s.cv = null; s.el = null; } });
+    const mine = new Set(list.map((s) => s.cv));   // Sicherheitsnetz: keine verwaisten Schneehaufen
+    document.querySelectorAll("#snowdoc > canvas, #snowhdr > canvas, canvas.snowcap").forEach((c) => { if (!mine.has(c)) c.remove(); });
     act = list;
   }
   let mTimer = 0;
@@ -3009,7 +3018,6 @@ async function connect() {
     const sy = scrollY, sx = scrollX;
     const hr = header ? header.getBoundingClientRect() : null;
     const hdy = hr ? hr.top - hdrTop0 : 0, hBot = hr ? hr.bottom : 0;
-    hdrL.style.transform = hdy ? `translateY(${hdy}px)` : "";
     // Flächen, auf die gerade etwas fallen kann (im Fenster, nicht unter der Kopfzeile)
     const vis = [];
     for (const s of act) {
@@ -3121,6 +3129,8 @@ async function connect() {
   }
   addEventListener("resize", () => { if (running) { sizeFx(); soon(); } });
   addEventListener("pagehide", saveSnow);
+  addEventListener("load", soon);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
   document.addEventListener("visibilitychange", () => { if (document.hidden) saveSnow(); else last = performance.now(); });
   if (wrap) new MutationObserver((ms) => {
     if (!running) return;

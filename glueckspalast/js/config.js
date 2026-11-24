@@ -16,7 +16,7 @@ window.GP_CONFIG = {
   // Optional: gemeinsamer Online-Speicher für Bestenliste und Login auf allen Geräten (Supabase).
   // Leer lassen = alles bleibt im Browser des jeweiligen Geräts. Einrichtung: siehe README.
   online: {
-    supabaseUrl: '',       // z. B. 'https://abcdefgh.supabase.co'
-    supabaseAnonKey: ''    // der "anon public"-Schlüssel (Project Settings → API)
+    supabaseUrl: 'https://kstmccmfxhkooqkawhnf.supabase.co',       // z. B. 'https://abcdefgh.supabase.co'
+    supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzdG1jY21meGhrb29xa2F3aG5mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1MTU5OTYsImV4cCI6MjExMTA5MTk5Nn0.jeVPT9_5GxJeOKZ-K9q_QtAQSYu2SKHQsVpwmZS57eU'    // der "anon public"-Schlüssel (Project Settings → API)
   }
 };

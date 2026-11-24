@@ -638,6 +638,18 @@ header .btn > canvas.snowcap { position: absolute; left: -4px; top: -26px; point
 .snowp.off .amt { opacity: 0.4; pointer-events: none; }
 .snowp .ctl { margin-top: 0; }
 
+/* Werkzeugleiste "Im Schnee spielen" */
+.snowdock { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; max-width: calc(100vw - 28px); pointer-events: none; }
+.snowdock > * { pointer-events: auto; }
+.snowdock .sd-done { border: 0; border-radius: 999px; padding: 9px 16px; min-height: 42px; font-weight: 600; font-size: 0.9rem; background: var(--accent); color: #fff; box-shadow: 0 6px 24px -6px rgb(0 0 0 / 0.35); }
+.snowp .play { display: flex; flex-direction: column; gap: 6px; }
+.snowp .play .sub { font-size: 0.82rem; color: var(--muted); font-weight: 550; }
+.snowp .play .ctl { margin-top: 0; }
+.snowp .play .btn svg { flex: none; }
+.snowp.off .play { opacity: 0.4; pointer-events: none; }
+.snowdock .sd-hint { margin: 0; max-width: 320px; font-size: 0.8rem; line-height: 1.35; color: var(--fg); padding: 8px 12px; border-radius: 14px; background: color-mix(in srgb, var(--surface) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 6px 24px -6px rgb(0 0 0 / 0.3), 0 0 0 0.5px var(--line); }
+@media print { .snowdock, #snowfx, #snowdoc { display: none !important; } }
+
 /* ---------- Hinweis: als App auf iPhone/iPad ---------- */
 .a2 { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgb(0 0 0 / 0.38); padding: 12px max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
 @media (min-width: 640px) { .a2 { align-items: center; } }
@@ -705,8 +717,16 @@ header .btn > canvas.snowcap { position: absolute; left: -4px; top: -26px; point
     <span class="cap" id="snowcap">Schnee</span>
     <label class="sw"><input type="checkbox" id="snowOn"><span class="ui"></span>Es schneit</label>
     <label class="amt" for="snowAmt"><span>Menge</span><input type="range" id="snowAmt" min="5" max="100" step="1"><output id="snowAmtOut" for="snowAmt"></output></label>
+    <div class="play">
+      <span class="sub">Im Schnee spielen</span>
+      <div class="ctl" role="group" aria-label="Werkzeuge">
+        <button type="button" class="btn ghost" data-t="shovel" aria-pressed="false" title="Schnee wegschieben"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M17.5 3.5l3 3M19 5l-7.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M11.5 12.5l-5.5 1-3 3.5 4 4 3.5-3 1-5.5z" fill="currentColor"/></svg> Schaufel</button>
+        <button type="button" class="btn ghost" data-t="ball" aria-pressed="false" title="Schneebälle formen und werfen">⚪ Schneeball</button>
+        <button type="button" class="btn ghost" data-t="man" aria-pressed="false" title="Schneemann bauen">⛄ Schneemann</button>
+      </div>
+    </div>
     <div class="ctl"><button type="button" class="btn ghost" id="snowShake">Schnee abschütteln</button></div>
-    <p class="note">Der Schnee bleibt auf den Kästen liegen und wird mit der Zeit immer mehr. Fahr mit der Maus (oder dem Finger) drüber, dann stäubt er weg.</p>
+    <p class="note">Der Schnee bleibt auf den Kästen liegen und wird mit der Zeit immer mehr. Fahr mit der Maus (oder dem Finger) drüber, dann stäubt er weg. Mit den Werkzeugen oben kannst du schaufeln, Schneebälle werfen und Schneemänner bauen.</p>
   </section>
 
   <section class="panel cal" id="calpanel" hidden aria-labelledby="calcap">
@@ -3055,13 +3075,14 @@ async function connect() {
       const q = puffs[k];
       q.life -= dt;
       if (q.life <= 0) { puffs[k] = puffs[puffs.length - 1]; puffs.pop(); continue; }
-      q.vx *= 1 - 1.8 * dt; q.vy += 34 * dt; q.vy *= 1 - 1.2 * dt;
+      q.vx *= 1 - 1.8 * dt; q.vy += (q.g || 34) * dt; q.vy *= q.g > 100 ? 1 : 1 - 1.2 * dt;
       q.x += q.vx * dt; q.y += q.vy * dt;
       const vx = q.fixed ? q.x : q.x - sx, vy = q.fixed ? q.y + hdy : q.y - sy, d = q.r * 2.6 * (1 + (1 - q.life / q.l0) * 0.6);
       g.globalAlpha = Math.max(0, q.life / q.l0) * 0.95;
       g.drawImage(sprite, vx - d / 2, vy - d / 2, d, d);
     }
     g.globalAlpha = 1;
+    toolFrame(g, dt, sx, sy, hdy, hBot);
     for (const s of act) if (s.dirty && s.cv) drawSurf(s);
     saveT += dt; if (saveT > 15) { saveT = 0; saveSnow(); }
   }
@@ -3095,11 +3116,11 @@ async function connect() {
   }
   let lastBlow = 0;
   document.addEventListener("pointermove", (e) => {
-    if (!running) return;
+    if (!running || tool) return;
     const now = performance.now(); if (now - lastBlow < 16) return; lastBlow = now;
     blow(e.clientX, e.clientY, e.pointerType === "mouse" ? 26 : 34, 0.5);
   }, { passive: true });
-  document.addEventListener("pointerdown", (e) => { if (running && e.pointerType !== "mouse") blow(e.clientX, e.clientY, 34, 0.6); }, { passive: true });
+  document.addEventListener("pointerdown", (e) => { if (running && !tool && e.pointerType !== "mouse") blow(e.clientX, e.clientY, 34, 0.6); }, { passive: true });
 
   function shakeAll() {
     const sy = scrollY, sx = scrollX;
@@ -3113,6 +3134,8 @@ async function connect() {
       }
       s.cols.fill(0); s.dirty = true;
     }
+    for (const o of objs.slice()) knock(o);
+    flying = []; held = null;
     saveSnow();
   }
 
@@ -3123,7 +3146,8 @@ async function connect() {
     requestAnimationFrame(frame);
   }
   function stop() {
-    running = false; flakes = []; puffs = [];
+    running = false; flakes = []; puffs = []; flying = []; held = null; ptr = null; shovel = null;
+    setTool("");
     fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, fx.width, fx.height);
     fx.hidden = docL.hidden = hdrL.hidden = true;
   }
@@ -3145,6 +3169,338 @@ async function connect() {
   const reTheme = () => { const d = isDark(); if (d !== dark) { dark = d; makeSprite(); surf.forEach((s) => { s.dirty = true; }); } };
   new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   if (window.matchMedia) { const mq = matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", reTheme); }
+
+
+  /* ---- Im Schnee spielen: Schaufel, Schneebälle, Schneemänner ----
+     Schaufel: über den liegenden Schnee ziehen, er wird vor dem Blatt hergeschoben und fällt an der Kante herunter.
+     Schneeball: auf Schnee drücken und ziehen, der Ball rollt sich größer. Loslassen = werfen. Sanft abgelegt bleibt er liegen,
+     drei aufeinander werden zum Schneemann. Schneemann: auf eine verschneite Kante tippen.
+     Liegende Kugeln und Schneemänner merkt sich das Gerät. */
+  const OBJ = "semesterplaner.schnee.figuren.v1";
+  let tool = "";
+  let objs = [];
+  try { const o = JSON.parse(localStorage.getItem(OBJ) || "[]"); if (Array.isArray(o)) objs = o.filter((x) => x && typeof x.key === "string" && Array.isArray(x.rs) && x.rs.length).slice(-40); } catch (e) { /* leer */ }
+  const saveObjs = () => { try { localStorage.setItem(OBJ, JSON.stringify(objs.map((o) => ({ key: o.key, ox: Math.round(o.ox), rs: o.rs.map((r) => Math.round(r * 10) / 10), man: !!o.man })))); } catch (e) { /* egal */ } };
+  let flying = [], held = null, ptr = null, shovel = null, swallow = false, swallowT = 0;
+  const hdyNow = () => (header ? header.getBoundingClientRect().top - hdrTop0 : 0);
+  const geo = (s, sx, sy, hdy) => ({ left: s.fixed ? s.x : s.x - sx, top: s.fixed ? s.y + hdy : s.y - sy });
+  const ballR = (vol) => Math.min(24, 3 + Math.sqrt(Math.max(0, vol)) * 1.1);
+  const ballVol = (r) => Math.pow(Math.max(0, r - 3) / 1.1, 2);
+  const colAt = (s, ox) => Math.max(0, Math.min(s.cols.length - 1, Math.round(ox / COL)));
+  const snowTop = (s, top, i) => top + dyAt(s, i) - s.cols[i];
+
+  /* Welche Kante liegt unter dem Finger/der Maus? */
+  function hitSurf(cx, cy, padUp) {
+    const sx = scrollX, sy = scrollY, hdy = hdyNow(), hBot = header ? header.getBoundingClientRect().bottom : 0;
+    let best = null, bd = 1e9;
+    for (const s of act) {
+      const { left, top } = geo(s, sx, sy, hdy);
+      if (!s.fixed && top < hBot) continue;
+      if (cx < left - 2 || cx > left + s.w + 2) continue;
+      const i = colAt(s, cx - left), st = snowTop(s, top, i);
+      if (cy < st - padUp || cy > top + dyAt(s, i) + 10) continue;
+      const d = Math.abs(cy - st);
+      if (d < bd) { bd = d; best = { s, i, left, top }; }
+    }
+    return best;
+  }
+  /* Kugeln und Schneemänner: Position im Fenster */
+  function objPos(o, sx, sy, hdy) {
+    const s = surf.get(o.key);
+    if (!s || !s.cv || !act.includes(s)) return null;
+    const { left, top } = geo(s, sx, sy, hdy), i = colAt(s, o.ox);
+    const k = o.grow == null ? 1 : o.grow;
+    const balls = []; let yb = top + dyAt(s, i) - s.cols[i] * 0.55 + 1, x = left + o.ox;
+    for (let j = 0; j < o.rs.length; j++) {
+      const r = o.rs[j] * k, cy = j === 0 ? yb - r : balls[j - 1].y - (balls[j - 1].r + r) * 0.78;
+      balls.push({ x, y: cy, r });
+    }
+    return { s, balls, fixed: s.fixed };
+  }
+  function hitObj(cx, cy) {
+    const sx = scrollX, sy = scrollY, hdy = hdyNow();
+    for (let n = objs.length - 1; n >= 0; n--) {
+      const p = objPos(objs[n], sx, sy, hdy); if (!p) continue;
+      for (const b of p.balls) if (Math.hypot(cx - b.x, cy - b.y) < b.r + 6) return objs[n];
+      if (objs[n].man && p.balls.length === 3) { const h = p.balls[2]; if (Math.abs(cx - h.x) < h.r && cy < h.y && cy > h.y - h.r * 2.2) return objs[n]; }
+    }
+    return null;
+  }
+  function burst(x, y, fixed, n, spread, up, grav) {   // x/y im Fenster
+    const sx = scrollX, sy = scrollY, hdy = hdyNow();
+    for (let k = 0; k < n && puffs.length < 420; k++) {
+      const l0 = 0.6 + Math.random() * 0.9;
+      puffs.push({ x: fixed ? x : x + sx, y: fixed ? y - hdy : y + sy, vx: (Math.random() - 0.5) * spread, vy: -Math.random() * up, r: 0.9 + Math.random() * 2, life: l0, l0, fixed, g: grav || 34 });
+    }
+  }
+  function knock(o) {
+    const p = objPos(o, scrollX, scrollY, hdyNow());
+    if (p) for (const b of p.balls) burst(b.x, b.y, p.fixed, Math.min(40, 6 + b.r * 1.6), 160, 140, 500);
+    objs = objs.filter((x) => x !== o); saveObjs();
+  }
+  /* Schnee in der Nähe abtragen (für Bälle und Schneemänner), gibt die Menge zurück */
+  function scoop(s, ox, radius, want) {
+    const i0 = Math.max(0, Math.floor((ox - radius) / COL)), i1 = Math.min(s.cols.length - 1, Math.ceil((ox + radius) / COL));
+    let got = 0;
+    for (let pass = 0; pass < 3 && got < want; pass++) for (let i = i0; i <= i1 && got < want; i++) {
+      const t = Math.min(s.cols[i] * 0.5, want - got); s.cols[i] -= t; got += t;
+    }
+    if (got > 0) s.dirty = true;
+    return got;
+  }
+  function pileOn(s, ox, amount, wide) {   // Schnee aufschütten (darf etwas höher werden als normal)
+    let i = colAt(s, ox), left = amount;
+    for (let k = 0; k < 40 && left > 0.05; k++) {
+      const j = i + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * (wide || 1);
+      if (j < 0 || j >= s.cols.length) continue;
+      const room = Math.max(0, capAt(s, j) * 1.5 - s.cols[j]), put = Math.min(room, left * 0.4 + 0.2, left);
+      s.cols[j] += put; left -= put;
+    }
+    s.dirty = true;
+    return left;
+  }
+
+  function buildMan(h, cx) {
+    const ox = cx - h.left;
+    const got = scoop(h.s, ox, 60, 340);
+    if (got < 25) { hint("Hier liegt noch zu wenig Schnee. Warte kurz, bis mehr gefallen ist ❄️", true); h.s.cols[h.i] += 0; pileOn(h.s, ox, got); return; }
+    const f = Math.max(0.7, Math.min(1, got / 300));
+    const o = { key: h.s.key, ox, rs: [19 * f, 14 * f, 10.5 * f], man: true, grow: 0 };
+    objs.push(o); if (objs.length > 40) objs.shift();
+    burst(cx, h.top - 6, h.s.fixed, 18, 120, 90, 300);
+    saveObjs();
+  }
+
+  /* ---- Schaufel ---- */
+  function shovelMove(x0, x1, cy) {
+    const h = hitSurf(x1, cy, 28);
+    if (!h) return;
+    const s = h.s, left = h.left;
+    const dir = Math.sign(x1 - x0) || shovel.dir || 1; shovel.dir = dir;
+    const a = Math.min(x0, x1) - left - 7, b = Math.max(x0, x1) - left + 7;
+    for (let i = Math.max(0, Math.floor(a / COL)); i <= Math.min(s.cols.length - 1, Math.ceil(b / COL)); i++) { shovel.carry += s.cols[i] * 0.92; s.cols[i] *= 0.08; }
+    for (const o of objs.slice()) if (o.key === s.key && o.ox > a - 4 && o.ox < b + 4) knock(o);
+    const front = x1 - left + dir * 10;
+    if (front < 0 || front > s.w) {   // über die Kante: Schnee fällt runter
+      const ex = left + (front < 0 ? 0 : s.w), ey = h.top + dyAt(s, front < 0 ? 0 : s.cols.length - 1) - 4;
+      const n = Math.min(40, Math.round(shovel.carry * 0.35));
+      const sx = scrollX, sy = scrollY, hdy = hdyNow();
+      for (let k = 0; k < n && puffs.length < 420; k++) {
+        const l0 = 1.2 + Math.random() * 0.8;
+        puffs.push({ x: s.fixed ? ex : ex + sx, y: s.fixed ? ey - hdy - Math.random() * 10 : ey + sy - Math.random() * 10, vx: dir * (30 + Math.random() * 90), vy: -20 - Math.random() * 60, r: 1.2 + Math.random() * 2.4, life: l0, l0, fixed: s.fixed, g: 900 });
+      }
+      shovel.carry = 0;
+    } else if (shovel.carry > 0) shovel.carry = pileOn(s, front + dir * 6, shovel.carry);
+    s.dirty = true;
+  }
+
+  /* ---- Zeiger ---- */
+  function grab(e) {
+    e.preventDefault(); swallow = true; clearTimeout(swallowT);
+    ptr = { id: e.pointerId, x: e.clientX, y: e.clientY, vx: 0, vy: 0, t: performance.now() };
+  }
+  document.addEventListener("pointerdown", (e) => {
+    if (!running || !tool || e.button > 0) return;
+    if (e.target.closest && e.target.closest(".snowdock, #snowpanel, .a2, input, textarea, select, a")) return;
+    const cx = e.clientX, cy = e.clientY;
+    const ob = hitObj(cx, cy);
+    if (ob) {
+      grab(e);
+      if (tool === "ball") {   // oberste Kugel aufheben
+        const r = ob.rs.pop(); ob.man = false;
+        if (!ob.rs.length) objs = objs.filter((x) => x !== ob);
+        held = { vol: ballVol(r), r, x: cx, y: cy }; saveObjs();
+      } else knock(ob);
+      return;
+    }
+    const h = hitSurf(cx, cy, tool === "man" ? 34 : 24);
+    if (!h) return;
+    grab(e);
+    if (tool === "man") buildMan(h, cx);
+    else if (tool === "ball") { held = { vol: 0, r: 3, x: cx, y: cy }; }
+    else { shovel = { carry: 0, dir: 0, x: cx }; shovelMove(cx - 1, cx, cy); }
+  }, true);
+  document.addEventListener("pointermove", (e) => {
+    if (!ptr || e.pointerId !== ptr.id) return;
+    const now = performance.now(), dtp = Math.max(1, now - ptr.t) / 1000;
+    const nvx = (e.clientX - ptr.x) / dtp, nvy = (e.clientY - ptr.y) / dtp;
+    ptr.vx = ptr.vx * 0.5 + nvx * 0.5; ptr.vy = ptr.vy * 0.5 + nvy * 0.5;
+    const x0 = ptr.x; ptr.x = e.clientX; ptr.y = e.clientY; ptr.t = now;
+    if (shovel) shovelMove(x0, e.clientX, e.clientY);
+    if (held) { held.x = e.clientX; held.y = e.clientY; }
+  });
+  function release(e) {
+    if (!ptr || (e && e.pointerId !== ptr.id)) return;
+    if (held) {
+      const sx = scrollX, sy = scrollY;
+      if (held.vol < 4) burst(held.x, held.y, false, 8, 80, 60, 200);
+      else {
+        let vx = ptr.vx, vy = ptr.vy; const sp = Math.hypot(vx, vy);
+        if (performance.now() - ptr.t > 90) { vx = 0; vy = 0; }   // still gehalten = ablegen
+        else if (sp > 1800) { vx *= 1800 / sp; vy *= 1800 / sp; }
+        flying.push({ x: held.x + sx, y: held.y + sy, vx, vy, r: held.r, vol: held.vol });
+      }
+      held = null;
+    }
+    if (shovel) shovel = null;
+    ptr = null;
+    swallowT = setTimeout(() => { swallow = false; }, 350);
+  }
+  document.addEventListener("pointerup", release);
+  document.addEventListener("pointercancel", release);
+  document.addEventListener("click", (e) => { if (swallow) { e.preventDefault(); e.stopPropagation(); swallow = false; } }, true);
+  document.addEventListener("touchstart", (e) => {   // auf Schnee nicht scrollen, daneben schon
+    if (!running || !tool || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    if (t.target.closest && t.target.closest(".snowdock, #snowpanel, .a2")) return;
+    if (hitObj(t.clientX, t.clientY) || hitSurf(t.clientX, t.clientY, tool === "man" ? 34 : 24)) e.preventDefault();
+  }, { passive: false });
+  document.addEventListener("touchmove", (e) => { if (ptr) e.preventDefault(); }, { passive: false });
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && tool) setTool(""); });
+
+  /* ---- jedes Bild: Ball in der Hand, fliegende Bälle, Figuren ---- */
+  function drawBall(g, x, y, r) {
+    const gr = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+    if (dark) { gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.7, "#e6edf6"); gr.addColorStop(1, "#b7c5d8"); }
+    else { gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.7, "#eef3f9"); gr.addColorStop(1, "#c9d6e7"); }
+    g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fillStyle = gr; g.fill();
+    if (!dark) { g.lineWidth = 0.8; g.strokeStyle = "rgba(120,142,175,0.5)"; g.stroke(); }
+  }
+  function drawMan(g, b) {
+    const [lo, mid, hd] = b;
+    // Arme (Äste)
+    g.strokeStyle = "#6b4423"; g.lineCap = "round"; g.lineWidth = Math.max(1.4, mid.r * 0.13);
+    for (const d of [-1, 1]) {
+      const ax = mid.x + d * mid.r * 0.85, ay = mid.y - mid.r * 0.15, ex = ax + d * mid.r * 1.1, ey = ay - mid.r * 0.75;
+      g.beginPath(); g.moveTo(ax, ay); g.lineTo(ex, ey);
+      g.moveTo(ax + (ex - ax) * 0.6, ay + (ey - ay) * 0.6); g.lineTo(ax + (ex - ax) * 0.6 + d * mid.r * 0.35, ay + (ey - ay) * 0.6 + mid.r * 0.05);
+      g.stroke();
+    }
+    drawBall(g, lo.x, lo.y, lo.r); drawBall(g, mid.x, mid.y, mid.r);
+    // Schal
+    g.fillStyle = "#d62828";
+    g.beginPath(); g.ellipse(mid.x, mid.y - mid.r * 0.82, mid.r * 0.78, Math.max(1.6, mid.r * 0.2), 0, 0, 6.2832); g.fill();
+    drawBall(g, hd.x, hd.y, hd.r);
+    g.fillRect(mid.x + mid.r * 0.25, mid.y - mid.r * 0.85, Math.max(2, mid.r * 0.24), mid.r * 0.75);
+    // Knöpfe, Augen, Mund
+    g.fillStyle = "#1b1b1f";
+    const dot = (x, y, r) => { g.beginPath(); g.arc(x, y, Math.max(0.8, r), 0, 6.2832); g.fill(); };
+    dot(mid.x, mid.y - mid.r * 0.15, mid.r * 0.1); dot(mid.x, mid.y + mid.r * 0.3, mid.r * 0.1); dot(lo.x, lo.y - lo.r * 0.35, lo.r * 0.09);
+    dot(hd.x - hd.r * 0.35, hd.y - hd.r * 0.2, hd.r * 0.12); dot(hd.x + hd.r * 0.35, hd.y - hd.r * 0.2, hd.r * 0.12);
+    for (let k = -2; k <= 2; k++) dot(hd.x + k * hd.r * 0.17, hd.y + hd.r * 0.38 - (2 - Math.abs(k)) * hd.r * 0.06, hd.r * 0.06);
+    // Karottennase
+    g.fillStyle = "#f28c28"; g.beginPath(); g.moveTo(hd.x, hd.y - hd.r * 0.06); g.lineTo(hd.x + hd.r * 0.85, hd.y + hd.r * 0.06); g.lineTo(hd.x, hd.y + hd.r * 0.16); g.closePath(); g.fill();
+    // Hut
+    const hy = hd.y - hd.r * 0.82;
+    g.fillStyle = "#1f1f24"; g.fillRect(hd.x - hd.r * 0.95, hy - hd.r * 0.12, hd.r * 1.9, hd.r * 0.2);
+    g.fillRect(hd.x - hd.r * 0.6, hy - hd.r * 1.05, hd.r * 1.2, hd.r * 0.95);
+    g.fillStyle = "#d62828"; g.fillRect(hd.x - hd.r * 0.6, hy - hd.r * 0.36, hd.r * 1.2, hd.r * 0.18);
+  }
+  function toolFrame(g, dt, sx, sy, hdy, hBot) {
+    // Ball in der Hand: über Schnee rollen = wachsen
+    if (held) {
+      const h = hitSurf(held.x, held.y + held.r * 0.6, held.r + 10);
+      if (h && held.r < 24) { const got = scoop(h.s, held.x - h.left, held.r * 0.9, 60 * dt * (1 + held.r / 8)); held.vol += got; held.r = ballR(held.vol); }
+      drawBall(g, held.x, held.y, held.r);
+    }
+    // fliegende Bälle
+    for (let k = flying.length - 1; k >= 0; k--) {
+      const f = flying[k], pyb = f.y - sy + f.r;
+      f.age = (f.age || 0) + dt; f.vy += 1500 * dt; f.vx *= 1 - 0.3 * dt; f.x += f.vx * dt; f.y += f.vy * dt;
+      const x = f.x - sx, y = f.y - sy, yb = y + f.r;
+      let done = false;
+      if (f.vy > 0) {
+        // auf einer Kugel / einem Schneemann gelandet?
+        for (const o of objs) {
+          const p = objPos(o, sx, sy, hdy); if (!p) continue;
+          const t = p.balls[p.balls.length - 1], tt = o.man ? t.y - t.r * 1.9 : t.y - t.r;
+          if (Math.abs(x - t.x) < Math.max(t.r, f.r) * 0.9 && yb >= tt && (y < t.y || f.age < 0.06)) {
+            const sp = Math.hypot(f.vx, f.vy);
+            if (o.man || o.rs.length >= 3 || sp > 650) { burst(x, yb, false, Math.min(40, 8 + f.r * 1.5), 200, 160, 500); }
+            else { o.rs.push(Math.min(f.r, o.rs[o.rs.length - 1] * 1.05)); if (o.rs.length === 3) { o.man = true; o.grow = 0.85; burst(x, tt, p.fixed, 16, 140, 120, 300); } saveObjs(); }
+            done = true; break;
+          }
+        }
+        if (!done) for (const s of act) {
+          const gm = geo(s, sx, sy, hdy);
+          if (!s.fixed && gm.top < hBot) continue;
+          if (x < gm.left || x > gm.left + s.w) continue;
+          const i = colAt(s, x - gm.left), st = snowTop(s, gm.top, i);
+          if (pyb <= st + 1 && yb >= st) {
+            const sp = Math.hypot(f.vx, f.vy);
+            if (sp > 520) {   // Platsch
+              const rest = pileOn(s, x - gm.left, f.vol * 0.8, 1);
+              burst(x, st, s.fixed, Math.min(50, 10 + f.r * 2 + rest), 240, 170, 480);
+            } else {
+              objs.push({ key: s.key, ox: x - gm.left, rs: [f.r], man: false }); if (objs.length > 40) objs.shift(); saveObjs();
+            }
+            done = true; break;
+          }
+        }
+      }
+      if (!done && (y > H + 80 || x < -120 || x > W + 120)) done = true;
+      if (done) { flying.splice(k, 1); continue; }
+      drawBall(g, x, y, f.r);
+    }
+    // liegende Kugeln und Schneemänner
+    for (const o of objs) {
+      if (o.grow != null && o.grow < 1) { o.grow = Math.min(1, o.grow + dt * 2.2); if (o.grow >= 1) delete o.grow; }
+      const p = objPos(o, sx, sy, hdy); if (!p) continue;
+      const b0 = p.balls[0];
+      if (b0.y < -60 || b0.y > H + 80) continue;
+      g.save();
+      if (!p.fixed) { g.beginPath(); g.rect(0, hBot, W, H - hBot); g.clip(); }
+      if (o.man && p.balls.length === 3) drawMan(g, p.balls);
+      else for (const b of p.balls) drawBall(g, b.x, b.y, b.r);
+      g.restore();
+    }
+  }
+
+  /* ---- Werkzeugleiste ---- */
+  const svgShovel = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M17.5 3.5l3 3M19 5l-7.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M11.5 12.5l-5.5 1-3 3.5 4 4 3.5-3 1-5.5z" fill="currentColor"/></svg>';
+  const dock = document.createElement("div");
+  dock.className = "snowdock"; dock.setAttribute("role", "toolbar"); dock.setAttribute("aria-label", "Im Schnee spielen");
+  dock.innerHTML = `<p class="sd-hint" aria-live="polite" hidden></p><button type="button" class="sd-done">Fertig ✕</button>`;
+  dock.hidden = true;
+  document.body.appendChild(dock);
+  const sdHint = dock.querySelector(".sd-hint");
+  const toolBtns = () => document.querySelectorAll("#snowpanel [data-t]");
+  const TIPS = {
+    shovel: "Schaufel: über den liegenden Schnee ziehen. An der Kante fällt er runter.",
+    ball: "Schneeball: auf Schnee drücken und drüberziehen, dann loslassen zum Werfen. Sanft ablegen lässt ihn liegen, drei übereinander werden ein Schneemann.",
+    man: "Schneemann: auf eine Kante mit Schnee tippen. Je mehr Schnee, desto größer."
+  };
+  let hintT = 0;
+  function hint(t, temp) {
+    clearTimeout(hintT);
+    sdHint.textContent = t; sdHint.hidden = !t;
+    if (temp) hintT = setTimeout(() => hint(tool ? TIPS[tool] : ""), 3200);
+  }
+  const curShovel = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path d="M17.5 3.5l3 3M19 5l-7.5 7.5" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M17.5 3.5l3 3M19 5l-7.5 7.5" stroke="#6b4423" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M11.5 12.5l-5.5 1-3 3.5 4 4 3.5-3 1-5.5z" fill="#8a96a8" stroke="#fff" stroke-width="1.2"/></svg>');
+  const curStyle = document.createElement("style");
+  curStyle.textContent = `html.sdt-shovel, html.sdt-shovel *:not(.snowdock *):not(#snowpanel *) { cursor: url("${curShovel}") 4 28, grab !important; }
+html.sdt-ball, html.sdt-ball *:not(.snowdock *):not(#snowpanel *) { cursor: grab !important; } html.sdt-ball.sdt-hold, html.sdt-ball.sdt-hold * { cursor: grabbing !important; }
+html.sdt-man, html.sdt-man *:not(.snowdock *):not(#snowpanel *) { cursor: cell !important; }`;
+  document.head.appendChild(curStyle);
+  function setTool(t) {
+    tool = t;
+    const de = document.documentElement;
+    de.classList.remove("sdt-shovel", "sdt-ball", "sdt-man");
+    if (t) de.classList.add("sdt-" + t);
+    toolBtns().forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.t === t)));
+    dock.hidden = !t;
+    hint(t ? TIPS[t] : "");
+  }
+  dock.querySelector(".sd-done").addEventListener("click", () => setTool(""));
+  toolBtns().forEach((b) => b.addEventListener("click", () => {
+    const t = tool === b.dataset.t ? "" : b.dataset.t;
+    setTool(t);
+    if (t) {   // Menü zu, damit man direkt loslegen kann
+      const p = document.getElementById("snowpanel"), sb = document.getElementById("snowbtn");
+      p.hidden = true; sb.setAttribute("aria-expanded", "false");
+    }
+  }));
+  setInterval(() => { document.documentElement.classList.toggle("sdt-hold", !!held); }, 120);
 
   /* ---- Bedienfeld ---- */
   const btn = document.getElementById("snowbtn"), panel = document.getElementById("snowpanel");

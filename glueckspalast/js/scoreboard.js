@@ -48,7 +48,7 @@ const GPScores = (() => {
     const f = cat === 'x' ? 'x' : 'amount';
     if (src === 'online') {
       const k = `${f}|${machine}|${limit}`;
-      if (!cache[k] || Date.now() - cache[k].t > 30000) {
+      if (!cache[k] || Date.now() - cache[k].t > 4000) {
         const data = await GPOnline.scores({ order: f, machine, limit });
         cache[k] = { t: Date.now(), data: data.map(r => ({ name: r.name, m: r.machine, amount: +r.amount, bet: +r.bet, x: +r.x, type: r.type, t: Date.parse(r.created_at) })) };
       }
@@ -81,11 +81,11 @@ const GPScores = (() => {
       <div id="sbTable" aria-live="polite"></div>
       <p class="rules" style="margin-top:12px">${online() ? 'Online: Einträge aller Spieler (Gewinne ab 3× Einsatz, Freispielrunden, Hold & Win). ' : 'Die Liste gilt für alle Spieler auf diesem Gerät. '}Nach der Risikoleiter zählt der Endbetrag. Spielgeld ohne Geldwert.</p>`);
     const box = document.querySelector('.modal .body');
-    const render = async () => {
+    const render = async (quiet) => {
       box.querySelectorAll('.sb-seg').forEach(s => s.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(st[s.dataset.seg] === b.dataset.v))));
       const ms = box.querySelector('[data-seg="machine"]'); if (ms) ms.hidden = st.cat === 'balance';
       const t = box.querySelector('#sbTable');
-      t.innerHTML = '<p class="sb-empty">Lädt …</p>';
+      if (!quiet) t.innerHTML = '<p class="sb-empty">Lädt …</p>';
       try { t.innerHTML = tableHTML(st.cat, await rows(st.src, st.cat, st.machine, 20)); }
       catch (e) { t.innerHTML = `<p class="sb-empty">${esc(e.message)}</p>`; }
     };
@@ -94,6 +94,13 @@ const GPScores = (() => {
       st[s.dataset.seg] = b.dataset.v; render();
     }));
     render();
+    // Solange das Fenster offen ist, alle 5 Sekunden neu laden
+    if (st.src === 'online' || online()) {
+      const timer = setInterval(() => {
+        if (!document.body.contains(box)) { clearInterval(timer); return; }
+        if (st.src === 'online' && document.visibilityState === 'visible') render(true);
+      }, 5000);
+    }
   }
 
   /* ---------- Kurzfassung in der Lobby ---------- */
@@ -114,6 +121,8 @@ const GPScores = (() => {
   const _renderLobby = renderLobby;
   renderLobby = function () { _renderLobby(); renderLobbyPanel(); };
   renderLobbyPanel();
+  // Kurzfassung in der Lobby regelmäßig auffrischen
+  if (online()) setInterval(() => { if (document.visibilityState === 'visible') renderLobbyPanel(); }, 8000);
 
   return { add, open, list: () => list.slice() };
 })();

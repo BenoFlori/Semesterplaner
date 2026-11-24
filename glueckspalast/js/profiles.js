@@ -13,11 +13,11 @@ const GPProfiles = (() => {
   });
   const ls = store(() => localStorage), ss = store(() => sessionStorage);
   const online = typeof GPOnline !== 'undefined' && GPOnline.enabled;
-
+ 
   let idx = { profiles: {}, last: null };
   try { const raw = ls.get(IDX_KEY); if (raw) idx = Object.assign(idx, JSON.parse(raw)); } catch (e) {}
   const saveIdx = () => ls.set(IDX_KEY, JSON.stringify(idx));
-
+ 
   const NAME_RE = /^[\p{L}\p{N} ._-]{2,16}$/u;
   const nameKey = n => String(n).trim().toLowerCase();
   const pinHash = (name, pin) => sha256Hex(nameKey(name) + ':' + pin + ':glueckspalast');
@@ -25,13 +25,29 @@ const GPProfiles = (() => {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const newId = () => { const a = new Uint32Array(2); crypto.getRandomValues(a); return a[0].toString(36) + a[1].toString(36); };
   const byName = name => Object.entries(idx.profiles).find(([, p]) => nameKey(p.name) === nameKey(name));
-
+ 
   /* ---------- aktive Sitzung (läuft sofort, vor main.js) ---------- */
   const activeId = ss.get(SESSION_KEY) || ls.get(REMEMBER_KEY);
   const me = activeId && idx.profiles[activeId] ? idx.profiles[activeId] : null;
   window.GP_PROFILE = me ? { id: activeId, name: me.name, key: storageKey(activeId), online: !!me.online && online } : null;
   if (me) ss.set(SESSION_KEY, activeId);
-
+ 
+  // Profile, die angelegt wurden, bevor der Online-Speicher eingeschaltet war, automatisch online anmelden
+  if (me && online && !me.online) (async () => {
+    let st = null;
+    try { st = JSON.parse(ls.get(storageKey(activeId)) || 'null'); } catch (e) {}
+    st = st || { balance: me.balance || 5000, savedAt: Date.now() };
+    try {
+      await GPOnline.rpc('gp_register', { p_name: me.name, p_pin_hash: me.pinHash, p_state: st });
+    } catch (e) {
+      // Name schon online vorhanden: mit derselben PIN ist es dasselbe Profil
+      try { await GPOnline.rpc('gp_login', { p_name: me.name, p_pin_hash: me.pinHash }); }
+      catch (e2) { console.warn('Online anmelden:', e2.message); return; }
+    }
+    me.online = true; saveIdx();
+    window.GP_PROFILE.online = true;
+  })();
+ 
   function enter(id, remember) {
     ss.set(SESSION_KEY, id);
     if (remember) ls.set(REMEMBER_KEY, id); else if (ls.get(REMEMBER_KEY) === id) ls.del(REMEMBER_KEY);
@@ -62,7 +78,7 @@ const GPProfiles = (() => {
   }
   function list() { return Object.entries(idx.profiles).map(([id, p]) => ({ id, name: p.name, balance: p.balance || 0, lastLogin: p.lastLogin || p.created })); }
   function legacyState() { try { const raw = ls.get(LEGACY_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
-
+ 
   /* ---------- Speichern & Online-Abgleich ---------- */
   let syncTimer = null, pending = null;
   function onSave(S) {
@@ -86,7 +102,7 @@ const GPProfiles = (() => {
   }
   addEventListener('pagehide', () => flush(true));
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(true); });
-
+ 
   // Neueren Spielstand von einem anderen Gerät übernehmen
   async function syncDown() {
     if (!window.GP_PROFILE || !GP_PROFILE.online) return;
@@ -108,7 +124,7 @@ const GPProfiles = (() => {
     return GPOnline.rpc('gp_add_score', { p_name: p.name, p_pin_hash: p.pinHash, p_machine: e.m, p_amount: e.amount, p_bet: e.bet, p_type: e.type })
       .catch(err => console.warn('Bestenliste online:', err.message));
   }
-
+ 
   /* ---------- Login-Bildschirm ---------- */
   let veil = null;
   const triesLeft = () => { const t = JSON.parse(ss.get(TRIES_KEY) || '{"n":0,"until":0}'); return t; };
@@ -120,7 +136,7 @@ const GPProfiles = (() => {
     const card = veil.querySelector('.gpl-card'); card.classList.remove('bad'); void card.offsetWidth; card.classList.add('bad');
   }
   const locked = () => triesLeft().until > Date.now();
-
+ 
   function showLogin() {
     if (veil) return;
     veil = document.createElement('div');
@@ -146,7 +162,7 @@ const GPProfiles = (() => {
     <input class="gpl-input gpl-pin" id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">`;
   const rememberField = `<label class="gpl-check"><input type="checkbox" id="gplRemember" checked> Auf diesem Gerät angemeldet bleiben</label>`;
   const busy = (btn, on, label) => { btn.disabled = on; if (label) btn.textContent = on ? 'Einen Moment …' : label; };
-
+ 
   function stepChoose(profiles) {
     err('');
     body().innerHTML = `
@@ -167,7 +183,7 @@ const GPProfiles = (() => {
     const rb = body().querySelector('#gplRemote'); if (rb) rb.onclick = stepRemote;
     setTimeout(() => body().querySelector('.gpl-player')?.focus(), 30);
   }
-
+ 
   function stepPin(id) {
     err('');
     const p = idx.profiles[id];
@@ -192,7 +208,7 @@ const GPProfiles = (() => {
     body().querySelector('#gplBack').onclick = () => stepChoose(list());
     setTimeout(() => pin.focus(), 30);
   }
-
+ 
   function stepNew() {
     err('');
     const legacy = !list().length && legacyState();
@@ -231,7 +247,7 @@ const GPProfiles = (() => {
     const rb = body().querySelector('#gplRemote'); if (rb) rb.onclick = stepRemote;
     setTimeout(() => nm.focus(), 30);
   }
-
+ 
   function stepRemote() {
     err('');
     body().innerHTML = `
@@ -268,14 +284,14 @@ const GPProfiles = (() => {
     body().querySelector('#gplBack').onclick = () => list().length ? stepChoose(list()) : stepNew();
     setTimeout(() => nm.focus(), 30);
   }
-
+ 
   const fmtN = n => Math.round(n || 0).toLocaleString('de-DE');
-
+ 
   // Solange der Login offen ist, keine Tasten an das Spiel durchreichen
   addEventListener('keydown', e => {
     if (veil && !veil.contains(e.target)) { e.stopPropagation(); if (e.key === ' ' || e.key === 'Enter') e.preventDefault(); }
   }, true);
-
+ 
   /* ---------- Spieler-Anzeige oben rechts ---------- */
   function renderChip() {
     const chip = document.getElementById('playerChip');
@@ -303,7 +319,7 @@ const GPProfiles = (() => {
     chip.querySelector('#pcDelNo').onclick = () => { chip.querySelector('#pcConfirm').hidden = true; };
     chip.querySelector('#pcDelYes').onclick = () => { const id = GP_PROFILE.id; pending = null; removeProfile(id); ss.del(SESSION_KEY); ls.del(REMEMBER_KEY); location.reload(); };
   }
-
+ 
   function init() {
     if (!window.GP_PROFILE) showLogin();
     else {
@@ -313,7 +329,8 @@ const GPProfiles = (() => {
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else setTimeout(init, 0);
-
+ 
   return { onSave, flush, list, submitScore, logout, current: () => window.GP_PROFILE, isOnline: () => !!(window.GP_PROFILE && GP_PROFILE.online), esc };
 })();
 window.GPProfiles = GPProfiles;
+ 

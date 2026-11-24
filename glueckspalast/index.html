@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Spielgeld-Kasino im Browser mit fünf Spielautomaten, Risikoleiter, Freispiel-Multiplikator und Bestenliste. Kein Echtgeld.">
+<meta name="theme-color" content="#170910">
+<title>Glückspalast · König der Spielhalle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=Outfit:wght@400;500;600;700;800&family=Chivo+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/premium.css">
+<link rel="stylesheet" href="css/v7.css">
+</head>
+<body>
+
+<div class="bgphoto" id="bgphoto" aria-hidden="true"></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="brand" id="home" title="Zur Königlichen Spielhalle">
+      <svg class="brand-crown" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="crGold" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fffbe0"/>
+            <stop offset="50%" stop-color="#f2b63d"/>
+            <stop offset="100%" stop-color="#7d4d0c"/>
+          </linearGradient>
+        </defs>
+        <path d="M8 48 L4 18 L20 32 L32 10 L44 32 L60 18 L56 48 Z" fill="url(#crGold)" stroke="#3d2204" stroke-width="2.5" stroke-linejoin="round"/>
+        <rect x="8" y="46" width="48" height="10" rx="3" fill="url(#crGold)" stroke="#3d2204" stroke-width="2"/>
+        <circle cx="4" cy="17" r="3.5" fill="#fffbe0"/>
+        <circle cx="32" cy="9" r="4.5" fill="#fffbe0"/>
+        <circle cx="60" cy="17" r="3.5" fill="#fffbe0"/>
+        <circle cx="32" cy="36" r="4" fill="#e6223c"/>
+        <circle cx="20" cy="51" r="2.5" fill="#18d968"/>
+        <circle cx="32" cy="51" r="2.5" fill="#e6223c"/>
+        <circle cx="44" cy="51" r="2.5" fill="#18d968"/>
+      </svg>
+      <span>Glückspalast</span>
+    </button>
+    <span class="royal-badge">Spielhalle · 24k Gold</span>
+    <div class="spacer"></div>
+    <div class="pill" title="Dein Spielgeld-Guthaben in Chips"><span class="chip"></span><span id="balance" class="num">0</span></div>
+    <div class="player-chip" id="playerChip" hidden></div>
+    <button class="tbtn" id="scoreBtn">Bestenliste</button>
+    <button class="tbtn" id="statsBtn">Statistik</button>
+    <button class="tbtn" id="soundBtn" aria-pressed="true">Ton an</button>
+  </div>
+</header>
+
+<main>
+  <!-- LOBBY -->
+  <section id="lobby">
+    <div class="hero">
+      <div class="hero-txt">
+        <div class="eyebrow">Deutsche Spielhallen-Welt · 5 Automaten · Risikoleiter</div>
+        <h1>Willkommen in der Königlichen Spielhalle</h1>
+        <p class="lead">Echte Spielhallen-Atmosphäre mit glänzenden 3D-Walzensymbolen, klassischen Spielhallen-Sounds, blinkender Risikoleiter mit Teilen-Funktion und dem Kult-Automaten <b>ALGE – König der Meere</b>.</p>
+        <div class="hero-syms" id="heroSyms" aria-hidden="true"></div>
+      </div>
+      <div class="panel bonus">
+        <div>
+          <div class="eyebrow">Königliches Glücksrad</div>
+          <div class="row" style="margin-top:8px"><span class="chip lg"></span><span class="amt" id="bonusAmt">1.000</span></div>
+          <p class="lead" id="bonusInfo" style="margin-top:4px">Alle 24 Stunden ein goldener Dreh am Glücksrad.</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="bonusBtn">Glücksrad drehen</button>
+          <button class="btn ghost" id="refillBtn" hidden>Gratis-Nachschub (1.000)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spotlight Banner für ALGE – König der Meere -->
+    <div class="spotlight">
+      <div class="spot-art" id="spotAlge"></div>
+      <div>
+        <span class="spot-pill">👑 KULT-AUTOMAT · ECHTES SPIELHALLEN-FEELING</span>
+        <h2>ALGE – König der Meere</h2>
+        <p>5 Walzen, 10 Linien, der <b>Alge-König</b> bis 5.000×, die ikonische <b>ALGE-Dose</b> als Wild &amp; Scatter, bis zu 12 Freispiele mit Spezialsymbol und <b>Multiplikator bis ×10</b> sowie echte <b>Risikoleiter &amp; Kartenrisiko</b>!</p>
+      </div>
+      <button class="btn" data-open="alge">Jetzt ALGE spielen</button>
+    </div>
+
+    <div class="machines" id="machineCards"></div>
+
+    <div class="lobby-lower">
+      <div class="panel sb-panel">
+        <div class="sb-head"><h3>Bestenliste</h3><button class="tbtn" type="button" id="sbMore">Alle anzeigen</button></div>
+        <div id="sbLobby"></div>
+      </div>
+      <div class="panel">
+        <h3>Letzte Spiele</h3>
+        <ul class="hist" id="histList"></ul>
+      </div>
+    </div>
+    <p class="foot">Nur zur Unterhaltung. Alle Chips sind Spielgeld ohne Geldwert, können nicht gekauft und nicht ausgezahlt werden. Dein Spielstand wird lokal in diesem Browser gespeichert.</p>
+  </section>
+
+  <!-- MACHINE -->
+  <section id="machine" hidden>
+    <div class="stage">
+      <div class="mhead">
+        <button class="tbtn" id="backBtn">← Spielhalle</button>
+        <h2 id="mTitle"></h2>
+        <button class="tbtn" id="payBtn">Gewinnplan</button>
+      </div>
+
+      <!-- Hype-O-Meter -->
+      <div class="hype-strip" id="hypeStrip">
+        <span class="hype-label">👑 KÖNIGS-HYPE</span>
+        <div class="hype-track"><div class="hype-fill" id="hypeFill"></div></div>
+        <span class="hype-status" id="hypeStatus">WARMLAUFEN</span>
+      </div>
+
+      <div class="jackpots" id="jackpots" hidden>
+        <div class="jp" data-jp="MINI"><small>MINI</small><b class="num" id="jpMINI"></b></div>
+        <div class="jp" data-jp="MINOR"><small>MINOR</small><b class="num" id="jpMINOR"></b></div>
+        <div class="jp" data-jp="MAJOR"><small>MAJOR</small><b class="num" id="jpMAJOR"></b></div>
+        <div class="jp grand" data-jp="GRAND"><small>GRAND · KÖNIGSTOPF</small><b class="num" id="jpGRAND"></b></div>
+      </div>
+      <div class="fsbar" id="fsbar" hidden></div>
+
+      <div class="cabinet">
+        <div class="chase" aria-hidden="true"></div>
+        <div class="cab-in">
+          <div class="marquee"><div class="bulbs"><i></i><i></i><i></i></div><span class="t" id="mMarquee"></span><div class="bulbs"><i></i><i></i><i></i></div></div>
+          <div class="window" id="window"></div>
+          <div class="readout">
+            <div><small>Einsatz</small><b id="roBet" class="num">0</b></div>
+            <div><small>Gewinn</small><b id="roWin" class="num">0</b></div>
+            <div><small>Linien</small><b id="roLines" class="num">0</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="msg" id="msg"></div>
+
+      <div class="controls">
+        <div class="ctl-l">
+          <div class="stepper">
+            <button id="betDown" aria-label="Einsatz senken">−</button>
+            <div class="v"><small>Einsatz</small><b id="betVal" class="num">10</b></div>
+            <button id="betUp" aria-label="Einsatz erhöhen">+</button>
+          </div>
+          <button class="tbtn" id="maxBet">Max</button>
+        </div>
+        <button class="spin" id="spinBtn" aria-label="Drehen (Leertaste)">START</button>
+        <div class="ctl-r">
+          <select class="sel" id="autoSel" aria-label="Autostart">
+            <option value="0">Auto aus</option>
+            <option value="10">Auto 10</option>
+            <option value="25">Auto 25</option>
+            <option value="50">Auto 50</option>
+            <option value="100">Auto 100</option>
+          </select>
+          <button class="toggle" id="turboBtn" aria-pressed="false">Turbo</button>
+        </div>
+      </div>
+
+      <!-- Simulated Stream Hype Chat Ticker -->
+      <div class="chat-bar" aria-live="off">
+        <span class="chat-pill">LIVE HYPE</span>
+        <div class="chat-feed" id="chatFeed">
+          <span class="chat-msg"><b>PalastWache:</b> Bereit für die Krone! 👑</span>
+          <span class="chat-msg"><b>AlgenFan77:</b> Heute scheppert's richtig!</span>
+        </div>
+      </div>
+
+      <!-- Spielhallen-Risiko: Risikoleiter & Kartenrisiko -->
+      <div class="gamble" id="gamble" hidden role="dialog" aria-modal="true" aria-labelledby="gTitle">
+        <div class="gamble-card">
+          <div class="gamble-head">
+            <div><div class="eyebrow" id="lType">Gewinn</div><h2 id="gTitle">Risiko</h2></div>
+            <div class="gamble-tabs" role="tablist">
+              <button class="gtab active" id="tabLadder" type="button" role="tab" aria-selected="true">Risikoleiter</button>
+              <button class="gtab" id="tabCard" type="button" role="tab" aria-selected="false">Rot / Schwarz</button>
+            </div>
+          </div>
+
+          <!-- Ansicht 1: Risikoleiter -->
+          <div id="viewLadder" class="ladder-wrap">
+            <div class="ladder" aria-label="Leiterstufen">
+              <div class="ladder-rail l"></div><div class="ladder-rail r"></div>
+              <div class="ladder-steps" id="ladderSteps"></div>
+            </div>
+            <div class="ladder-side">
+              <div class="ladder-box">
+                <small>Im Risiko</small>
+                <b id="lStake" class="num">0</b>
+                <dl class="ladder-facts">
+                  <div><dt>Nächste Stufe</dt><dd id="lNext" class="num">0</dd></div>
+                  <div><dt>Chance</dt><dd id="lChance" class="num">50 %</dd></div>
+                  <div><dt>Gesichert</dt><dd id="lBank" class="num">0</dd></div>
+                </dl>
+              </div>
+              <button class="btn-risk" id="lRiskBtn" type="button">▲ Risiko <small>Leertaste</small></button>
+              <div class="ladder-subbtns">
+                <button class="btn-split" id="lSplitBtn" type="button">½ Teilen</button>
+                <button class="btn-collect" id="lTakeBtn" type="button">Annehmen</button>
+              </div>
+              <p class="ladder-help">Das Licht springt zwischen der nächsten Stufe und dem Absturz. <b>Risiko</b> steigt eine Stufe hoch oder stürzt auf 0. <b>Teilen</b> geht eine Stufe runter und sichert die Differenz.</p>
+            </div>
+          </div>
+
+          <!-- Ansicht 2: Kartenrisiko Rot / Schwarz -->
+          <div id="viewCard" class="card-risk-wrap" hidden>
+            <div class="pcard" id="gCard">?</div>
+            <div>
+              <div class="eyebrow" style="color:var(--gold-hi)">Kartenrisiko · Stufe <span id="gStep">1</span> von 5</div>
+              <div style="font-size:15px;margin-top:4px">Im Risiko: <b class="num" id="gStake" style="color:var(--gold-hi);font-size:17px"></b> · Rot oder Schwarz verdoppelt, falsch verliert den Einsatz.</div>
+              <div class="gbtns">
+                <button class="btn gbtn-red" id="gRed" type="button">♥ Rot</button>
+                <button class="btn gbtn-black" id="gBlack" type="button">♠ Schwarz</button>
+                <button class="btn ghost" id="gTake" type="button">Einsammeln</button>
+              </div>
+              <div class="ghist" id="gHist"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="foot">Leertaste startet / drückt hoch · Spielgeld ohne Geldwert</p>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay" hidden></div>
+<div class="coins" id="coins"></div>
+<div class="toast" id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/tuning.js"></script>
+<script src="js/online.js"></script>
+<script src="js/profiles.js"></script>
+<script src="js/main.js"></script>
+<script src="js/premium.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/scoreboard.js"></script>
+</body>
+</html>

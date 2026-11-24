@@ -3651,5 +3651,37 @@ html.sdt-man, html.sdt-man *:not(.snowdock *):not(#snowpanel *) { cursor: cell !
   setTimeout(show, force ? 300 : 1800);
 })();
 </script>
+<!-- Easter Egg: 5x schnell auf die Überschrift tippen öffnet den Glückspalast -->
+<style>
+.gpx-x { position: fixed; z-index: 2147483001; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; font: 700 17px/36px system-ui, -apple-system, sans-serif; color: #fff1a8; background: rgb(20 8 12 / 0.85); box-shadow: 0 0 0 2px #c98a20, 0 4px 14px rgb(0 0 0 / 0.5); cursor: pointer; touch-action: manipulation; }
+@media (min-width: 641px) { .gpx-x { display: none; } }
+.wrap > header h1 { cursor: default; touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+</style>
+<script src="glueckspalast/embed.js" data-mode="none" defer></script>
+<script>
+(() => {
+  const h = document.querySelector(".wrap > header h1");
+  if (!h) return;
+  let n = 0, last = 0;
+  h.addEventListener("click", () => {
+    const now = Date.now();
+    if (now - last > 900) n = 0;
+    last = now;
+    if (++n >= 5) {
+      n = 0;
+      if (!window.Glueckspalast) { location.href = "glueckspalast/index.html"; return; }
+      window.Glueckspalast.open();
+      // Eigener Schließen-Knopf, damit man auch auf dem Handy (Vollbild) immer rauskommt
+      const veil = document.querySelector(".gpx-veil");
+      if (veil && !veil.querySelector(".gpx-x")) {
+        const x = document.createElement("button");
+        x.type = "button"; x.className = "gpx-x"; x.textContent = "✕"; x.setAttribute("aria-label", "Spielhalle schließen");
+        x.addEventListener("click", () => window.Glueckspalast.close());
+        veil.appendChild(x);
+      }
+    }
+  });
+})();
+</script>
 </body>
 </html>

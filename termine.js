@@ -99,7 +99,7 @@ window.TERMINE = [
   {"title": "Einführung in die Programmierung", "kind": "tutorium", "prof": "Ghays Alnema, Anton Nguyen, Jan Wieland", "room": "", "date": "2026-11-24", "start": "14:00", "end": "15:30"},
   {"title": "Vertrags- und Schuldrecht", "kind": "vorlesung", "prof": "Frau Grewe", "room": "MP2-3.13", "date": "2026-11-25", "start": "10:45", "end": "13:15"},
   {"title": "Analysis & Lineare Algebra", "kind": "tutorium", "prof": "", "room": "", "date": "2026-11-25", "start": "16:45", "end": "18:15"},
-  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-26", "start": "15:45", "end": "17:15"},
+  {"title": "Logik & Algebra", "kind": "tutorium", "prof": "Ramona Buchbinder, Steffen Waldvogel", "room": "", "date": "2026-11-26", "start": "13:45", "end": "15:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-11-27", "start": "09:00", "end": "12:15"},
   {"title": "Einführung in die Programmierung", "kind": "vorlesung", "prof": "Herr Goellner", "room": "MP2-3.13", "date": "2026-11-27", "start": "13:00", "end": "16:15"},
   {"title": "Vertrags- und Schuldrecht", "kind": "vorlesung", "prof": "Frau Grewe", "room": "MP2-3.13", "date": "2026-11-30", "start": "08:00", "end": "10:30"},

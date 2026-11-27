@@ -935,8 +935,10 @@
 <kh_100>0.9</kh_100>
 <zucker_100>0.9</zucker_100>
 <salz_100>0.5</salz_100>
-<co2_einsparung></co2_einsparung>
-<h2o_wert></h2o_wert>
+<co2_wert>45</co2_wert>
+<co2_bewertung></co2_bewertung>
+<co2_einsparung>68.00</co2_einsparung>
+<h2o_wert>0.56</h2o_wert>
 <h2o_bewertung></h2o_bewertung>
 <tierwohl></tierwohl>
 <regenwald></regenwald>
